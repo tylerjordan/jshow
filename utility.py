@@ -364,7 +364,7 @@ def get_fact(ip, username, password, fact):
 
 
 # Run a single non-edit command and get the output returned
-def op_command(ip, host_name, command, username, password, port=22):
+def op_command(ip, command, username, password, port=22):
     """ Purpose: For the -c flag, this function is called. It will connect to a device, run the single specified command, and return the output.
                  Paramiko is used instead of ncclient so we can pipe the command output just like on the CLI.
         Parameters:
@@ -376,7 +376,7 @@ def op_command(ip, host_name, command, username, password, port=22):
     """
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    device = '*' * 80 + '\n[%s at %s] - Command: %s\n' % (host_name, ip, command)
+    device = '> Command: %s\n' % (command)
     command = command.strip() + ' | no-more\n'
     output = ''
     try:

@@ -74,22 +74,22 @@ def oper_commands(creds, my_ips):
     output = ""
     screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
     # Loop over commands and devices
-    for command in command_list:
-        for ip in my_ips:
-            if ping(ip):
+    for ip in my_ips:
+        if ping(ip):
+            hostname = get_fact(ip, creds['username'], creds['password'], "hostname")
+            screen_and_log('*' * 80 + '\n' + '[{0} at {1}]\n'.format(hostname, ip), log_file)
+            for command in command_list:
                 try:
-                    hostname = get_fact(ip, creds['username'], creds['password'], "hostname")
-                    results = op_command(ip, hostname, command, creds['username'], creds['password'])
+                    results = op_command(ip, command, creds['username'], creds['password'])
                 except Exception as err:
                     print("Error running op_command on {0} ERROR: {1}").format(ip, err)
                 else:
-                    screen_and_log(results, log_file)
+                    screen_and_log(results + '\n', log_file)
                     # Append output to a variable, we'll save when done with output
                     if log_file:
                         output += results
-            else:
-                screen_and_log("Skipping {0}, unable to ping.\n", log_file)
-
+        else:
+            screen_and_log((("*" * 80) + "\nSkipping {0}, unable to ping.\n" + ("*" * 80) + "\n\n").format(ip), log_file)
     screen_and_log(("\n" + "*" * 30 + " Commands Completed " + "*" * 30 + "\n"), log_file)
 
     # Check if a file was requested, if so print output to file

@@ -27,6 +27,7 @@ ssh_port = 22
 iplist_dir = ""
 log_dir = ""
 config_dir = ""
+csv_dir = ""
 
 system_slash = "/"   # This is the linux/mac slash format, windows format will be used in that case
 
@@ -38,6 +39,7 @@ def detect_env():
     global iplist_dir
     global config_dir
     global log_dir
+    global csv_dir
     global system_slash
     global ssh_port
 
@@ -47,6 +49,7 @@ def detect_env():
         iplist_dir = ".\\iplists\\"
         config_dir = ".\\configs\\"
         log_dir = ".\\logs\\"
+        csv_dir = ".\\csv\\"
         system_slash = "\\"
     else:
         #print "Environment Linux/MAC!"
@@ -54,6 +57,7 @@ def detect_env():
         iplist_dir = "./iplists/"
         config_dir = "./configs/"
         log_dir = "./logs/"
+        csv_dir = "./csv/"
 
 def oper_commands(creds, my_ips):
     # Provide selection for sending a single command or multiple commands from a file
@@ -103,6 +107,25 @@ def oper_commands(creds, my_ips):
             print "Output Written To: {0}".format(log_file)
         f.close()
 
+def populate_template(record, template_file):
+
+    command_list = []
+    try:
+        with open(template_file) as f:
+            command_list = f.read().splitlines()
+    except Exception as err:
+        print "Error turning file into list. ERROR: {0}".format(err)
+    else:
+        # Loop over commands
+        for command in command_list:
+            #print("Command: {0}").format(command)
+            if not re.match(r'^\s*$', command):
+                if re.match(r'.*\{\{.*\}\}.*', command):
+                    print("Template Command: {0}").format(command)
+                    matches = re.findall(r"\{\{.*?\}\}", command)
+                    print("Template Matches: {0}").format(matches)
+                else:
+                    print("Standard Command: {0}").format(command)
 
 def template_commands(creds):
     # Option for creating dynamic configurations for dictionary of devices
@@ -110,18 +133,31 @@ def template_commands(creds):
     template_config = getOptionAnswer("Choose a config file", filelist)
     template_file = config_dir + template_config
 
-    command_list = []
-    with open(template_file) as f:
-        command_list = f.read().splitlines()
+    # Read template csv in as dictionary
+    filelist = getFileList(csv_dir)
+    csv_config = getOptionAnswer("Choose a csv file", filelist)
+    csv_file = csv_dir + csv_config
 
-    for command in command_list:
-        if not re.match(r'^\s*$', command):
-            if re.match(r'\{\{', command):
-                print("Command: {0}").format(command)
+    list_dict = csvListDict(csv_file)
+    #for adict in list_dict:
+    #    print adict
 
+    # Create log file for operation
+    """
+    log_file = log_dir + "set_cmd_" + datetime.datetime.now().strftime("%Y%m%d-%H%M") + ".log"
+    print('\nInformation logged in {0}'.format(log_file))
+    screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
+    screen_and_log("*" * 50 + " COMMANDS " + "*" * 50 + '\n', log_file)
+    """
+    for record in list_dict:
+        #if ping(record['mgmt_ip']):
+        command_list = populate_template(record, template_file)
 
+    """
 
-def set_commands(creds, my_ips):
+    """
+
+def standard_commands(creds, my_ips):
     # Provide option for using a file to supply configuration commands
     command_list = []
     if getTFAnswer('\nProvide commands from a file'):
@@ -185,7 +221,7 @@ if __name__ == "__main__":
         elif answer == "2":
             oper_commands(creds, my_ips)
         elif answer == "3":
-            set_commands(creds, my_ips)
+            standard_commands(creds, my_ips)
         elif answer == "4":
             template_commands(creds)
         elif answer == "5":

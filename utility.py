@@ -266,7 +266,7 @@ def csvListDict(fileName):
                     firstline = False
                 else:
                     values = "".join(line.split()).split(',')
-                    a.append({mykeys[n]:values[n] for n in range(0,len(mykeys))})
+                    myListDict.append({mykeys[n]:values[n] for n in range(0,len(mykeys))})
     except Exception as err:
         print "Failure converting CSV to listDict - ERROR: {0}".format(err)
     return myListDict

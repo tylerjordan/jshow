@@ -616,3 +616,5 @@ def ping(ip):
             return True
         except subprocess.CalledProcessError:
             return False
+
+# Import variables into config file

@@ -104,6 +104,23 @@ def oper_commands(creds, my_ips):
         f.close()
 
 
+def template_commands(creds):
+    # Option for creating dynamic configurations for dictionary of devices
+    filelist = getFileList(config_dir)
+    template_config = getOptionAnswer("Choose a config file", filelist)
+    template_file = config_dir + template_config
+
+    command_list = []
+    with open(template_file) as f:
+        command_list = f.read().splitlines()
+
+    for command in command_list:
+        if not re.match(r'^\s*$', command):
+            if re.match(r'\{\{', command):
+                print("Command: {0}").format(command)
+
+
+
 def set_commands(creds, my_ips):
     # Provide option for using a file to supply configuration commands
     command_list = []
@@ -156,7 +173,7 @@ if __name__ == "__main__":
     #myuser = creds['username']
     #mypwd = creds['password']
 
-    my_options = ['Load IPs', 'Execute Operational Commands', 'Execute Set Commands', 'Quit']
+    my_options = ['Load IPs', 'Execute Operational Commands', 'Execute Set Commands', 'Template Commands', 'Quit']
     my_ips = []
 
     while True:
@@ -170,4 +187,6 @@ if __name__ == "__main__":
         elif answer == "3":
             set_commands(creds, my_ips)
         elif answer == "4":
+            template_commands(creds)
+        elif answer == "5":
             quit()

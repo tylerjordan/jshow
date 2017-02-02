@@ -188,8 +188,8 @@ def getTarget():
 # Common method for accessing multiple routers
 def chooseDevices(list_dir):
     # Define the routers to deploy the config to (file/range/custom)
-    print "**** Configuration Deployment ****"
-    method_resp = getOptionAnswer('How would you like to define the devices', ['file', 'range', 'custom'])
+    print "**** Define your target devices ****"
+    method_resp = getOptionAnswer('How would you like to define the devices by IP', ['file', 'range', 'custom'])
     ip_list = []
     # Choose a file from a list of options
     if method_resp == "file":
@@ -352,15 +352,20 @@ def get_fact(ip, username, password, fact):
             personality
         Parameters:
     """
+    myfact = ""
     dev = Device(ip, user=username, password=password)
     try:
         dev.open()
     except Exception as err:
-        print("Unable to open connection to: {0} | ERROR: {1}").format(ip, err)
+        return False
+        # print("Unable to open connection to: {0} | ERROR: {1}").format(ip, err)
     else:
         myfact = dev.facts[fact]
         dev.close()
-        return myfact
+        if myfact:
+            return myfact
+        else:
+            return False
 
 
 # Run a single non-edit command and get the output returned

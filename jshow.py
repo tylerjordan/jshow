@@ -247,13 +247,6 @@ if __name__ == "__main__":
     my_options = ['Load IPs', 'Execute Operational Commands', 'Execute Set Commands', 'Execute Template Commands', 'Quit']
     my_ips = []
 
-    # Spinner
-    spinner = Spinner()
-    spinner.start()
-    time.sleep(5)
-    spinner.stop()
-
-
     # Get menu selection
     while True:
         print "*" * 50 + "\n"

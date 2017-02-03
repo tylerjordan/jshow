@@ -11,6 +11,7 @@ import paramiko  # https://github.com/paramiko/paramiko for -c -mc -put -get
 import logging
 import subprocess
 import platform
+import ipaddress
 
 from os import listdir
 from os.path import isfile, join, exists
@@ -189,7 +190,7 @@ def getTarget():
 def chooseDevices(list_dir):
     # Define the routers to deploy the config to (file/range/custom)
     print "**** Define your target devices ****"
-    method_resp = getOptionAnswer('How would you like to define the devices by IP', ['file', 'range', 'custom'])
+    method_resp = getOptionAnswer('How would you like to define the devices by IP', ['file', 'range', 'single IP', 'quit'])
     ip_list = []
     # Choose a file from a list of options
     if method_resp == "file":
@@ -207,22 +208,36 @@ def chooseDevices(list_dir):
 
     # Define a certain range of IPs
     elif method_resp == "range":
-        print "Defining a range..."
+        print "Define a network using the format X.X.X.X/Y"
+        notvalid = True
+        while( notvalid ):
+            answer = getInputAnswer('Enter an ip address or network')
+            addr_regex = re.compile("(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/\d{0,32}")
+            if addr_regex.match(answer):
+                notvalid = False
+            else:
+                print "Invalid ip address format"
+        n1 = ipaddress.ip_network(answer)
+        for one_ip in n1.hosts():
+            ip_list.append(str(one_ip))
 
     # Define one or more IPs individually
-    elif method_resp == "custom":
-        print 'Define using /32 IP Addresses'
+    elif method_resp == "single IP":
+        print 'Define a single IP Address'
         answer = ""
         while( answer != 'x' ):
             answer = getInputAnswer('Enter an ip address (x) to exit')
             if( answer != 'x'):
                 ip_list.append(answer)
+    else:
+        print "Exiting menu..."
 
     # Print the IPs that will be used
-    loop = 1;
-    for my_ip in ip_list:
-        print 'IP' + str(loop) + '-> ' + my_ip
-        loop=loop + 1
+    if ip_list:
+        loop = 1;
+        for my_ip in ip_list:
+            print 'IP' + str(loop) + '-> ' + my_ip
+            loop=loop + 1
     return ip_list
 
 
@@ -299,48 +314,6 @@ def getCode(device, mypath):
     print("*"*10 + "\n")
 
     return tar_code
-
-
-# Analyze listDict and create statistics (Upgrade)
-def tabulateUpgradeResults(listDict):
-    statusDict = {'success_rebooted': [],'success_not_rebooted': [], 'connect_fails': [], 'software_install_fails': [], 'total_devices': 0}
-
-    for mydict in listDict:
-        if mydict['Connected'] == 'Y' and mydict['OS_installed'] == 'Y':
-            if mydict['Rebooted'] == 'Y':
-                statusDict['success_rebooted'].append(mydict['IP'])
-            else:
-                statusDict['success_not_rebooted'].append(mydict['IP'])
-        elif mydict['Connected'] == 'Y' and mydict['OS_installed'] == 'N':
-            statusDict['software_install_fails'].append(mydict['IP'])
-        elif mydict['Connected'] == 'N':
-            statusDict['connect_fails'].append(mydict['IP'])
-        else:
-            print("Error: Uncaptured Result")
-        # Every device increments this total
-        statusDict['total_devices'] += 1
-
-    return statusDict
-
-
-# Analyze listDict and create statistics (Reboot)
-def tabulateRebootResults(listDict):
-    statusDict = {'rebooted': [], 'not_rebooted': [], 'connect_fails': [], 'total_devices': 0}
-
-    for mydict in listDict:
-        if mydict['Connected'] == 'Y':
-            if mydict['Rebooted'] == 'Y':
-                statusDict['rebooted'].append(mydict['IP'])
-            else:
-                statusDict['not_rebooted'].append(mydict['IP'])
-        elif mydict['Connected'] == 'N':
-            statusDict['connect_fails'].append(mydict['IP'])
-        else:
-            print("Error: Uncaptured Result")
-        # Every device increments this total
-        statusDict['total_devices'] += 1
-
-    return statusDict
 
 
 # Get fact

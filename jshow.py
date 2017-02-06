@@ -67,11 +67,13 @@ def detect_env():
 
 
 def oper_commands(creds, my_ips):
+    print "*" * 50 + "\n" + " " * 10 + "OPERATIONAL COMMANDS MENU\n" + "*" * 50
     # Provide selection for sending a single command or multiple commands from a file
     if not my_ips:
         my_ips = chooseDevices(iplist_dir)
     if my_ips:
         command_list = []
+        print "\n" + "*" * 50 + "\n"
         while True:
             command = raw_input("Enter an operational command: ")  # Change this to "input" when using Python 3
             if not command:
@@ -79,54 +81,56 @@ def oper_commands(creds, my_ips):
             else:
                 command_list.append(command)
 
-        # Check if user wants to print output to a file
-        log_file = None
-        if getTFAnswer('\nPrint output to a file'):
-            log_file = log_dir + "oper_cmd_" + datetime.datetime.now().strftime("%Y%m%d-%H%M") + ".log"
-            print('Information logged in {0}'.format(log_file))
+        if getTFAnswer("Continue with template deployment?"):
+            # Check if user wants to print output to a file
+            log_file = None
+            if getTFAnswer('\nPrint output to a file'):
+                log_file = log_dir + "oper_cmd_" + datetime.datetime.now().strftime("%Y%m%d-%H%M") + ".log"
+                print('Information logged in {0}'.format(log_file))
 
-        output = ""
-        screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
-        # Loop over commands and devices
-        for ip in my_ips:
-            if ping(ip):
-                hostname = get_fact(ip, creds['username'], creds['password'], "hostname")
-                screen_and_log('*' * 80 + '\n' + '[{0} at {1}]\n'.format(hostname, ip), log_file)
-                for command in command_list:
-                    try:
-                        results = op_command(ip, command, creds['username'], creds['password'])
-                    except Exception as err:
-                        print("Error running op_command on {0} ERROR: {1}").format(ip, err)
-                    else:
-                        screen_and_log(results + '\n', log_file)
-                        # Append output to a variable, we'll save when done with output
-                        if log_file:
-                            output += results
-            else:
-                screen_and_log((("*" * 80) + "\nSkipping {0}, unable to ping.\n" + ("*" * 80) + "\n\n").format(ip), log_file)
-        screen_and_log(("\n" + "*" * 30 + " Commands Completed " + "*" * 30 + "\n"), log_file)
+            output = ""
+            screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
+            # Loop over commands and devices
+            loop = 0
+            for ip in my_ips:
+                loop += 1
+                if ping(ip):
+                    hostname = get_fact(ip, creds['username'], creds['password'], "hostname")
+                    screen_and_log('*' * 80 + '\n', log_file)
+                    screen_and_log('[{0} at {1}]'.format(hostname, ip), log_file)
+                    screen_and_log(' ({0} of {1})\n'.format(loop, my_ips.len()), log_file)
+                    for command in command_list:
+                        try:
+                            results = op_command(ip, command, creds['username'], creds['password'])
+                        except Exception as err:
+                            print("Error running op_command on {0} ERROR: {1}").format(ip, err)
+                        else:
+                            screen_and_log(results + '\n', log_file)
+                            # Append output to a variable, we'll save when done with output
+                            if log_file:
+                                output += results
+                else:
+                    screen_and_log((("*" * 80) + "\nSkipping {0}, unable to ping.\n" + ("*" * 80) + "\n\n").format(ip), log_file)
+            screen_and_log(("\n" + "*" * 30 + " Commands Completed " + "*" * 30 + "\n"), log_file)
 
-        # Check if a file was requested, if so print output to file
-        if log_file:
-            try:
-                f = open(log_file, 'w')
-            except Exception as err:
-                print "Problem writing to file {0} ERROR: {1}".format(log_file, err)
-            else:
-                f.write(output)
-                print "Output Written To: {0}".format(log_file)
-            f.close()
+            # Check if a file was requested, if so print output to file
+            if log_file:
+                try:
+                    f = open(log_file, 'w')
+                except Exception as err:
+                    print "Problem writing to file {0} ERROR: {1}".format(log_file, err)
+                else:
+                    f.write(output)
+                    print "Output Written To: {0}".format(log_file)
+                f.close()
+        else:
+            print "\n!!! Configuration deployment aborted... No changes made !!!\n"
 
-
+# Adds device specific content to a template file
 def populate_template(record, template_file):
-    command_list = []
+    command_list = txt_to_list(template_file)
     new_command_list = []
-    try:
-        with open(template_file) as f:
-            command_list = f.read().splitlines()
-    except Exception as err:
-        print "Error turning file into list. ERROR: {0}".format(err)
-    else:
+    if command_list:
         # Loop over commands
         for command in command_list:
             #print("Command: {0}").format(command)
@@ -144,53 +148,87 @@ def populate_template(record, template_file):
                 #else:
                     #print("Standard Command: {0}").format(command)
             new_command_list.append(command)
-        return new_command_list
+    return new_command_list
 
+# Template function for bulk set command deployment
 def template_commands(creds):
-    # Option for creating dynamic configurations for dictionary of devices
+    print "*" * 50 + "\n" + " " * 10 + "TEMPLATE COMMANDS MENU\n" + "*" * 50
+
+    # Choose the template configuration file to use
     filelist = getFileList(config_dir)
-    template_config = getOptionAnswer("Choose a config file", filelist)
+    template_config = getOptionAnswer("Choose a template config file", filelist)
+    print "-" * 50
     template_file = config_dir + template_config
+    print " " * 10 + "File: " + template_config
+    print "-" * 50
+    # Display the commands in the configuration file
+    for line in txt_to_list(template_file):
+        print " -> {0}".format(line)
+    print "-" * 50
 
-    # Read template csv in as dictionary
+    # Choose the template csv file to use
     filelist = getFileList(csv_dir)
-    csv_config = getOptionAnswer("Choose a csv file", filelist)
+    csv_config = getOptionAnswer("Choose a template csv file", filelist)
     csv_file = csv_dir + csv_config
-
     list_dict = csvListDict(csv_file)
-    #for adict in list_dict:
-    #    print adict
+    print " " * 10 + "File: " + csv_config
+    print "-" * 50
 
-    # Create log file for operation
-    log_file = log_dir + "set_cmd_" + datetime.datetime.now().strftime("%Y%m%d-%H%M") + ".log"
-    print('\nInformation logged in {0}'.format(log_file))
-    screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
-    screen_and_log("-" * 49 + " START LOAD " + "-" * 49 + '\n', log_file)
+    # Capture the headers of the CSV file
+    with open(csv_file, 'r') as f:
+        first_line = f.readline().strip()
+    keys = first_line.split(',')
 
-    for record in list_dict:
-        if ping(record['mgmt_ip']):
-            hostname = get_fact(record['mgmt_ip'], creds["username"], creds["password"], "hostname")
-            if not hostname:
-                hostname = "Unknown"
-            screen_and_log("*" * 5 + " " + hostname + " at (" + record["mgmt_ip"] + ") " + "*" * 5 + '\n', log_file)
-            screen_and_log("-" * 50 + " COMMANDS " + "-" * 50 + '\n', log_file)
-            command_list = populate_template(record, template_file)
-            for command in command_list:
-                screen_and_log((" -> {0}\n".format(command)), log_file)
-            screen_and_log("-" * 110 + '\n', log_file)
-            try:
-                screen_and_log("-" * 50 + " EXECUTE " + "-" * 51 + '\n\n', log_file)
-                set_command(record['mgmt_ip'], creds["username"], creds["password"], ssh_port, log_file, command_list)
-                screen_and_log("\n" + ("-" * 110) + '\n\n', log_file)
-            except Exception as err:
-                print "Problem changing configuration ERROR: {0}".format(err)
-        else:
-            screen_and_log("-" * 110 + '\n', log_file)
-            screen_and_log("Skipping {0}, unable to ping.\n".format(record['mgmt_ip']), log_file)
-            screen_and_log("-" * 110 + '\n\n', log_file)
-    screen_and_log("-" * 50 + " END LOAD " + "-" * 50 + '\n\n', log_file)
+    # Sort headers with mgmt_ip being the first key
+    sorted_keys = []
+    sorted_keys.append('mgmt_ip')
+    for one_key in keys:
+        if one_key != 'mgmt_ip':
+            sorted_keys.append(one_key)
 
+    # Print the CSV file and the
+    for device in list_dict:
+        for key in sorted_keys:
+            if key == 'mgmt_ip':
+                print " -> {0}".format(device[key])
+            else:
+                print " ---> {0}:{1}".format(key, device[key])
+    print "-" * 50
+    print "Total IPs: {0}".format(len(list_dict))
 
+    if getTFAnswer("Continue with template deployment?"):
+        # Create log file for operation
+        log_file = log_dir + "set_cmd_" + datetime.datetime.now().strftime("%Y%m%d-%H%M") + ".log"
+        print('\nInformation logged in {0}'.format(log_file))
+        screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
+        screen_and_log("-" * 49 + " START LOAD " + "-" * 49 + '\n', log_file)
+
+        for record in list_dict:
+            if ping(record['mgmt_ip']):
+                hostname = get_fact(record['mgmt_ip'], creds["username"], creds["password"], "hostname")
+                if not hostname:
+                    hostname = "Unknown"
+                screen_and_log("*" * 5 + " " + hostname + " at (" + record["mgmt_ip"] + ") " + "*" * 5 + '\n', log_file)
+                screen_and_log("-" * 50 + " COMMANDS " + "-" * 50 + '\n', log_file)
+                command_list = populate_template(record, template_file)
+                for command in command_list:
+                    screen_and_log((" -> {0}\n".format(command)), log_file)
+                screen_and_log("-" * 110 + '\n', log_file)
+                try:
+                    screen_and_log("-" * 50 + " EXECUTE " + "-" * 51 + '\n\n', log_file)
+                    set_command(record['mgmt_ip'], creds["username"], creds["password"], ssh_port, log_file, command_list)
+                    screen_and_log("\n" + ("-" * 110) + '\n\n', log_file)
+                except Exception as err:
+                    print "Problem changing configuration ERROR: {0}".format(err)
+            else:
+                screen_and_log("-" * 110 + '\n', log_file)
+                screen_and_log("Skipping {0}, unable to ping.\n".format(record['mgmt_ip']), log_file)
+                screen_and_log("-" * 110 + '\n\n', log_file)
+        screen_and_log("-" * 50 + " END LOAD " + "-" * 50 + '\n\n', log_file)
+    else:
+        print "\n!!! Configuration deployment aborted... No changes made !!!\n"
+
+# Function to push set commands to multiple devices
 def standard_commands(creds, my_ips):
     # Provide option for using a file to supply configuration commands
     if not my_ips:
@@ -235,7 +273,7 @@ def standard_commands(creds, my_ips):
 
         screen_and_log("*" * 50 + " END LOAD " + "*" * 50 + '\n', log_file)
 
-
+# Function to exit program
 def quit():
     print("Thank you for using JRack. Powered by electricity!")
     sys.exit(0)
@@ -254,9 +292,8 @@ if __name__ == "__main__":
 
     # Get menu selection
     while True:
-        print "*" * 50 + "\n"
+        print "*" * 50 + "\n" + " " * 10 + "JSHOW MAIN MENU\n" + "*" * 50
         answer = getOptionAnswerIndex('Make a Selection', my_options)
-        print "\n" + "*" * 50
         if answer == "1":
             oper_commands(creds, my_ips)
         elif answer == "2":

@@ -34,11 +34,12 @@ def getOptionAnswer(question, options):
     answer = ""
     loop = 0
     while not answer:
-        print question + '?:\n'
+        print "\n" + question + ':\n'
         for option in options:
             loop += 1
             print '[' + str(loop) + '] -> ' + option
-        answer = raw_input('Your Selection: ')
+        answer = raw_input('\nYour Selection: ')
+        print "*" * 50
         try:
             if int(answer) >= 1 and int(answer) <= loop:
                 index = int(answer) - 1
@@ -56,11 +57,12 @@ def getOptionMultiAnswer(question, options):
     answer_str = ""
     loop = 0
     while not answer_str and options:
-        print question + '?:\n'
+        print "\n" + question + ':\n'
         for option in options:
             loop += 1
             print '[' + str(loop) + '] -> ' + option
-        answer_str = raw_input('Your Selections: ')
+        answer_str = raw_input('\nYour Selections: ')
+        print "*" * 50
         try:
             answer_list = []
             index_list = answer_str.split(",")
@@ -81,11 +83,12 @@ def getOptionAnswerIndex(question, options):
     answer = ""
     loop = 0
     while not answer:
-        print question + '?:\n'
+        print "\n" + question + ':\n'
         for option in options:
             loop += 1
             print '[' + str(loop) + '] -> ' + option
-        answer = raw_input('Your Selection: ')
+        answer = raw_input('\nYour Selection: ')
+        print "*" * 50
         try:
             if int(answer) >= 1 and int(answer) <= loop:
                 return answer
@@ -101,7 +104,7 @@ def getOptionAnswerIndex(question, options):
 def getInputAnswer(question):
     answer = ""
     while not answer:
-        answer = raw_input(question + '?: ')
+        answer = raw_input(question + ': ')
     return answer
 
 
@@ -109,7 +112,9 @@ def getInputAnswer(question):
 def getYNAnswer(question):
     answer = ""
     while not answer:
-        answer = raw_input(question + '?(y/n): ')
+        print ""
+        answer = raw_input(question + '(y/n): ')
+        print ""
         if answer == 'Y' or answer == 'y':
             answer = 'y'
         elif answer == 'N' or answer == 'n':
@@ -124,7 +129,9 @@ def getYNAnswer(question):
 def getTFAnswer(question):
     answer = False
     while not answer:
-        ynanswer = raw_input(question + '?(y/n): ')
+        print ""
+        ynanswer = raw_input(question + '(y/n): ')
+        print ""
         if ynanswer == 'Y' or ynanswer == 'y':
             answer = True
             return answer
@@ -189,12 +196,10 @@ def getTarget():
 # Common method for accessing multiple routers
 def chooseDevices(list_dir):
     # Define the routers to deploy the config to (file/range/custom)
-    print "**** Define your target devices ****"
     method_resp = getOptionAnswer('How would you like to define the devices by IP', ['file', 'range', 'single IP', 'quit'])
     ip_list = []
     # Choose a file from a list of options
     if method_resp == "file":
-        print "Defining a file..."
         path = list_dir + "*.ips"
         files=glob.glob(path)
         if files:
@@ -235,9 +240,13 @@ def chooseDevices(list_dir):
     # Print the IPs that will be used
     if ip_list:
         loop = 1;
+        print "\n" + " " * 10 + "IPs Selected"
+        print "-" * 50
         for my_ip in ip_list:
-            print 'IP' + str(loop) + '-> ' + my_ip
+            print ' -> {0}'.format(my_ip)
             loop=loop + 1
+        print "-" * 50
+        print "Total IPs: {0}".format(loop)
     return ip_list
 
 
@@ -354,7 +363,7 @@ def op_command(ip, command, username, password, port=22):
     """
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    device = '> Command: %s\n' % (command)
+    device = ' -> Command: %s\n' % (command)
     command = command.strip() + ' | no-more\n'
     output = ''
     try:
@@ -574,6 +583,18 @@ def screen_and_log(output, log_file=None):
         with open(log_file, 'a') as myfile:
             myfile.write(output)
     sys.stdout.write(output)
+
+
+# Creates list from a text file
+def txt_to_list(txt_file):
+    command_list = []
+    try:
+        with open(txt_file) as f:
+            command_list = f.read().splitlines()
+    except Exception as err:
+        print "Error turning file into list. ERROR: {0}".format(err)
+
+    return command_list
 
 
 # Pings the provided IP and returns True/False, works on Windows or Linux/Mac

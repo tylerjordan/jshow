@@ -220,7 +220,7 @@ def template_commands(creds):
 
         # Try to load configurations onto defined devices
         screen_and_log("-" * 49 + " START LOAD " + "-" * 49 + '\n', log_file)
-        '''
+
         for record in list_dict:
             if ping(record['mgmt_ip']):
                 hostname = get_fact(record['mgmt_ip'], creds["username"], creds["password"], "hostname")
@@ -242,7 +242,7 @@ def template_commands(creds):
                 screen_and_log("-" * 110 + '\n', log_file)
                 screen_and_log("Skipping {0}, unable to ping.\n".format(record['mgmt_ip']), log_file)
                 screen_and_log("-" * 110 + '\n\n', log_file)
-        '''
+
         screen_and_log("-" * 50 + " END LOAD " + "-" * 50 + '\n\n', log_file)
     else:
         print "\n!!! Configuration deployment aborted... No changes made !!!\n"

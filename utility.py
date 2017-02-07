@@ -206,7 +206,9 @@ def chooseDevices(list_dir):
             file_resp = getOptionAnswer('Choose a file to use', files)
             # Print out all the IPs/SITEs
             for line in fileinput.input(file_resp):
-                ip_list.append(line.strip())
+                line = line.rstrip()
+                if line != '':
+                    ip_list.append(line)
         else:
             print "No valid files in {0}".format(path)
             return ip_list
@@ -239,14 +241,12 @@ def chooseDevices(list_dir):
 
     # Print the IPs that will be used
     if ip_list:
-        loop = 1;
         print "\n" + " " * 10 + "IPs Selected"
         print "-" * 50
         for my_ip in ip_list:
             print ' -> {0}'.format(my_ip)
-            loop=loop + 1
         print "-" * 50
-        print "Total IPs: {0}".format(loop)
+        print "Total IPs: {0}".format(len(ip_list))
     return ip_list
 
 

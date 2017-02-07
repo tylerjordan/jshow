@@ -84,21 +84,32 @@ def oper_commands(creds, my_ips):
         if getTFAnswer("Continue with template deployment?"):
             # Check if user wants to print output to a file
             log_file = None
-            if getTFAnswer('\nPrint output to a file'):
-                log_file = log_dir + "oper_cmd_" + datetime.datetime.now().strftime("%Y%m%d-%H%M") + ".log"
+            now = datetime.datetime.now()
+            if getTFAnswer('Print output to a file'):
+                log_file = log_dir + "oper_cmd_" + now.strftime("%Y%m%d-%H%M") + ".log"
                 print('Information logged in {0}'.format(log_file))
 
-            output = ""
+            # Header of operational command output
+            screen_and_log("*" * 50 + "\n" + " " * 10 + "OPERATIONAL COMMANDS OUTPUT\n" + "*" * 50 + "\n", log_file)
             screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
+            screen_and_log(('Performed: {0}\n').format(now), log_file)
+            screen_and_log('*' * 50 + '\n' + " " * 10 + "COMMANDS EXECUTED\n" + "*" * 50 + '\n', log_file)
+            for command in command_list:
+                screen_and_log(' -> {0}\n'.format(command), log_file)
+            screen_and_log('*' * 50 + '\n\n', log_file)
+
             # Loop over commands and devices
+            devs_accessed = 0
+            devs_unreachable = 0
             loop = 0
             for ip in my_ips:
                 loop += 1
                 if ping(ip):
+                    devs_accessed += 1
                     hostname = get_fact(ip, creds['username'], creds['password'], "hostname")
                     screen_and_log('*' * 80 + '\n', log_file)
                     screen_and_log('[{0} at {1}]'.format(hostname, ip), log_file)
-                    screen_and_log(' ({0} of {1})\n'.format(loop, my_ips.len()), log_file)
+                    screen_and_log(' ({0} of {1})\n'.format(loop, len(my_ips)), log_file)
                     for command in command_list:
                         try:
                             results = op_command(ip, command, creds['username'], creds['password'])
@@ -106,23 +117,19 @@ def oper_commands(creds, my_ips):
                             print("Error running op_command on {0} ERROR: {1}").format(ip, err)
                         else:
                             screen_and_log(results + '\n', log_file)
-                            # Append output to a variable, we'll save when done with output
-                            if log_file:
-                                output += results
                 else:
-                    screen_and_log((("*" * 80) + "\nSkipping {0}, unable to ping.\n" + ("*" * 80) + "\n\n").format(ip), log_file)
-            screen_and_log(("\n" + "*" * 30 + " Commands Completed " + "*" * 30 + "\n"), log_file)
+                    screen_and_log("*" * 80 + "\n", log_file)
+                    screen_and_log("Unable to ping {0}, skipping. ({1} of {2})\n".format(ip, str(loop), len(my_ips)), log_file)
+                    screen_and_log("*" * 80 + "\n\n", log_file)
+                    devs_unreachable += 1
+            screen_and_log(("*" * 30 + " Commands Completed " + "*" * 30 + "\n\n"), log_file)
 
-            # Check if a file was requested, if so print output to file
-            if log_file:
-                try:
-                    f = open(log_file, 'w')
-                except Exception as err:
-                    print "Problem writing to file {0} ERROR: {1}".format(log_file, err)
-                else:
-                    f.write(output)
-                    print "Output Written To: {0}".format(log_file)
-                f.close()
+            # Results of commands
+            screen_and_log("Total Devices:       {0}\n".format(len(my_ips)), log_file)
+            screen_and_log("Devices Accessed:    {0}\n".format(devs_accessed), log_file)
+            screen_and_log("Devices Unreachable: {0}\n\n".format(devs_unreachable), log_file)
+            screen_and_log('*' * 80 + '\n\n', log_file)
+
         else:
             print "\n!!! Configuration deployment aborted... No changes made !!!\n"
 
@@ -192,17 +199,28 @@ def template_commands(creds):
             if key == 'mgmt_ip':
                 print " -> {0}".format(device[key])
             else:
-                print " ---> {0}:{1}".format(key, device[key])
+                print " ---> {0}: {1}".format(key, device[key])
     print "-" * 50
     print "Total IPs: {0}".format(len(list_dict))
 
     if getTFAnswer("Continue with template deployment?"):
         # Create log file for operation
-        log_file = log_dir + "set_cmd_" + datetime.datetime.now().strftime("%Y%m%d-%H%M") + ".log"
+        now = datetime.datetime.now()
+        log_file = log_dir + "set_cmd_" + now.strftime("%Y%m%d-%H%M") + ".log"
         print('\nInformation logged in {0}'.format(log_file))
-        screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
-        screen_and_log("-" * 49 + " START LOAD " + "-" * 49 + '\n', log_file)
 
+        # Print output header, for both screen and log outputs
+        screen_and_log("*" * 50 + "\n" + " " * 10 + "TEMPLATE COMMANDS OUTPUT\n" + "*" * 50 + "\n", log_file)
+        screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
+        screen_and_log(('Performed: {0}\n').format(now), log_file)
+        screen_and_log('*' * 50 + '\n' + " " * 10 + "COMMANDS TO EXECUTE\n" + "*" * 50 + '\n', log_file)
+        for line in txt_to_list(template_file):
+            screen_and_log(" -> {0}\n".format(line), log_file)
+        screen_and_log("*" * 50 + "\n\n", log_file)
+
+        # Try to load configurations onto defined devices
+        screen_and_log("-" * 49 + " START LOAD " + "-" * 49 + '\n', log_file)
+        '''
         for record in list_dict:
             if ping(record['mgmt_ip']):
                 hostname = get_fact(record['mgmt_ip'], creds["username"], creds["password"], "hostname")
@@ -224,6 +242,7 @@ def template_commands(creds):
                 screen_and_log("-" * 110 + '\n', log_file)
                 screen_and_log("Skipping {0}, unable to ping.\n".format(record['mgmt_ip']), log_file)
                 screen_and_log("-" * 110 + '\n\n', log_file)
+        '''
         screen_and_log("-" * 50 + " END LOAD " + "-" * 50 + '\n\n', log_file)
     else:
         print "\n!!! Configuration deployment aborted... No changes made !!!\n"
@@ -246,6 +265,7 @@ def standard_commands(creds, my_ips):
         else:
             # Provide selection for sending a single set command or multiple set commands
             while True:
+                print "\n" + "*" * 50 + "\n"
                 command = raw_input("Enter a set command: ")  # Change this to "input" when using Python 3
                 if not command:
                     break
@@ -254,11 +274,15 @@ def standard_commands(creds, my_ips):
 
         # Create log file for operation
         log_file = log_dir + "set_cmd_" + datetime.datetime.now().strftime("%Y%m%d-%H%M") + ".log"
-        print('\nInformation logged in {0}'.format(log_file))
+
+        # Print output header, for both screen and log outputs
+        screen_and_log("*" * 50 + "\n" + " " * 10 + "TEMPLATE COMMANDS OUTPUT\n" + "*" * 50 + "\n", log_file)
         screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
-        screen_and_log("*" * 50 + " COMMANDS " + "*" * 50 + '\n', log_file)
-        for command in command_list:
-            screen_and_log((" -> {0}\n".format(command)), log_file)
+        screen_and_log(('Performed: {0}\n').format(now), log_file)
+        screen_and_log('*' * 50 + '\n' + " " * 10 + "COMMANDS TO EXECUTE\n" + "*" * 50 + '\n', log_file)
+        for line in txt_to_list(template_file):
+            screen_and_log(" -> {0}\n".format(line), log_file)
+        screen_and_log("*" * 50 + "\n\n", log_file)
 
         # Loop over all devices in the rack
         screen_and_log("*" * 50 + " START LOAD " + "*" * 50 + '\n', log_file)

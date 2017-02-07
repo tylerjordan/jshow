@@ -66,8 +66,23 @@ def detect_env():
         csv_dir = "./csv/"
 
 
+def getargs(argv):
+    # Interprets and handles the command line arguments
+    try:
+        opts, args = getopt.getopt(argv, "hu:", ["user="])
+    except getopt.GetoptError:
+        print("jscan.py -u <username>")
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print("jscan.py -u <username>")
+            sys.exit()
+        elif opt in ("-u", "--user"):
+            return arg
+
+# Function for running operational commands to multiple devices
 def oper_commands(creds, my_ips):
-    print "*" * 50 + "\n" + " " * 10 + "OPERATIONAL COMMANDS MENU\n" + "*" * 50
+    print "*" * 50 + "\n" + " " * 10 + "OPERATIONAL COMMANDS\n" + "*" * 50
     # Provide selection for sending a single command or multiple commands from a file
     if not my_ips:
         my_ips = chooseDevices(iplist_dir)
@@ -81,7 +96,7 @@ def oper_commands(creds, my_ips):
             else:
                 command_list.append(command)
 
-        if getTFAnswer("Continue with template deployment?"):
+        if getTFAnswer("Continue with operational requests?"):
             # Check if user wants to print output to a file
             log_file = None
             now = datetime.datetime.now()
@@ -159,13 +174,13 @@ def populate_template(record, template_file):
 
 # Template function for bulk set command deployment
 def template_commands(creds):
-    print "*" * 50 + "\n" + " " * 10 + "TEMPLATE COMMANDS MENU\n" + "*" * 50
+    print "*" * 50 + "\n" + " " * 10 + "TEMPLATE COMMANDS\n" + "*" * 50
 
     # Choose the template configuration file to use
     filelist = getFileList(config_dir)
     template_config = getOptionAnswer("Choose a template config file", filelist)
-    print "-" * 50
     template_file = config_dir + template_config
+    print "-" * 50
     print " " * 10 + "File: " + template_config
     print "-" * 50
     # Display the commands in the configuration file
@@ -228,7 +243,11 @@ def template_commands(creds):
                     hostname = "Unknown"
                 screen_and_log("*" * 5 + " " + hostname + " at (" + record["mgmt_ip"] + ") " + "*" * 5 + '\n', log_file)
                 screen_and_log("-" * 50 + " COMMANDS " + "-" * 50 + '\n', log_file)
-                command_list = populate_template(record, template_file)
+                try:
+                    command_list = populate_template(record, template_file)
+                except Exception as err:
+                    print "Issues with populating the template. ERROR: {0}".format(err)
+                    break
                 for command in command_list:
                     screen_and_log((" -> {0}\n".format(command)), log_file)
                 screen_and_log("-" * 110 + '\n', log_file)
@@ -237,7 +256,7 @@ def template_commands(creds):
                     set_command(record['mgmt_ip'], creds["username"], creds["password"], ssh_port, log_file, command_list)
                     screen_and_log("\n" + ("-" * 110) + '\n\n', log_file)
                 except Exception as err:
-                    print "Problem changing configuration ERROR: {0}".format(err)
+                    print "Problem changing configuration. ERROR: {0}".format(err)
             else:
                 screen_and_log("-" * 110 + '\n', log_file)
                 screen_and_log("Skipping {0}, unable to ping.\n".format(record['mgmt_ip']), log_file)
@@ -249,6 +268,8 @@ def template_commands(creds):
 
 # Function to push set commands to multiple devices
 def standard_commands(creds, my_ips):
+    print "*" * 50 + "\n" + " " * 10 + "SET COMMANDS\n" + "*" * 50
+
     # Provide option for using a file to supply configuration commands
     if not my_ips:
         my_ips = chooseDevices(iplist_dir)
@@ -258,10 +279,21 @@ def standard_commands(creds, my_ips):
             filelist = getFileList(config_dir)
             # If the files exist...
             if filelist:
-                config_file = getOptionAnswer("Choose a config file", filelist)
-                config_file = config_dir + config_file
-                with open(config_file) as f:
-                    command_list = f.read().splitlines()
+                set_config = getOptionAnswer("Choose a config file", filelist)
+                set_file = config_dir + set_config
+                try:
+                    with open(set_file) as f:
+                        command_list = f.read().splitlines()
+                except Exception as err:
+                    print "Problems extracting commands from file. ERROR: {0}".format(err)
+                else:
+                    print "-" * 50
+                    print " " * 10 + "File: " + set_config
+                    print "-" * 50
+                    # Display the commands in the configuration file
+                    for line in txt_to_list(set_file):
+                        print " -> {0}".format(line)
+                    print "-" * 50
         else:
             # Provide selection for sending a single set command or multiple set commands
             while True:
@@ -272,43 +304,49 @@ def standard_commands(creds, my_ips):
                 else:
                     command_list.append(command)
 
-        # Create log file for operation
-        log_file = log_dir + "set_cmd_" + datetime.datetime.now().strftime("%Y%m%d-%H%M") + ".log"
+        if getTFAnswer("Continue with set commands deployment?"):
+            # Create log file for operation
+            log_file = log_dir + "set_cmd_" + datetime.datetime.now().strftime("%Y%m%d-%H%M") + ".log"
 
-        # Print output header, for both screen and log outputs
-        screen_and_log("*" * 50 + "\n" + " " * 10 + "TEMPLATE COMMANDS OUTPUT\n" + "*" * 50 + "\n", log_file)
-        screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
-        screen_and_log(('Performed: {0}\n').format(now), log_file)
-        screen_and_log('*' * 50 + '\n' + " " * 10 + "COMMANDS TO EXECUTE\n" + "*" * 50 + '\n', log_file)
-        for line in txt_to_list(template_file):
-            screen_and_log(" -> {0}\n".format(line), log_file)
-        screen_and_log("*" * 50 + "\n\n", log_file)
+            # Print output header, for both screen and log outputs
+            screen_and_log("*" * 50 + "\n" + " " * 10 + "TEMPLATE COMMANDS OUTPUT\n" + "*" * 50 + "\n", log_file)
+            screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
+            screen_and_log(('Performed: {0}\n').format(now), log_file)
+            screen_and_log('*' * 50 + '\n' + " " * 10 + "COMMANDS TO EXECUTE\n" + "*" * 50 + '\n', log_file)
+            for line in txt_to_list(template_file):
+                screen_and_log(" -> {0}\n".format(line), log_file)
+            screen_and_log("*" * 50 + "\n\n", log_file)
 
-        # Loop over all devices in the rack
-        screen_and_log("*" * 50 + " START LOAD " + "*" * 50 + '\n', log_file)
-        for ip in my_ips:
-            if ping(ip):
-                try:
-                    set_command(ip, creds["username"], creds["password"], ssh_port, log_file, command_list)
-                except Exception as err:
-                    print "Problem changing configuration ERROR: {0}".format(err)
-            else:
-                screen_and_log("Skipping {0}, unable to ping.\n", log_file)
+            # Loop over all devices in the rack
+            screen_and_log("*" * 50 + " START LOAD " + "*" * 50 + '\n', log_file)
+            for ip in my_ips:
+                if ping(ip):
+                    try:
+                        set_command(ip, creds["username"], creds["password"], ssh_port, log_file, command_list)
+                    except Exception as err:
+                        print "Problem changing configuration ERROR: {0}".format(err)
+                else:
+                    screen_and_log("Skipping {0}, unable to ping.\n", log_file)
 
-        screen_and_log("*" * 50 + " END LOAD " + "*" * 50 + '\n', log_file)
+            screen_and_log("*" * 50 + " END LOAD " + "*" * 50 + '\n', log_file)
+        else:
+            print "\n!!! Configuration deployment aborted... No changes made !!!\n"
 
 # Function to exit program
 def quit():
-    print("Thank you for using JRack. Powered by electricity!")
+    print("Thank you for using jShow. Powered by electricity!")
     sys.exit(0)
+
 
 # Main execution loop
 if __name__ == "__main__":
-
     # Detect the platform type
     detect_env()
-    # Get credentials from file
-    creds = csv_to_dict(credsCSV)
+
+    # Get a username and password from the user
+    creds = {'username': '', 'password': ''}
+    creds['username'] = getargs(sys.argv[1:])
+    creds['password'] = getpass(prompt="\nEnter your password: ")
 
     # Define menu options
     my_options = ['Execute Operational Commands', 'Execute Set Commands', 'Execute Template Commands', 'Quit']

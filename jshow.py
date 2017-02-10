@@ -147,6 +147,9 @@ def oper_commands(creds, my_ips):
 
         else:
             print "\n!!! Configuration deployment aborted... No changes made !!!\n"
+    else:
+        print "\n!! Configuration deployment aborted... No IPs defined !!!\n"
+
 
 # Adds device specific content to a template file
 def populate_template(record, template_file):

@@ -193,10 +193,31 @@ def getTarget():
             print "Bad Selection"
 
 
+# This function creates a list of IPs from the IP
+def extract_ips(ip):
+    iplist = []
+    ip_mask_regex = re.compile("(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/\d{0,32}")
+    ip_only_regex = re.compile("(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)")
+    if ip_mask_regex.match(ip):
+        n1 = ipaddress.ip_network(ip)
+        for one_ip in n1.hosts():
+            print "Adding IP: {0}".format(one_ip)
+            iplist.append(str(one_ip))
+    elif ip_only_regex.match(ip):
+        print "Adding single IP: {0}".format(ip)
+        iplist.append(ip)
+    else:
+        print "Invalid IP format"
+    return iplist
+
 # Common method for accessing multiple routers
 def chooseDevices(list_dir):
-    # Define the routers to deploy the config to (file/range/custom)
-    method_resp = getOptionAnswer('How would you like to define the devices by IP', ['file', 'range', 'single IP', 'quit'])
+    # Define the routers to deploy the config to (file/cli)
+    # IP Formats to recognize...
+    #   - 10.10.10.X        // A single IP address
+    #   - 10.10.10.X/XX     // A masked IP, probably network
+
+    method_resp = getOptionAnswer('How would you like to define the devices by IP', ['file', 'manual', 'quit'])
     ip_list = []
     # Choose a file from a list of options
     if method_resp == "file":
@@ -208,47 +229,49 @@ def chooseDevices(list_dir):
             for line in fileinput.input(file_resp):
                 line = line.rstrip()
                 if line != '':
-                    ip_list.append(line)
+                    ip_list += extract_ips(line)
         else:
             print "No valid files in {0}".format(path)
             return ip_list
 
-    # Define a certain range of IPs
-    elif method_resp == "range":
-        print "Define a network using the format X.X.X.X/Y"
-        notvalid = True
-        while( notvalid ):
-            answer = getInputAnswer('Enter an ip address or network')
-            addr_regex = re.compile("(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/\d{0,32}")
-            if addr_regex.match(answer):
-                notvalid = False
-            else:
-                print "Invalid ip address format"
-        n1 = ipaddress.ip_network(answer)
-        for one_ip in n1.hosts():
-            ip_list.append(str(one_ip))
-
     # Define one or more IPs individually
-    elif method_resp == "single IP":
-        print 'Define a single IP Address'
+    elif method_resp == "manual":
+        print 'Provide IPs - Correct format: X.X.X.X or X.X.X.X/X:'
         answer = ""
         while( answer != 'x' ):
             answer = getInputAnswer('Enter an ip address (x) to exit')
             if( answer != 'x'):
-                ip_list.append(answer)
+                ip_list += extract_ips(answer)
     else:
         print "Exiting menu..."
 
     # Print the IPs that will be used
     if ip_list:
+        checked_sorted_list = check_sort(ip_list)
         print "\n" + " " * 10 + "IPs Selected"
         print "-" * 50
-        for my_ip in ip_list:
-            print ' -> {0}'.format(my_ip)
+        for ip in checked_sorted_list:
+            print ' -> {0}'.format(ip)
         print "-" * 50
-        print "Total IPs: {0}".format(len(ip_list))
-    return ip_list
+        print "Total IPs: {0}".format(len(checked_sorted_list))
+    return checked_sorted_list
 
+# Removes duplicates and sorts IPs intelligently
+def check_sort(ip_list):
+    # First remove all duplicates
+    checked = []
+    for ip in ip_list:
+        if ip not in checked:
+            checked.append(ip)
+
+    # Sorting function
+    for i in range(len(checked)):
+        checked[i] = "%3s.%3s.%3s.%3s" % tuple(checked[i].split("."))
+    checked.sort()
+    for i in range(len(checked)):
+        checked[i] = checked[i].replace(" ", "")
+
+    return checked
 
 # Converts listDict to CSV file
 def listDictCSV(myListDict, filePathName, keys):

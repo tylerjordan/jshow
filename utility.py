@@ -196,18 +196,25 @@ def getTarget():
 # This function creates a list of IPs from the IP
 def extract_ips(ip):
     iplist = []
-    ip_mask_regex = re.compile("(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/\d{0,32}")
-    ip_only_regex = re.compile("(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)")
+    ip_mask_regex = re.compile("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/[8]|[9]|1[0-9]|2[0-9]|3[0-1]$")
+    ip_only_regex = re.compile("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$")
     if ip_mask_regex.match(ip):
-        n1 = ipaddress.ip_network(ip)
-        for one_ip in n1.hosts():
-            print "Adding IP: {0}".format(one_ip)
-            iplist.append(str(one_ip))
+        print "Match IP/Mask"
+        try:
+            n1 = ipaddress.ip_network(ip)
+        except ValueError as err:
+            print "Invalid IP address - skipping {0}".format(ip)
+            return iplist
+        else:
+            for one_ip in n1.hosts():
+                print "Adding IP: {0}".format(one_ip)
+                iplist.append(str(one_ip))
     elif ip_only_regex.match(ip):
         print "Adding single IP: {0}".format(ip)
         iplist.append(ip)
     else:
         print "Invalid IP format"
+
     return iplist
 
 # Common method for accessing multiple routers
@@ -232,7 +239,6 @@ def chooseDevices(list_dir):
                     ip_list += extract_ips(line)
         else:
             print "No valid files in {0}".format(path)
-            return ip_list
 
     # Define one or more IPs individually
     elif method_resp == "manual":
@@ -254,7 +260,10 @@ def chooseDevices(list_dir):
             print ' -> {0}'.format(ip)
         print "-" * 50
         print "Total IPs: {0}".format(len(checked_sorted_list))
-    return checked_sorted_list
+        return checked_sorted_list
+    else:
+        return ip_list
+
 
 # Removes duplicates and sorts IPs intelligently
 def check_sort(ip_list):

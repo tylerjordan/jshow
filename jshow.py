@@ -289,34 +289,37 @@ def standard_commands(creds, my_ips):
                         command_list = f.read().splitlines()
                 except Exception as err:
                     print "Problems extracting commands from file. ERROR: {0}".format(err)
-                else:
-                    print "-" * 50
-                    print " " * 10 + "File: " + set_config
-                    print "-" * 50
-                    # Display the commands in the configuration file
-                    for line in txt_to_list(set_file):
-                        print " -> {0}".format(line)
-                    print "-" * 50
+                    return
         else:
             # Provide selection for sending a single set command or multiple set commands
+            print "\n" + "*" * 50 + "\n"
             while True:
-                print "\n" + "*" * 50 + "\n"
                 command = raw_input("Enter a set command: ")  # Change this to "input" when using Python 3
                 if not command:
                     break
                 else:
                     command_list.append(command)
+        print "\n" + "*" * 50 + "\n"
 
+        # Print the set commands that will be pushed
+        print "\n" + " " * 10 + "Set Commands Entered"
+        print "-" * 50
+        for one_comm in command_list:
+            print " -> {0}".format(one_comm)
+        print "-" * 50 + "\n"
+
+        # Verify that user wants to continue with this deployment
         if getTFAnswer("Continue with set commands deployment?"):
             # Create log file for operation
-            log_file = log_dir + "set_cmd_" + datetime.datetime.now().strftime("%Y%m%d-%H%M") + ".log"
+            now = datetime.datetime.now()
+            log_file = log_dir + "set_cmd_" + now.strftime("%Y%m%d-%H%M") + ".log"
 
             # Print output header, for both screen and log outputs
             screen_and_log("*" * 50 + "\n" + " " * 10 + "TEMPLATE COMMANDS OUTPUT\n" + "*" * 50 + "\n", log_file)
             screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
             screen_and_log(('Performed: {0}\n').format(now), log_file)
             screen_and_log('*' * 50 + '\n' + " " * 10 + "COMMANDS TO EXECUTE\n" + "*" * 50 + '\n', log_file)
-            for line in txt_to_list(template_file):
+            for line in command_list:
                 screen_and_log(" -> {0}\n".format(line), log_file)
             screen_and_log("*" * 50 + "\n\n", log_file)
 
@@ -329,7 +332,7 @@ def standard_commands(creds, my_ips):
                     except Exception as err:
                         print "Problem changing configuration ERROR: {0}".format(err)
                 else:
-                    screen_and_log("Skipping {0}, unable to ping.\n", log_file)
+                    screen_and_log("Skipping {0}, unable to ping.\n".format(ip), log_file)
 
             screen_and_log("*" * 50 + " END LOAD " + "*" * 50 + '\n', log_file)
         else:

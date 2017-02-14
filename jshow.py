@@ -88,7 +88,7 @@ def oper_commands(creds, my_ips):
         my_ips = chooseDevices(iplist_dir)
     if my_ips:
         command_list = []
-        print "\n" + "*" * 50 + "\n"
+        print "\n" + "*" * 110 + "\n"
         while True:
             command = raw_input("Enter an operational command: ")  # Change this to "input" when using Python 3
             if not command:
@@ -105,13 +105,13 @@ def oper_commands(creds, my_ips):
                 print('Information logged in {0}'.format(log_file))
 
             # Header of operational command output
-            screen_and_log("*" * 50 + "\n" + " " * 10 + "OPERATIONAL COMMANDS OUTPUT\n" + "*" * 50 + "\n", log_file)
+            screen_and_log("*" * 110 + "\n" + " " * 40 + "OPERATIONAL COMMANDS OUTPUT\n" + "*" * 110 + "\n", log_file)
             screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
             screen_and_log(('Performed: {0}\n').format(now), log_file)
-            screen_and_log('*' * 50 + '\n' + " " * 10 + "COMMANDS EXECUTED\n" + "*" * 50 + '\n', log_file)
+            screen_and_log('*' * 110 + '\n' + " " * 40 + "COMMANDS EXECUTED\n" + "*" * 110 + '\n', log_file)
             for command in command_list:
                 screen_and_log(' -> {0}\n'.format(command), log_file)
-            screen_and_log('*' * 50 + '\n\n', log_file)
+            screen_and_log('*' * 110 + '\n\n', log_file)
 
             # Loop over commands and devices
             devs_accessed = 0
@@ -122,9 +122,10 @@ def oper_commands(creds, my_ips):
                 if ping(ip):
                     devs_accessed += 1
                     hostname = get_fact(ip, creds['username'], creds['password'], "hostname")
-                    screen_and_log('*' * 80 + '\n', log_file)
-                    screen_and_log('[{0} at {1}]'.format(hostname, ip), log_file)
+                    screen_and_log('*' * 110 + '\n', log_file)
+                    screen_and_log(' ' * 40 + '[{0} at {1}]'.format(hostname, ip), log_file)
                     screen_and_log(' ({0} of {1})\n'.format(loop, len(my_ips)), log_file)
+                    screen_and_log('*' * 110 + '\n', log_file)
                     for command in command_list:
                         try:
                             results = op_command(ip, command, creds['username'], creds['password'])
@@ -133,11 +134,11 @@ def oper_commands(creds, my_ips):
                         else:
                             screen_and_log(results + '\n', log_file)
                 else:
-                    screen_and_log("*" * 80 + "\n", log_file)
+                    screen_and_log("*" * 110 + "\n", log_file)
                     screen_and_log("Unable to ping {0}, skipping. ({1} of {2})\n".format(ip, str(loop), len(my_ips)), log_file)
-                    screen_and_log("*" * 80 + "\n\n", log_file)
+                    screen_and_log("*" * 110 + "\n\n", log_file)
                     devs_unreachable += 1
-            screen_and_log(("*" * 30 + " Commands Completed " + "*" * 30 + "\n\n"), log_file)
+            screen_and_log(("*" * 45 + " Commands Completed " + "*" * 45 + "\n\n"), log_file)
             # Results of commands
             screen_and_log("*" * 32 + " Process Summary " + "*" * 31 + '\n\n', log_file)
             screen_and_log("Devices Accessed:    {0}\n".format(devs_accessed), log_file)
@@ -228,13 +229,13 @@ def template_commands(creds):
         print('\nInformation logged in {0}'.format(log_file))
 
         # Print output header, for both screen and log outputs
-        screen_and_log("*" * 50 + "\n" + " " * 10 + "TEMPLATE COMMANDS OUTPUT\n" + "*" * 50 + "\n", log_file)
+        screen_and_log("*" * 110 + "\n" + " " * 40 + "TEMPLATE COMMANDS OUTPUT\n" + "*" * 110 + "\n", log_file)
         screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
         screen_and_log(('Performed: {0}\n').format(now), log_file)
-        screen_and_log('*' * 50 + '\n' + " " * 10 + "COMMANDS TO EXECUTE\n" + "*" * 50 + '\n', log_file)
+        screen_and_log('*' * 110 + '\n' + " " * 40 + "COMMANDS TO EXECUTE\n" + "*" * 110 + '\n', log_file)
         for line in txt_to_list(template_file):
             screen_and_log(" -> {0}\n".format(line), log_file)
-        screen_and_log("*" * 50 + "\n\n", log_file)
+        screen_and_log("*" * 110 + "\n\n", log_file)
 
         # Try to load configurations onto defined devices
         screen_and_log("-" * 49 + " START LOAD " + "-" * 49 + '\n', log_file)
@@ -250,7 +251,7 @@ def template_commands(creds):
                 if not hostname:
                     hostname = "Unknown"
                 screen_and_log('*' * 110 + '\n', log_file)
-                screen_and_log(' ' * 40 + '[{0} at {1}]'.format(hostname, ip), log_file)
+                screen_and_log(' ' * 30 + '[{0} at {1}]'.format(hostname, ip), log_file)
                 screen_and_log(' ({0} of {1})\n'.format(loop, len(list_dict)), log_file)
                 screen_and_log('*' * 110 + '\n', log_file)
                 screen_and_log("-" * 50 + " COMMANDS " + "-" * 50 + '\n', log_file)
@@ -287,7 +288,6 @@ def template_commands(creds):
 # Function to push set commands to multiple devices
 def standard_commands(creds, my_ips):
     print "*" * 50 + "\n" + " " * 10 + "SET COMMANDS\n" + "*" * 50
-
     # Provide option for using a file to supply configuration commands
     if not my_ips:
         my_ips = chooseDevices(iplist_dir)
@@ -330,13 +330,13 @@ def standard_commands(creds, my_ips):
             log_file = log_dir + "set_cmd_" + now.strftime("%Y%m%d-%H%M") + ".log"
 
             # Print output header, for both screen and log outputs
-            screen_and_log("*" * 50 + "\n" + " " * 10 + "SET COMMANDS OUTPUT\n" + "*" * 50 + "\n", log_file)
+            screen_and_log("*" * 110 + "\n" + " " * 40 + "SET COMMANDS OUTPUT\n" + "*" * 110 + "\n", log_file)
             screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
             screen_and_log(('Performed: {0}\n').format(now), log_file)
-            screen_and_log('*' * 50 + '\n' + " " * 10 + "COMMANDS TO EXECUTE\n" + "*" * 50 + '\n', log_file)
+            screen_and_log('*' * 110 + '\n' + " " * 40 + "COMMANDS TO EXECUTE\n" + "*" * 110 + '\n', log_file)
             for line in command_list:
                 screen_and_log(" -> {0}\n".format(line), log_file)
-            screen_and_log("*" * 50 + "\n\n", log_file)
+            screen_and_log("*" * 110 + "\n\n", log_file)
 
             # Loop over all devices in the rack
             screen_and_log("*" * 50 + " START LOAD " + "*" * 50 + '\n', log_file)
@@ -347,14 +347,22 @@ def standard_commands(creds, my_ips):
                 loop += 1
                 if ping(ip):
                     devs_accessed += 1
+                    hostname = get_fact(ip, creds["username"], creds["password"], "hostname")
+                    if not hostname:
+                        hostname = "Unknown"
+                    screen_and_log('*' * 110 + '\n', log_file)
+                    screen_and_log(' ' * 30 + '[{0} at {1}]'.format(hostname, ip), log_file)
+                    screen_and_log(' ({0} of {1})\n'.format(loop, len(my_ips)), log_file)
+                    screen_and_log('*' * 110 + '\n', log_file)
+                    screen_and_log("-" * 50 + " COMMANDS " + "-" * 50 + '\n', log_file)
                     try:
                         set_command(ip, creds["username"], creds["password"], ssh_port, log_file, command_list)
                     except Exception as err:
                         print "Problem changing configuration ERROR: {0}".format(err)
                 else:
-                    screen_and_log("*" * 80 + "\n", log_file)
+                    screen_and_log("*" * 110 + "\n", log_file)
                     screen_and_log("Unable to ping {0}, skipping. ({1} of {2})\n".format(ip, str(loop), len(my_ips)), log_file)
-                    screen_and_log("*" * 80 + "\n\n", log_file)
+                    screen_and_log("*" * 110 + "\n\n", log_file)
                     devs_unreachable += 1
             screen_and_log("*" * 50 + " END LOAD " + "*" * 50 + '\n', log_file)
             # Results of commands

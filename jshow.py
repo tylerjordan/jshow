@@ -138,11 +138,11 @@ def oper_commands(creds, my_ips):
                     screen_and_log("*" * 80 + "\n\n", log_file)
                     devs_unreachable += 1
             screen_and_log(("*" * 30 + " Commands Completed " + "*" * 30 + "\n\n"), log_file)
-
             # Results of commands
-            screen_and_log("Total Devices:       {0}\n".format(len(my_ips)), log_file)
+            screen_and_log("*" * 32 + " Process Summary " + "*" * 31 + '\n\n', log_file)
             screen_and_log("Devices Accessed:    {0}\n".format(devs_accessed), log_file)
-            screen_and_log("Devices Unreachable: {0}\n\n".format(devs_unreachable), log_file)
+            screen_and_log("Devices Unreachable: {0}\n".format(devs_unreachable), log_file)
+            screen_and_log("Total Devices:       {0}\n\n".format(loop), log_file)
             screen_and_log('*' * 80 + '\n\n', log_file)
 
         else:
@@ -224,7 +224,7 @@ def template_commands(creds):
     if getTFAnswer("Continue with template deployment?"):
         # Create log file for operation
         now = datetime.datetime.now()
-        log_file = log_dir + "set_cmd_" + now.strftime("%Y%m%d-%H%M") + ".log"
+        log_file = log_dir + "temp_cmd_" + now.strftime("%Y%m%d-%H%M") + ".log"
         print('\nInformation logged in {0}'.format(log_file))
 
         # Print output header, for both screen and log outputs
@@ -238,13 +238,21 @@ def template_commands(creds):
 
         # Try to load configurations onto defined devices
         screen_and_log("-" * 49 + " START LOAD " + "-" * 49 + '\n', log_file)
-
+        devs_accessed = 0
+        devs_unreachable = 0
+        loop = 0
         for record in list_dict:
-            if ping(record['mgmt_ip']):
-                hostname = get_fact(record['mgmt_ip'], creds["username"], creds["password"], "hostname")
+            loop += 1
+            ip = record['mgmt_ip']
+            if ping(ip):
+                devs_accessed += 1
+                hostname = get_fact(ip, creds["username"], creds["password"], "hostname")
                 if not hostname:
                     hostname = "Unknown"
-                screen_and_log("*" * 5 + " " + hostname + " at (" + record["mgmt_ip"] + ") " + "*" * 5 + '\n', log_file)
+                screen_and_log('*' * 110 + '\n', log_file)
+                screen_and_log(' ' * 40 + '[{0} at {1}]'.format(hostname, ip), log_file)
+                screen_and_log(' ({0} of {1})\n'.format(loop, len(list_dict)), log_file)
+                screen_and_log('*' * 110 + '\n', log_file)
                 screen_and_log("-" * 50 + " COMMANDS " + "-" * 50 + '\n', log_file)
                 try:
                     command_list = populate_template(record, template_file)
@@ -256,16 +264,23 @@ def template_commands(creds):
                 screen_and_log("-" * 110 + '\n', log_file)
                 try:
                     screen_and_log("-" * 50 + " EXECUTE " + "-" * 51 + '\n\n', log_file)
-                    set_command(record['mgmt_ip'], creds["username"], creds["password"], ssh_port, log_file, command_list)
+                    set_command(ip, creds["username"], creds["password"], ssh_port, log_file, command_list)
                     screen_and_log("\n" + ("-" * 110) + '\n\n', log_file)
                 except Exception as err:
                     print "Problem changing configuration. ERROR: {0}".format(err)
             else:
+                devs_unreachable += 1
                 screen_and_log("-" * 110 + '\n', log_file)
-                screen_and_log("Skipping {0}, unable to ping.\n".format(record['mgmt_ip']), log_file)
+                screen_and_log("Unable to ping {0}, skipping. ({1} of {2})\n".format(ip, str(loop), len(list_dict)), log_file)
                 screen_and_log("-" * 110 + '\n\n', log_file)
 
         screen_and_log("-" * 50 + " END LOAD " + "-" * 50 + '\n\n', log_file)
+        # Results of commands
+        screen_and_log("*" * 32 + " Process Summary " + "*" * 31 + '\n\n', log_file)
+        screen_and_log("Devices Accessed:    {0}\n".format(devs_accessed), log_file)
+        screen_and_log("Devices Unreachable: {0}\n".format(devs_unreachable), log_file)
+        screen_and_log("Total Devices:       {0}\n\n".format(loop), log_file)
+        screen_and_log('*' * 80 + '\n\n', log_file)
     else:
         print "\n!!! Configuration deployment aborted... No changes made !!!\n"
 
@@ -315,7 +330,7 @@ def standard_commands(creds, my_ips):
             log_file = log_dir + "set_cmd_" + now.strftime("%Y%m%d-%H%M") + ".log"
 
             # Print output header, for both screen and log outputs
-            screen_and_log("*" * 50 + "\n" + " " * 10 + "TEMPLATE COMMANDS OUTPUT\n" + "*" * 50 + "\n", log_file)
+            screen_and_log("*" * 50 + "\n" + " " * 10 + "SET COMMANDS OUTPUT\n" + "*" * 50 + "\n", log_file)
             screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
             screen_and_log(('Performed: {0}\n').format(now), log_file)
             screen_and_log('*' * 50 + '\n' + " " * 10 + "COMMANDS TO EXECUTE\n" + "*" * 50 + '\n', log_file)
@@ -325,16 +340,29 @@ def standard_commands(creds, my_ips):
 
             # Loop over all devices in the rack
             screen_and_log("*" * 50 + " START LOAD " + "*" * 50 + '\n', log_file)
+            devs_accessed = 0
+            devs_unreachable = 0
+            loop = 0
             for ip in my_ips:
+                loop += 1
                 if ping(ip):
+                    devs_accessed += 1
                     try:
                         set_command(ip, creds["username"], creds["password"], ssh_port, log_file, command_list)
                     except Exception as err:
                         print "Problem changing configuration ERROR: {0}".format(err)
                 else:
-                    screen_and_log("Skipping {0}, unable to ping.\n".format(ip), log_file)
-
+                    screen_and_log("*" * 80 + "\n", log_file)
+                    screen_and_log("Unable to ping {0}, skipping. ({1} of {2})\n".format(ip, str(loop), len(my_ips)), log_file)
+                    screen_and_log("*" * 80 + "\n\n", log_file)
+                    devs_unreachable += 1
             screen_and_log("*" * 50 + " END LOAD " + "*" * 50 + '\n', log_file)
+            # Results of commands
+            screen_and_log("*" * 32 + " Process Summary " + "*" * 31 + '\n\n', log_file)
+            screen_and_log("Devices Accessed:    {0}\n".format(devs_accessed), log_file)
+            screen_and_log("Devices Unreachable: {0}\n".format(devs_unreachable), log_file)
+            screen_and_log("Total Devices:       {0}\n\n".format(loop), log_file)
+            screen_and_log('*' * 80 + '\n\n', log_file)
         else:
             print "\n!!! Configuration deployment aborted... No changes made !!!\n"
 

@@ -122,6 +122,8 @@ def oper_commands(creds, my_ips):
                 if ping(ip):
                     devs_accessed += 1
                     hostname = get_fact(ip, creds['username'], creds['password'], "hostname")
+                    if not hostname:
+                        hostname = "Unknown"
                     screen_and_log('*' * 110 + '\n', log_file)
                     screen_and_log(' ' * 40 + '[{0} at {1}]'.format(hostname, ip), log_file)
                     screen_and_log(' ({0} of {1})\n'.format(loop, len(my_ips)), log_file)

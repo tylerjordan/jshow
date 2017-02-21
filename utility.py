@@ -25,7 +25,6 @@ from jnpr.junos.exception import CommitError
 from ncclient import manager  # https://github.com/ncclient/ncclient
 from ncclient.transport import errors
 
-
 # --------------------------------------
 # ANSWER METHODS
 #--------------------------------------

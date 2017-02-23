@@ -117,37 +117,39 @@ def oper_commands(creds, my_ips):
             devs_accessed = 0
             devs_unreachable = 0
             loop = 0
-            for ip in my_ips:
-                loop += 1
-                if ping(ip):
-                    devs_accessed += 1
-                    hostname = get_fact(ip, creds['username'], creds['password'], "hostname")
-                    if not hostname:
-                        hostname = "Unknown"
-                    screen_and_log('*' * 110 + '\n', log_file)
-                    screen_and_log(' ' * 40 + '[{0} at {1}]'.format(hostname, ip), log_file)
-                    screen_and_log(' ({0} of {1})\n'.format(loop, len(my_ips)), log_file)
-                    screen_and_log('*' * 110 + '\n', log_file)
-                    for command in command_list:
-                        try:
-                            results = op_command(ip, command, creds['username'], creds['password'])
-                        except Exception as err:
-                            print("Error running op_command on {0} ERROR: {1}").format(ip, err)
-                        else:
-                            screen_and_log(results + '\n', log_file)
-                else:
-                    screen_and_log("*" * 110 + "\n", log_file)
-                    screen_and_log("Unable to ping {0}, skipping. ({1} of {2})\n".format(ip, str(loop), len(my_ips)), log_file)
-                    screen_and_log("*" * 110 + "\n\n", log_file)
-                    devs_unreachable += 1
-            screen_and_log(("*" * 45 + " Commands Completed " + "*" * 45 + "\n\n"), log_file)
-            # Results of commands
-            screen_and_log("*" * 32 + " Process Summary " + "*" * 31 + '\n\n', log_file)
-            screen_and_log("Devices Accessed:    {0}\n".format(devs_accessed), log_file)
-            screen_and_log("Devices Unreachable: {0}\n".format(devs_unreachable), log_file)
-            screen_and_log("Total Devices:       {0}\n\n".format(loop), log_file)
-            screen_and_log('*' * 80 + '\n\n', log_file)
-
+            try:
+                for ip in my_ips:
+                    loop += 1
+                    if ping(ip):
+                        devs_accessed += 1
+                        hostname = get_fact(ip, creds['username'], creds['password'], "hostname")
+                        if not hostname:
+                            hostname = "Unknown"
+                        screen_and_log('*' * 110 + '\n', log_file)
+                        screen_and_log(' ' * 40 + '[{0} at {1}]'.format(hostname, ip), log_file)
+                        screen_and_log(' ({0} of {1})\n'.format(loop, len(my_ips)), log_file)
+                        screen_and_log('*' * 110 + '\n', log_file)
+                        for command in command_list:
+                            try:
+                                results = op_command(ip, command, creds['username'], creds['password'])
+                            except Exception as err:
+                                print("Error running op_command on {0} ERROR: {1}").format(ip, err)
+                            else:
+                                screen_and_log(results + '\n', log_file)
+                    else:
+                        screen_and_log("*" * 110 + "\n", log_file)
+                        screen_and_log("Unable to ping {0}, skipping. ({1} of {2})\n".format(ip, str(loop), len(my_ips)), log_file)
+                        screen_and_log("*" * 110 + "\n\n", log_file)
+                        devs_unreachable += 1
+                screen_and_log(("*" * 45 + " Commands Completed " + "*" * 45 + "\n\n"), log_file)
+                # Results of commands
+                screen_and_log("*" * 32 + " Process Summary " + "*" * 31 + '\n\n', log_file)
+                screen_and_log("Devices Accessed:    {0}\n".format(devs_accessed), log_file)
+                screen_and_log("Devices Unreachable: {0}\n".format(devs_unreachable), log_file)
+                screen_and_log("Total Devices:       {0}\n\n".format(loop), log_file)
+                screen_and_log('*' * 80 + '\n\n', log_file)
+            except KeyboardInterrupt:
+                print "Exiting Procedure..."
         else:
             print "\n!!! Configuration deployment aborted... No changes made !!!\n"
     else:

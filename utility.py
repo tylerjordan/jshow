@@ -376,15 +376,21 @@ def get_fact(ip, username, password, fact):
     try:
         dev.open()
     except Exception as err:
+        print("Unable to open connection to: {0} | ERROR: {1}").format(ip, err)
         return False
-        # print("Unable to open connection to: {0} | ERROR: {1}").format(ip, err)
     else:
-        myfact = dev.facts[fact]
-        dev.close()
-        if myfact:
-            return myfact
-        else:
+        try:
+            myfact = dev.facts[fact]
+        except Exception as err:
+            print("Reachability Issues... Standby: {0} | ERROR: {1}").format(ip, err)
+            dev.close()
             return False
+        else:
+            dev.close()
+            if myfact:
+                return myfact
+            else:
+                return False
 
 
 # Run a single non-edit command and get the output returned

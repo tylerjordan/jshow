@@ -211,83 +211,85 @@ def template_commands(creds):
 
     # Sort headers with mgmt_ip being the first key
     sorted_keys = []
-    sorted_keys.append('mgmt_ip')
-    for one_key in keys:
-        if one_key != 'mgmt_ip':
-            sorted_keys.append(one_key)
+    if 'mgmt_ip' in keys:
+        sorted_keys.append('mgmt_ip')
+        for one_key in keys:
+            if one_key != 'mgmt_ip':
+                sorted_keys.append(one_key)
+        # Print the CSV file and the
+        for device in list_dict:
+            for key in sorted_keys:
+                if key == 'mgmt_ip':
+                    print " -> {0}".format(device[key])
+                else:
+                    print " ---> {0}: {1}".format(key, device[key])
+        print "-" * 50
+        print "Total IPs: {0}".format(len(list_dict))
 
-    # Print the CSV file and the
-    for device in list_dict:
-        for key in sorted_keys:
-            if key == 'mgmt_ip':
-                print " -> {0}".format(device[key])
-            else:
-                print " ---> {0}: {1}".format(key, device[key])
-    print "-" * 50
-    print "Total IPs: {0}".format(len(list_dict))
+        if getTFAnswer("Continue with template deployment?"):
+            # Create log file for operation
+            now = datetime.datetime.now()
+            log_file = log_dir + "temp_cmd_" + now.strftime("%Y%m%d-%H%M") + ".log"
+            print('\nInformation logged in {0}'.format(log_file))
 
-    if getTFAnswer("Continue with template deployment?"):
-        # Create log file for operation
-        now = datetime.datetime.now()
-        log_file = log_dir + "temp_cmd_" + now.strftime("%Y%m%d-%H%M") + ".log"
-        print('\nInformation logged in {0}'.format(log_file))
+            # Print output header, for both screen and log outputs
+            screen_and_log("*" * 110 + "\n" + " " * 40 + "TEMPLATE COMMANDS OUTPUT\n" + "*" * 110 + "\n", log_file)
+            screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
+            screen_and_log(('Performed: {0}\n').format(now), log_file)
+            screen_and_log('*' * 110 + '\n' + " " * 40 + "COMMANDS TO EXECUTE\n" + "*" * 110 + '\n', log_file)
+            for line in txt_to_list(template_file):
+                screen_and_log(" -> {0}\n".format(line), log_file)
+            screen_and_log("*" * 110 + "\n\n", log_file)
 
-        # Print output header, for both screen and log outputs
-        screen_and_log("*" * 110 + "\n" + " " * 40 + "TEMPLATE COMMANDS OUTPUT\n" + "*" * 110 + "\n", log_file)
-        screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
-        screen_and_log(('Performed: {0}\n').format(now), log_file)
-        screen_and_log('*' * 110 + '\n' + " " * 40 + "COMMANDS TO EXECUTE\n" + "*" * 110 + '\n', log_file)
-        for line in txt_to_list(template_file):
-            screen_and_log(" -> {0}\n".format(line), log_file)
-        screen_and_log("*" * 110 + "\n\n", log_file)
+            # Try to load configurations onto defined devices
+            screen_and_log("-" * 49 + " START LOAD " + "-" * 49 + '\n', log_file)
+            devs_accessed = 0
+            devs_unreachable = 0
+            loop = 0
+            for record in list_dict:
+                loop += 1
+                ip = record['mgmt_ip']
+                if ping(ip):
+                    devs_accessed += 1
+                    hostname = get_fact(ip, creds["username"], creds["password"], "hostname")
+                    if not hostname:
+                        hostname = "Unknown"
+                    screen_and_log('*' * 110 + '\n', log_file)
+                    screen_and_log(' ' * 30 + '[{0} at {1}]'.format(hostname, ip), log_file)
+                    screen_and_log(' ({0} of {1})\n'.format(loop, len(list_dict)), log_file)
+                    screen_and_log('*' * 110 + '\n', log_file)
+                    screen_and_log("-" * 50 + " COMMANDS " + "-" * 50 + '\n', log_file)
+                    try:
+                        command_list = populate_template(record, template_file)
+                    except Exception as err:
+                        print "Issues with populating the template. ERROR: {0}".format(err)
+                        break
+                    for command in command_list:
+                        screen_and_log((" -> {0}\n".format(command)), log_file)
+                    screen_and_log("-" * 110 + '\n', log_file)
+                    try:
+                        screen_and_log("-" * 50 + " EXECUTE " + "-" * 51 + '\n\n', log_file)
+                        set_command(ip, creds["username"], creds["password"], ssh_port, log_file, command_list)
+                        screen_and_log("\n" + ("-" * 110) + '\n\n', log_file)
+                    except Exception as err:
+                        print "Problem changing configuration. ERROR: {0}".format(err)
+                else:
+                    devs_unreachable += 1
+                    screen_and_log("-" * 110 + '\n', log_file)
+                    screen_and_log("Unable to ping {0}, skipping. ({1} of {2})\n".format(ip, str(loop), len(list_dict)), log_file)
+                    screen_and_log("-" * 110 + '\n\n', log_file)
 
-        # Try to load configurations onto defined devices
-        screen_and_log("-" * 49 + " START LOAD " + "-" * 49 + '\n', log_file)
-        devs_accessed = 0
-        devs_unreachable = 0
-        loop = 0
-        for record in list_dict:
-            loop += 1
-            ip = record['mgmt_ip']
-            if ping(ip):
-                devs_accessed += 1
-                hostname = get_fact(ip, creds["username"], creds["password"], "hostname")
-                if not hostname:
-                    hostname = "Unknown"
-                screen_and_log('*' * 110 + '\n', log_file)
-                screen_and_log(' ' * 30 + '[{0} at {1}]'.format(hostname, ip), log_file)
-                screen_and_log(' ({0} of {1})\n'.format(loop, len(list_dict)), log_file)
-                screen_and_log('*' * 110 + '\n', log_file)
-                screen_and_log("-" * 50 + " COMMANDS " + "-" * 50 + '\n', log_file)
-                try:
-                    command_list = populate_template(record, template_file)
-                except Exception as err:
-                    print "Issues with populating the template. ERROR: {0}".format(err)
-                    break
-                for command in command_list:
-                    screen_and_log((" -> {0}\n".format(command)), log_file)
-                screen_and_log("-" * 110 + '\n', log_file)
-                try:
-                    screen_and_log("-" * 50 + " EXECUTE " + "-" * 51 + '\n\n', log_file)
-                    set_command(ip, creds["username"], creds["password"], ssh_port, log_file, command_list)
-                    screen_and_log("\n" + ("-" * 110) + '\n\n', log_file)
-                except Exception as err:
-                    print "Problem changing configuration. ERROR: {0}".format(err)
-            else:
-                devs_unreachable += 1
-                screen_and_log("-" * 110 + '\n', log_file)
-                screen_and_log("Unable to ping {0}, skipping. ({1} of {2})\n".format(ip, str(loop), len(list_dict)), log_file)
-                screen_and_log("-" * 110 + '\n\n', log_file)
-
-        screen_and_log("-" * 50 + " END LOAD " + "-" * 50 + '\n\n', log_file)
-        # Results of commands
-        screen_and_log("*" * 32 + " Process Summary " + "*" * 31 + '\n\n', log_file)
-        screen_and_log("Devices Accessed:    {0}\n".format(devs_accessed), log_file)
-        screen_and_log("Devices Unreachable: {0}\n".format(devs_unreachable), log_file)
-        screen_and_log("Total Devices:       {0}\n\n".format(loop), log_file)
-        screen_and_log('*' * 80 + '\n\n', log_file)
+            screen_and_log("-" * 50 + " END LOAD " + "-" * 50 + '\n\n', log_file)
+            # Results of commands
+            screen_and_log("*" * 32 + " Process Summary " + "*" * 31 + '\n\n', log_file)
+            screen_and_log("Devices Accessed:    {0}\n".format(devs_accessed), log_file)
+            screen_and_log("Devices Unreachable: {0}\n".format(devs_unreachable), log_file)
+            screen_and_log("Total Devices:       {0}\n\n".format(loop), log_file)
+            screen_and_log('*' * 80 + '\n\n', log_file)
+        else:
+            print "\n!!! Configuration deployment aborted... No changes made !!!\n"
     else:
-        print "\n!!! Configuration deployment aborted... No changes made !!!\n"
+        print "Unable to find mandatory 'mgmt_ip' column in {0}. Please check the column headers.".format(csv_file)
 
 # Function to push set commands to multiple devices
 def standard_commands(creds, my_ips):

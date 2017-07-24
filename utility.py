@@ -392,6 +392,27 @@ def get_fact(ip, username, password, fact):
             else:
                 return False
 
+# Takes a text string and creates a top level heading
+def topHeading(rawtext, margin):
+    head_length = len(rawtext)
+    equal_length = head_length + 6
+
+    heading = " " * margin + "+" + "=" * equal_length + "+\n" + \
+              " " * margin + "|   " + rawtext + "   |\n" + \
+              " " * margin + "+" + "=" * equal_length + "+\n"
+
+    return heading
+
+# Takes a string and creates a sub heading
+def subHeading(rawtext, margin):
+    head_length = len(rawtext)
+    dash_length = head_length + 2
+
+    heading = " " * margin + "o" + "-" * dash_length + "o\n" + \
+              " " * margin + "| " + rawtext + " |\n" + \
+              " " * margin + "o" + "-" * dash_length + "o\n"
+
+    return heading
 
 # Run a single non-edit command and get the output returned
 def op_command(ip, command, username, password, port=22):

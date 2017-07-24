@@ -24,6 +24,7 @@ from os.path import join
 from getpass import getpass
 from prettytable import PrettyTable
 from Spinner import *
+from sys import stdout
 
 credsCSV = ""
 username = ""
@@ -80,8 +81,48 @@ def getargs(argv):
         elif opt in ("-u", "--user"):
             return arg
 
+def connect(ip):
+    """ Purpose: Attempt to connect to the device
+
+    :param ip:          -   IP of the device
+    :param indbase:     -   Boolean if this device is in the database or not, defaults to False if not specified
+    :return dev:        -   Returns the device handle if its successfully opened.
+    """
+    dev = Device(host=ip, user=username, passwd=password, auto_probe=True)
+    # Try to open a connection to the device
+    try:
+        dev.open()
+    # If there is an error when opening the connection, display error and exit upgrade process
+    except ConnectRefusedError as err:
+        message = "Host Reachable, but NETCONF not configured."
+        stdout.write("Connect Fail - " + message + " |")
+        return False
+    except ConnectAuthError as err:
+        message = "Unable to connect with credentials. User:" + username
+        stdout.write("Connect Fail - " + message + " |")
+        return False
+    except ConnectTimeoutError as err:
+        message = "Timeout error, possible IP reachability issues."
+        stdout.write("Connect Fail - " + message + " |")
+        return False
+    except ProbeError as err:
+        message = "Probe timeout, possible IP reachability issues."
+        stdout.write("Connect Fail - " + message + " |")
+        return False
+    except ConnectError as err:
+        message = "Unknown connection issue."
+        stdout.write("Connect Fail - " + message + " |")
+        return False
+    except Exception as err:
+        message = "Undefined exception."
+        stdout.write("Connect Fail - " + message + " |")
+        return False
+    # If try arguments succeeded...
+    else:
+        return dev
+
 # Function for running operational commands to multiple devices
-def oper_commands(creds, my_ips):
+def oper_commands(my_ips):
     print "*" * 50 + "\n" + " " * 10 + "OPERATIONAL COMMANDS\n" + "*" * 50
     # Provide selection for sending a single command or multiple commands from a file
     if not my_ips:
@@ -106,7 +147,7 @@ def oper_commands(creds, my_ips):
 
             # Header of operational command output
             screen_and_log("*" * 110 + "\n" + " " * 40 + "OPERATIONAL COMMANDS OUTPUT\n" + "*" * 110 + "\n", log_file)
-            screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
+            screen_and_log(('User: {0}\n').format(username), log_file)
             screen_and_log(('Performed: {0}\n').format(now), log_file)
             screen_and_log('*' * 110 + '\n' + " " * 40 + "COMMANDS EXECUTED\n" + "*" * 110 + '\n', log_file)
             for command in command_list:
@@ -120,22 +161,31 @@ def oper_commands(creds, my_ips):
             try:
                 for ip in my_ips:
                     loop += 1
-                    if ping(ip):
+                    stdout.write("\n-> Connecting to " + ip + " ... ")
+                    dev = connect(ip)
+                    if dev:
+                        print "Connected!"
                         devs_accessed += 1
-                        hostname = get_fact(ip, creds['username'], creds['password'], "hostname")
+                        hostname = dev.facts['hostname']
                         if not hostname:
                             hostname = "Unknown"
-                        screen_and_log('*' * 110 + '\n', log_file)
-                        screen_and_log(' ' * 40 + '[{0} at {1}]'.format(hostname, ip), log_file)
-                        screen_and_log(' ({0} of {1})\n'.format(loop, len(my_ips)), log_file)
-                        screen_and_log('*' * 110 + '\n', log_file)
+                        topHeading(hostname + " at " + ip)
+                        #screen_and_log('*' * 110 + '\n', log_file)
+                        #screen_and_log(' ' * 40 + '[{0} at {1}]'.format(hostname, ip), log_file)
+                        #screen_and_log(' ({0} of {1})\n'.format(loop, len(my_ips)), log_file)
+                        #screen_and_log('*' * 110 + '\n', log_file)
+                        stdout.write("--> Executing commands ")
                         for command in command_list:
                             try:
-                                results = op_command(ip, command, creds['username'], creds['password'])
+                                results = dev.cli(command + " | no-more")
                             except Exception as err:
                                 print("Error running op_command on {0} ERROR: {1}").format(ip, err)
                             else:
-                                screen_and_log(results + '\n', log_file)
+                                if results:
+                                    print "|{0}|".format(results)
+                                else:
+                                    print "Nothin!"
+                                #screen_and_log(results + '\n', log_file)
                     else:
                         screen_and_log("*" * 110 + "\n", log_file)
                         screen_and_log("Unable to ping {0}, skipping. ({1} of {2})\n".format(ip, str(loop), len(my_ips)), log_file)
@@ -154,7 +204,6 @@ def oper_commands(creds, my_ips):
             print "\n!!! Configuration deployment aborted... No changes made !!!\n"
     else:
         print "\n!! Configuration deployment aborted... No IPs defined !!!\n"
-
 
 # Adds device specific content to a template file
 def populate_template(record, template_file):
@@ -181,7 +230,7 @@ def populate_template(record, template_file):
     return new_command_list
 
 # Template function for bulk set command deployment
-def template_commands(creds):
+def template_commands():
     print "*" * 50 + "\n" + " " * 10 + "TEMPLATE COMMANDS\n" + "*" * 50
 
     # Choose the template configuration file to use
@@ -234,7 +283,7 @@ def template_commands(creds):
 
             # Print output header, for both screen and log outputs
             screen_and_log("*" * 110 + "\n" + " " * 40 + "TEMPLATE COMMANDS OUTPUT\n" + "*" * 110 + "\n", log_file)
-            screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
+            screen_and_log(('User: {0}\n').format(username), log_file)
             screen_and_log(('Performed: {0}\n').format(now), log_file)
             screen_and_log('*' * 110 + '\n' + " " * 40 + "COMMANDS TO EXECUTE\n" + "*" * 110 + '\n', log_file)
             for line in txt_to_list(template_file):
@@ -251,7 +300,7 @@ def template_commands(creds):
                 ip = record['mgmt_ip']
                 if ping(ip):
                     devs_accessed += 1
-                    hostname = get_fact(ip, creds["username"], creds["password"], "hostname")
+                    hostname = get_fact(ip, username, password, "hostname")
                     if not hostname:
                         hostname = "Unknown"
                     screen_and_log('*' * 110 + '\n', log_file)
@@ -269,7 +318,7 @@ def template_commands(creds):
                     screen_and_log("-" * 110 + '\n', log_file)
                     try:
                         screen_and_log("-" * 50 + " EXECUTE " + "-" * 51 + '\n\n', log_file)
-                        set_command(ip, creds["username"], creds["password"], ssh_port, log_file, command_list)
+                        set_command(ip, username, password, ssh_port, log_file, command_list)
                         screen_and_log("\n" + ("-" * 110) + '\n\n', log_file)
                     except Exception as err:
                         print "Problem changing configuration. ERROR: {0}".format(err)
@@ -292,7 +341,7 @@ def template_commands(creds):
         print "Unable to find mandatory 'mgmt_ip' column in {0}. Please check the column headers.".format(csv_file)
 
 # Function to push set commands to multiple devices
-def standard_commands(creds, my_ips):
+def standard_commands(my_ips):
     print "*" * 50 + "\n" + " " * 10 + "SET COMMANDS\n" + "*" * 50
     # Provide option for using a file to supply configuration commands
     if not my_ips:
@@ -337,7 +386,7 @@ def standard_commands(creds, my_ips):
 
             # Print output header, for both screen and log outputs
             screen_and_log("*" * 110 + "\n" + " " * 40 + "SET COMMANDS OUTPUT\n" + "*" * 110 + "\n", log_file)
-            screen_and_log(('User: {0}\n').format(creds["username"]), log_file)
+            screen_and_log(('User: {0}\n').format(username), log_file)
             screen_and_log(('Performed: {0}\n').format(now), log_file)
             screen_and_log('*' * 110 + '\n' + " " * 40 + "COMMANDS TO EXECUTE\n" + "*" * 110 + '\n', log_file)
             for line in command_list:
@@ -353,7 +402,7 @@ def standard_commands(creds, my_ips):
                 loop += 1
                 if ping(ip):
                     devs_accessed += 1
-                    hostname = get_fact(ip, creds["username"], creds["password"], "hostname")
+                    hostname = get_fact(ip, username, password, "hostname")
                     if not hostname:
                         hostname = "Unknown"
                     screen_and_log('*' * 110 + '\n', log_file)
@@ -362,7 +411,7 @@ def standard_commands(creds, my_ips):
                     screen_and_log('*' * 110 + '\n', log_file)
                     screen_and_log("-" * 50 + " COMMANDS " + "-" * 50 + '\n', log_file)
                     try:
-                        set_command(ip, creds["username"], creds["password"], ssh_port, log_file, command_list)
+                        set_command(ip, username, password, ssh_port, log_file, command_list)
                     except Exception as err:
                         print "Problem changing configuration ERROR: {0}".format(err)
                 else:
@@ -392,9 +441,8 @@ if __name__ == "__main__":
     detect_env()
 
     # Get a username and password from the user
-    creds = {'username': '', 'password': ''}
-    creds['username'] = getargs(sys.argv[1:])
-    creds['password'] = getpass(prompt="\nEnter your password: ")
+    username = getargs(sys.argv[1:])
+    password = getpass(prompt="\nEnter your password: ")
 
     # Define menu options
     my_options = ['Execute Operational Commands', 'Execute Set Commands', 'Execute Template Commands', 'Quit']
@@ -405,10 +453,10 @@ if __name__ == "__main__":
         print "*" * 50 + "\n" + " " * 10 + "JSHOW MAIN MENU\n" + "*" * 50
         answer = getOptionAnswerIndex('Make a Selection', my_options)
         if answer == "1":
-            oper_commands(creds, my_ips)
+            oper_commands(my_ips)
         elif answer == "2":
-            standard_commands(creds, my_ips)
+            standard_commands(my_ips)
         elif answer == "3":
-            template_commands(creds)
+            template_commands()
         elif answer == "4":
             quit()

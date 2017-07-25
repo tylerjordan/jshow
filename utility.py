@@ -6,12 +6,10 @@
 import sys, re, os, csv
 import fileinput
 import glob
-import code
+import math
 import paramiko  # https://github.com/paramiko/paramiko for -c -mc -put -get
-import logging
 import subprocess
-import platform
-import ipaddress
+import datetime
 
 from os import listdir
 from os.path import isfile, join, exists
@@ -50,7 +48,6 @@ def getOptionAnswer(question, options):
         answer = ""
         loop = 0
 
-
 # Method for asking a question that can have multiple answers, returns list of answers
 def getOptionMultiAnswer(question, options):
     answer_str = ""
@@ -76,7 +73,6 @@ def getOptionMultiAnswer(question, options):
         answer_str = ""
         loop = 0
 
-
 # Method for asking a question that has a single answer, returns answer index
 def getOptionAnswerIndex(question, options):
     answer = ""
@@ -98,7 +94,6 @@ def getOptionAnswerIndex(question, options):
         answer = ""
         loop = 0
 
-
 # Method for asking a user input question
 def getInputAnswer(question):
     answer = ""
@@ -106,6 +101,15 @@ def getInputAnswer(question):
         answer = raw_input(question + ': ')
     return answer
 
+# Method for asking a user input question that can have multiple answers
+def getMultiInputAnswer(question):
+    answer_list = []
+    answer = "placeholder"
+    while answer:
+        answer = raw_input(question + ': ')
+        if answer:
+            answer_list.append(answer)
+    return answer_list
 
 # Method for asking a Y/N question
 def getYNAnswer(question):
@@ -123,7 +127,6 @@ def getYNAnswer(question):
             answer = ""
     return answer
 
-
 # Method for asking a Y/N question, return True or False
 def getTFAnswer(question):
     answer = False
@@ -140,7 +143,6 @@ def getTFAnswer(question):
         else:
             print "Bad Selection"
 
-
 # Return list of files from a directory
 def getFileList(mypath):
     fileList = []
@@ -154,7 +156,6 @@ def getFileList(mypath):
     else:
         print "Path: {0} does not exist!".format(mypath)
     return fileList
-
 
 # Method for requesting IP address target
 def getTarget():
@@ -190,7 +191,6 @@ def getTarget():
             return response
         else:
             print "Bad Selection"
-
 
 # This function creates a list of IPs from the IP
 def extract_ips(ip):
@@ -269,7 +269,6 @@ def chooseDevices(list_dir):
     else:
         return ip_list
 
-
 # Removes duplicates and sorts IPs intelligently
 def check_sort(ip_list):
     # First remove all duplicates
@@ -314,7 +313,6 @@ def listDictCSV(myListDict, filePathName, keys):
         f.close()
         print "\nCompleted appending to CSV."
 
-
 # Converts CSV file to listDict
 def csvListDict(fileName):
     myListDict = []
@@ -332,14 +330,12 @@ def csvListDict(fileName):
         print "Failure converting CSV to listDict - ERROR: {0}".format(err)
     return myListDict
 
-
 # Converts CSV file to Dictionary
 def csv_to_dict(filePathName):
     input_file = csv.DictReader(open(filePathName))
     for row in input_file:
         pass
     return row
-
 
 # Gets a target code
 def getCode(device, mypath):
@@ -360,7 +356,6 @@ def getCode(device, mypath):
     print("*"*10 + "\n")
 
     return tar_code
-
 
 # Get fact
 def get_fact(ip, username, password, fact):
@@ -393,24 +388,40 @@ def get_fact(ip, username, password, fact):
                 return False
 
 # Takes a text string and creates a top level heading
-def topHeading(rawtext, margin):
-    head_length = len(rawtext)
+def topHeading(raw_text, margin):
+    head_length = len(raw_text)
     equal_length = head_length + 6
 
     heading = " " * margin + "+" + "=" * equal_length + "+\n" + \
-              " " * margin + "|   " + rawtext + "   |\n" + \
+              " " * margin + "|   " + raw_text + "   |\n" + \
               " " * margin + "+" + "=" * equal_length + "+\n"
 
     return heading
 
 # Takes a string and creates a sub heading
-def subHeading(rawtext, margin):
-    head_length = len(rawtext)
+def subHeading(raw_text, margin):
+    head_length = len(raw_text)
     dash_length = head_length + 2
 
     heading = " " * margin + "o" + "-" * dash_length + "o\n" + \
-              " " * margin + "| " + rawtext + " |\n" + \
+              " " * margin + "| " + raw_text + " |\n" + \
               " " * margin + "o" + "-" * dash_length + "o\n"
+
+    return heading
+
+# Takes a string and adds stars to either side
+def starHeading(raw_text, head_len):
+    heading = ""
+    heading += "*" * head_len + "\n"
+    if raw_text > head_len:
+        half_text_len = int(math.ceil(len(raw_text) / 2))
+        half_head_len = int(head_len / 2)
+        start_text = half_head_len - half_text_len
+        # Create heading
+        heading += " " * start_text + raw_text + "\n"
+    else:
+        heading += raw_text + "\n"
+    heading += "*" * head_len + "\n"
 
     return heading
 
@@ -447,7 +458,6 @@ def op_command(ip, command, username, password, port=22):
     except paramiko.AuthenticationException:
         output = '*' * 45 + '\n\nBad username or password for device: %s\n' % ip
         return output
-
 
 def set_command(ip, username, password, port, log_file, command_list):
     """ Purpose: This is the function for the -s or -sl flags. it will send set command(s) to a device, and commit the change.
@@ -513,7 +523,6 @@ def set_command(ip, username, password, port, log_file, command_list):
         connection.close_session()
         screen_and_log(" Completed!\n", log_file)
 
-
 def enable_netconf(ip, username, password, port, log_file=None):
     """ Purpose: To enable the netconf ssh service on a device that does not have it.
     """
@@ -527,7 +536,6 @@ def enable_netconf(ip, username, password, port, log_file=None):
     else:
         print "Successfully enabled NETCONF!"
         return True
-
 
 def run(ip, username, password, port):
     """ Purpose: To open an NCClient manager session to the device, and run the appropriate function against the device.
@@ -555,7 +563,6 @@ def run(ip, username, password, port):
         print output
     else:
         return connection
-
 
 def load_with_pyez(merge_opt, overwrite_opt, format_opt, conf_file, log_file, ip, hostname, username, password):
     """ Purpose: Perform the actual loading of the config file. Catch any errors.
@@ -640,6 +647,14 @@ def load_with_pyez(merge_opt, overwrite_opt, format_opt, conf_file, log_file, ip
     dev.close()
     screen_and_log((" Completed!\n"), log_file)
 
+# Return a specifically formatted timestamp
+def get_now_time():
+    """ Purpose: Create a formatted timestamp
+
+    :return:            -   String of the timestamp in "YYYY-MM-DD_HHMM" format
+    """
+    now = datetime.datetime.now()
+    return now.strftime("%Y-%m-%d_%H%M")
 
 # Prints output to a log file and the screen
 def screen_and_log(output, log_file=None):
@@ -647,7 +662,6 @@ def screen_and_log(output, log_file=None):
         with open(log_file, 'a') as myfile:
             myfile.write(output)
     sys.stdout.write(output)
-
 
 # Creates list from a text file
 def txt_to_list(txt_file):
@@ -659,7 +673,6 @@ def txt_to_list(txt_file):
         print "Error turning file into list. ERROR: {0}".format(err)
 
     return command_list
-
 
 # Pings the provided IP and returns True/False, works on Windows or Linux/Mac
 def ping(ip):

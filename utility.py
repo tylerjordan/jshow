@@ -10,6 +10,7 @@ import math
 import paramiko  # https://github.com/paramiko/paramiko for -c -mc -put -get
 import subprocess
 import datetime
+import platform
 
 from os import listdir
 from os.path import isfile, join, exists
@@ -585,9 +586,8 @@ def load_with_pyez(merge_opt, overwrite_opt, format_opt, conf_file, log_file, ip
         dev.open()
     except ConnectError as err:
         screen_and_log(("{0}: Cannot connect to device : {1}".format(ip, err)), log_file)
-        return
+        return False
     dev.bind(cu=Config)
-
 
     #print("Try locking the configuration...")
     screen_and_log(dot, log_file)
@@ -596,7 +596,7 @@ def load_with_pyez(merge_opt, overwrite_opt, format_opt, conf_file, log_file, ip
     except LockError as err:
         screen_and_log(("{0}: Unable to lock configuration : {1}".format(ip, err)), log_file)
         dev.close()
-        return
+        return False
 
     #print("Try loading configuration changes...")
     screen_and_log(dot, log_file)
@@ -607,9 +607,9 @@ def load_with_pyez(merge_opt, overwrite_opt, format_opt, conf_file, log_file, ip
             dev.cu.load(path=conf_file, merge=merge_opt, format="set")
     except (ConfigLoadError, Exception) as err:
         if err.rpc_error['severity'] == 'warning':
-            pass
+            return False
         elif 'statement not found' in err.message:
-            pass
+            return False
         else:
             screen_and_log(("{0}: Unable to load configuration changes : {1}".format(ip, err)), log_file)
             screen_and_log(("{0}: Unlocking the configuration".format(ip)), log_file)
@@ -617,8 +617,9 @@ def load_with_pyez(merge_opt, overwrite_opt, format_opt, conf_file, log_file, ip
                 dev.cu.unlock()
             except UnlockError as err:
                 screen_and_log(("{0}: Unable to unlock configuration : {1}".format(ip, err)), log_file)
-            dev.close()
-            return
+                dev.close()
+                return False
+            return False
 
     #print("Try committing the configuration...")
     screen_and_log(dot, log_file)
@@ -631,8 +632,9 @@ def load_with_pyez(merge_opt, overwrite_opt, format_opt, conf_file, log_file, ip
             dev.cu.unlock()
         except UnlockError as err:
             screen_and_log(("{0}: Unable to unlock configuration : {1}".format(ip, err)), log_file)
-        dev.close()
-        return
+            dev.close()
+            return False
+        return False
 
     #print("Try Unlocking the configuration...")
     screen_and_log(dot, log_file)
@@ -641,11 +643,12 @@ def load_with_pyez(merge_opt, overwrite_opt, format_opt, conf_file, log_file, ip
     except UnlockError as err:
         screen_and_log(("{0}: Unable to unlock configuration : {1}".format(ip, err)), log_file)
         dev.close()
-        return
+        return False
 
     # End the NETCONF session and close the connection
     dev.close()
     screen_and_log((" Completed!\n"), log_file)
+    return True
 
 # Return a specifically formatted timestamp
 def get_now_time():
@@ -662,6 +665,7 @@ def screen_and_log(output, log_file=None):
         with open(log_file, 'a') as myfile:
             myfile.write(output)
     sys.stdout.write(output)
+    sys.stdout.flush()
 
 # Creates list from a text file
 def txt_to_list(txt_file):

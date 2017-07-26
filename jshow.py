@@ -400,14 +400,19 @@ def standard_commands(my_ips):
 
             # Loop over all devices in the rack
             screen_and_log("*" * 50 + " START LOAD " + "*" * 50 + '\n', output_log)
-            devs_accessed = 0
-            devs_unreachable = 0
+            devs_accessed = []
+            devs_successful = []
+            devs_unreachable = []
+            devs_unsuccessful = []
             loop = 0
             for ip in my_ips:
                 loop += 1
-                if ping(ip):
-                    devs_accessed += 1
-                    hostname = get_fact(ip, username, password, "hostname")
+                stdout.write("-> Connecting to " + ip + " ... ")
+                dev = connect(ip)
+                if dev:
+                    devs_accessed.append(ip)
+                    print "Connected!"
+                    hostname = dev.facts['hostname']
                     if not hostname:
                         hostname = "Unknown"
                     screen_and_log('*' * 110 + '\n', output_log)
@@ -419,17 +424,22 @@ def standard_commands(my_ips):
                         set_command(ip, username, password, ssh_port, output_log, command_list)
                     except Exception as err:
                         print "Problem changing configuration ERROR: {0}".format(err)
+                        devs_unsuccessful.append(ip)
+                    else:
+                        devs_successful.append(ip)
                 else:
                     screen_and_log("*" * 110 + "\n", output_log)
                     screen_and_log("Unable to ping {0}, skipping. ({1} of {2})\n".format(ip, str(loop), len(my_ips)), output_log)
                     screen_and_log("*" * 110 + "\n\n", output_log)
-                    devs_unreachable += 1
+                    devs_unreachable.append(ip)
             screen_and_log("*" * 50 + " END LOAD " + "*" * 50 + '\n', output_log)
             # Results of commands
             screen_and_log("*" * 32 + " Process Summary " + "*" * 31 + '\n\n', output_log)
-            screen_and_log("Devices Accessed:    {0}\n".format(devs_accessed), output_log)
-            screen_and_log("Devices Unreachable: {0}\n".format(devs_unreachable), output_log)
-            screen_and_log("Total Devices:       {0}\n\n".format(loop), output_log)
+            screen_and_log("Devices Accessed:       {0}\n".format(devs_accessed), output_log)
+            screen_and_log("Devices Successful:     {0}\n".format(devs_successful), output_log)
+            screen_and_log("Devices Unreachable:    {0}\n".format(devs_unreachable), output_log)
+            screen_and_log("Devices Unsuccessful:   {0}\n".format(devs_unsuccessful), output_log)
+            screen_and_log("Total Devices:          {0}\n\n".format(len(my_ips)), output_log)
             screen_and_log('*' * 80 + '\n\n', output_log)
         else:
             print "\n!!! Configuration deployment aborted... No changes made !!!\n"

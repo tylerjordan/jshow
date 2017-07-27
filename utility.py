@@ -565,7 +565,7 @@ def run(ip, username, password, port):
     else:
         return connection
 
-def load_with_pyez(merge_opt, overwrite_opt, format_opt, conf_file, log_file, ip, hostname, username, password):
+def load_with_pyez(conf_file, output_log, ip, hostname, username, password):
     """ Purpose: Perform the actual loading of the config file. Catch any errors.
         Parameters:
             format_opt      -   defines the format of input "set" or "hierarchical"
@@ -578,77 +578,83 @@ def load_with_pyez(merge_opt, overwrite_opt, format_opt, conf_file, log_file, ip
             username        -   username for logging in
             password        -   password for username
     """
-    dot = "."
-    screen_and_log(("Applying configuration on {0} ({1}) ".format(hostname, ip)), log_file)
-    screen_and_log(dot, log_file)
+    screen_and_log("Starting load procedure on {0} ({1})\n".format(hostname, ip), output_log)
     try:
         dev = Device(ip, user=username, password=password)
         dev.open()
     except ConnectError as err:
-        screen_and_log(("{0}: Cannot connect to device : {1}".format(ip, err)), log_file)
-        return False
+        err_message = "{0}: Cannot connect to device - ERROR: {1}".format(hostname, err)
+        screen_and_log("\n{0}\n".format(err_message), output_log)
+        return err_message
+    else:
+        screen_and_log("Opened > ", output_log)
+    # Bind the config to the cu object
     dev.bind(cu=Config)
 
     #print("Try locking the configuration...")
-    screen_and_log(dot, log_file)
     try:
         dev.cu.lock()
     except LockError as err:
-        screen_and_log(("{0}: Unable to lock configuration : {1}".format(ip, err)), log_file)
+        err_message = "{0}: Unable to lock configuration - ERROR: {1}".format(hostname, err)
+        screen_and_log("\n{0}\n".format(err_message), output_log)
         dev.close()
-        return False
+        return err_message
+    else:
+        screen_and_log("Locked > ", output_log)
 
     #print("Try loading configuration changes...")
-    screen_and_log(dot, log_file)
     try:
-        if format is None:
-            dev.cu.load(path=conf_file, merge=merge_opt, overwrite=overwrite_opt)
-        else:
-            dev.cu.load(path=conf_file, merge=merge_opt, format="set")
+        dev.cu.load(path=conf_file, merge=True, format="set")
     except (ConfigLoadError, Exception) as err:
         if err.rpc_error['severity'] == 'warning':
-            return False
+            pass
         elif 'statement not found' in err.message:
-            return False
+            pass
         else:
-            screen_and_log(("{0}: Unable to load configuration changes : {1}".format(ip, err)), log_file)
-            screen_and_log(("{0}: Unlocking the configuration".format(ip)), log_file)
+            err_message = "{0}: Unable to load configuration changes - ERROR: {1}".format(hostname, err)
+            screen_and_log("\n{0}\n".format(err_message), output_log)
             try:
                 dev.cu.unlock()
             except UnlockError as err:
-                screen_and_log(("{0}: Unable to unlock configuration : {1}".format(ip, err)), log_file)
+                screen_and_log("\n{0}: Unable to unlock configuration - ERROR: {1}\n".format(hostname, err), output_log)
                 dev.close()
-                return False
-            return False
+                return err_message
+            else:
+                return err_message
+    else:
+        screen_and_log("Loaded > ", output_log)
 
     #print("Try committing the configuration...")
-    screen_and_log(dot, log_file)
     try:
         dev.cu.commit()
     except CommitError as err:
-        screen_and_log(("{0}: Unable to commit configuration : {1}".format(ip, err)), log_file)
-        screen_and_log(("{0}: Unlocking the configuration".format(ip)), log_file)
+        err_message = "{0}: Unable to commit configuration - ERROR: {1}".format(hostname, err)
+        screen_and_log("\n{0}\n".format(err_message), output_log)
         try:
             dev.cu.unlock()
         except UnlockError as err:
-            screen_and_log(("{0}: Unable to unlock configuration : {1}".format(ip, err)), log_file)
+            screen_and_log("\n{0}: Unable to unlock configuration - ERROR: {1}\n".format(hostname, err), output_log)
             dev.close()
-            return False
-        return False
-
+            return err_message
+        else:
+            return err_message
+    else:
+        screen_and_log("Committed > ", output_log)
     #print("Try Unlocking the configuration...")
-    screen_and_log(dot, log_file)
     try:
         dev.cu.unlock()
     except UnlockError as err:
-        screen_and_log(("{0}: Unable to unlock configuration : {1}".format(ip, err)), log_file)
+        err_message = "{0}: Unable to unlock configuration : {1}".format(hostname, err)
+        screen_and_log("\n{0}\n".format(err_message), output_log)
         dev.close()
-        return False
-
+        return err_message
+    else:
+        screen_and_log("Unlocked > ", output_log)
     # End the NETCONF session and close the connection
     dev.close()
-    screen_and_log((" Completed!\n"), log_file)
-    return True
+    err_message = "Completed"
+    screen_and_log(("Completed!\n"), output_log)
+    return err_message
 
 # Return a specifically formatted timestamp
 def get_now_time():
@@ -675,8 +681,35 @@ def txt_to_list(txt_file):
             command_list = f.read().splitlines()
     except Exception as err:
         print "Error turning file into list. ERROR: {0}".format(err)
+        return False
+    else:
+        return command_list
 
-    return command_list
+# Creates text file from a list
+def list_to_txt(dest_file, src_list):
+    text_config = ""
+    try:
+        with open(dest_file, 'w') as text_config:
+            for line in src_list:
+                text_config.write("{0}\n".format(line))
+    except Exception as err:
+        print "Error writing list to file. ERROR: {0}".format(err)
+        return False
+    else:
+        return True
+
+# Creates a string from a text file
+def txt_to_string(src_file):
+    # Create a string of the configuration file
+    command_file = ""
+    try:
+        with open(src_file) as f:
+            command_file = f.read()
+    except Exception as err:
+        print "Problems extracting commands from file. ERROR: {0}".format(err)
+        return False
+    else:
+        return command_file
 
 # Pings the provided IP and returns True/False, works on Windows or Linux/Mac
 def ping(ip):

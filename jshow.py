@@ -49,10 +49,12 @@ def detect_env():
     global csv_dir
     global system_slash
     global ssh_port
+    global dir_path
+    global temp_conf
 
+    dir_path = os.path.dirname(os.path.abspath(__file__))
     if platform.system().lower() == "windows":
         #print "Environment Windows!"
-        credsCSV = ".\\pass.csv"
         iplist_dir = ".\\iplists\\"
         config_dir = ".\\configs\\"
         log_dir = ".\\logs\\"
@@ -60,12 +62,13 @@ def detect_env():
         system_slash = "\\"
     else:
         #print "Environment Linux/MAC!"
-        credsCSV = "./pass.csv"
         iplist_dir = "./iplists/"
         config_dir = "./configs/"
         log_dir = "./logs/"
         csv_dir = "./csv/"
 
+    credsCSV = os.path.join(dir_path, "pass.csv")
+    temp_conf = os.path.join(dir_path, config_dir, "temp.conf")
 
 def getargs(argv):
     # Interprets and handles the command line arguments
@@ -352,95 +355,98 @@ def standard_commands(my_ips):
     if not my_ips:
         my_ips = chooseDevices(iplist_dir)
     if my_ips:
+        set_file = ""
+        command_file = ""
         command_list = []
-        if getTFAnswer('\nProvide commands from a file'):
+        if not getTFAnswer('\nProvide commands from a file'):
+            command_list = getMultiInputAnswer("Enter a set command")
+            if list_to_txt(temp_conf, command_list):
+                command_file = txt_to_string(temp_conf)
+            else:
+                return
+        else:
             filelist = getFileList(config_dir)
             # If the files exist...
             if filelist:
                 set_config = getOptionAnswer("Choose a config file", filelist)
                 set_file = config_dir + set_config
-                try:
-                    with open(set_file) as f:
-                        command_list = f.read().splitlines()
-                except Exception as err:
-                    print "Problems extracting commands from file. ERROR: {0}".format(err)
-                    return
-        else:
-            # Provide selection for sending a single set command or multiple set commands
-            print "\n" + "*" * 50 + "\n"
-            while True:
-                command = raw_input("Enter a set command: ")  # Change this to "input" when using Python 3
-                if not command:
-                    break
+                command_file = txt_to_string(set_file)
+                if command_file:
+                    command_list = command_file.splitlines()
                 else:
-                    command_list.append(command)
-        print "\n" + "*" * 50 + "\n"
+                    return
 
         # Print the set commands that will be pushed
         print "\n" + " " * 10 + "Set Commands Entered"
         print "-" * 50
-        for one_comm in command_list:
-            print " -> {0}".format(one_comm)
+        if command_list:
+            for one_comm in command_list:
+                print " -> {0}".format(one_comm)
         print "-" * 50 + "\n"
 
         # Verify that user wants to continue with this deployment
         if getTFAnswer("Continue with set commands deployment?"):
             # Create log file for operation
             now = datetime.datetime.now()
-            output_log = log_dir + "set_cmd_" + now.strftime("%Y%m%d-%H%M") + ".log"
+            output_log = create_timestamped_log("set_output_")
 
             # Print output header, for both screen and log outputs
             screen_and_log("*" * 110 + "\n" + " " * 40 + "SET COMMANDS OUTPUT\n" + "*" * 110 + "\n", output_log)
             screen_and_log(('User: {0}\n').format(username), output_log)
-            screen_and_log(('Performed: {0}\n').format(now), output_log)
-            screen_and_log('*' * 110 + '\n' + " " * 40 + "COMMANDS TO EXECUTE\n" + "*" * 110 + '\n', output_log)
+            screen_and_log(('Performed: {0}\n').format(get_now_time()), output_log)
+            screen_and_log(('Output Log: {0}\n').format(output_log), output_log)
+            screen_and_log("*" * 110 + "\n" + " " * 40 + "COMMANDS TO EXECUTE\n" + "*" * 110 + "\n", output_log)
             for line in command_list:
                 screen_and_log(" -> {0}\n".format(line), output_log)
             screen_and_log("*" * 110 + "\n\n", output_log)
 
             # Loop over all devices in the rack
-            screen_and_log("*" * 50 + " START LOAD " + "*" * 50 + '\n', output_log)
+            exit(0)
+            screen_and_log("*" * 50 + " START LOAD " + "*" * 50 + "\n", output_log)
+            dev_status = []
             devs_accessed = []
             devs_successful = []
             devs_unreachable = []
             devs_unsuccessful = []
             loop = 0
             for ip in my_ips:
+                dev_dict = {'IP': ip, 'HOSTNAME': 'Unknown', 'CONNECTED': 'Unknown', 'LOAD_SUCCESS': 'Unknown', 'ERROR': 'None'}
                 loop += 1
-                stdout.write("-> Connecting to " + ip + " ... ")
+                stdout.write("[{0} of {1}] - Connecting to {2} ... ".format(loop, len(my_ips), ip))
                 dev = connect(ip)
                 if dev:
                     devs_accessed.append(ip)
+                    dev_dict['CONNECTED'] = 'Yes'
                     print "Connected!"
                     hostname = dev.facts['hostname']
                     if not hostname:
                         hostname = "Unknown"
-                    screen_and_log('*' * 110 + '\n', output_log)
-                    screen_and_log(' ' * 30 + '[{0} at {1}]'.format(hostname, ip), output_log)
-                    screen_and_log(' ({0} of {1})\n'.format(loop, len(my_ips)), output_log)
-                    screen_and_log('*' * 110 + '\n', output_log)
-                    screen_and_log("-" * 50 + " COMMANDS " + "-" * 50 + '\n', output_log)
-                    try:
-                        set_command(ip, username, password, ssh_port, output_log, command_list)
-                    except Exception as err:
-                        print "Problem changing configuration ERROR: {0}".format(err)
-                        devs_unsuccessful.append(ip)
-                    else:
+                    dev_dict['HOSTNAME'] = hostname
+                    # Try to load the changes
+                    results = load_with_pyez()
+                    if results == "Completed":
                         devs_successful.append(ip)
+                        dev_dict['LOAD_SUCCESS'] = 'Yes'
+                    else:
+                        print "Moving to next device..."
+                        devs_unsuccessful.append(ip)
+                        dev_dict['LOAD_SUCCESS'] = 'No'
+                        dev_dict['ERROR'] = results
                 else:
-                    screen_and_log("*" * 110 + "\n", output_log)
-                    screen_and_log("Unable to ping {0}, skipping. ({1} of {2})\n".format(ip, str(loop), len(my_ips)), output_log)
-                    screen_and_log("*" * 110 + "\n\n", output_log)
+                    print "Unable to Connect!"
+                    screen_and_log("{0}: Unable to connect\n".format(ip), output_log)
                     devs_unreachable.append(ip)
+                    dev_dict['CONNECTED'] = 'No'
             screen_and_log("*" * 50 + " END LOAD " + "*" * 50 + '\n', output_log)
             # Results of commands
             screen_and_log("*" * 32 + " Process Summary " + "*" * 31 + '\n\n', output_log)
-            screen_and_log("Devices Accessed:       {0}\n".format(devs_accessed), output_log)
-            screen_and_log("Devices Successful:     {0}\n".format(devs_successful), output_log)
-            screen_and_log("Devices Unreachable:    {0}\n".format(devs_unreachable), output_log)
-            screen_and_log("Devices Unsuccessful:   {0}\n".format(devs_unsuccessful), output_log)
+            screen_and_log("Devices Accessed:       {0}\n".format(len(devs_accessed)), output_log)
+            screen_and_log("Devices Successful:     {0}\n".format(len(devs_successful)), output_log)
+            screen_and_log("Devices Unreachable:    {0}\n".format(len(devs_unreachable)), output_log)
+            screen_and_log("Devices Unsuccessful:   {0}\n".format(len(devs_unsuccessful)), output_log)
             screen_and_log("Total Devices:          {0}\n\n".format(len(my_ips)), output_log)
             screen_and_log('*' * 80 + '\n\n', output_log)
+
         else:
             print "\n!!! Configuration deployment aborted... No changes made !!!\n"
 

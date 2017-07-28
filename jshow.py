@@ -406,7 +406,7 @@ def standard_commands(my_ips):
             devs_unsuccessful = []
             loop = 0
             for ip in my_ips:
-                dev_dict = {'IP': ip, 'HOSTNAME': 'Unknown', 'CONNECTED': 'No', 'LOAD_SUCCESS': 'No', 'ERROR': 'None'}
+                dev_dict = {'IP': ip, 'HOSTNAME': 'Unknown', 'MODEL': 'Unknown', 'JUNOS': 'Unknown', 'CONNECTED': 'No', 'LOAD_SUCCESS': 'No', 'ERROR': 'None'}
                 loop += 1
                 stdout.write("[{0} of {1}] - Connecting to {2} ... ".format(loop, len(my_ips), ip))
                 dev = connect(ip)
@@ -414,10 +414,17 @@ def standard_commands(my_ips):
                     devs_accessed.append(ip)
                     dev_dict['CONNECTED'] = 'Yes'
                     screen_and_log("Connected!\n", output_log)
+                    # Get the hostname
                     hostname = dev.facts['hostname']
                     if not hostname:
                         hostname = "Unknown"
                     dev_dict['HOSTNAME'] = hostname
+                    # Get the model number
+                    model = dev.facts['model']
+                    dev_dict['MODEL'] = model
+                    # Get the version
+                    junos = dev.facts['version']
+                    dev_dict['JUNOS'] = junose
                     # Try to load the changes
                     results = load_with_pyez(command_fp, output_log, ip, hostname, username, password)
                     if results == "Completed":
@@ -458,7 +465,7 @@ def standard_commands(my_ips):
             screen_and_log(starHeading("", 110), output_log)
             """
             # Print to a CSV file
-            keys = ['HOSTNAME', 'IP', 'CONNECTED', 'LOAD_SUCCESS', 'ERROR']
+            keys = ['HOSTNAME', 'IP', 'MODEL', 'JUNOS', 'CONNECTED', 'LOAD_SUCCESS', 'ERROR']
             listDictCSV(dev_status, summary_csv, keys)
         else:
             print "\n!!! Configuration deployment aborted... No changes made !!!\n"

@@ -33,6 +33,7 @@ def getOptionAnswer(question, options):
     loop = 0
     while not answer:
         print "\n" + question + ':\n'
+        options.append('Quit')
         for option in options:
             loop += 1
             print '[' + str(loop) + '] -> ' + option
@@ -229,33 +230,38 @@ def chooseDevices(list_dir):
     # IP Formats to recognize...
     #   - 10.10.10.X        // A single IP address
     #   - 10.10.10.X/XX     // A masked IP, probably network
-
-    method_resp = getOptionAnswer('How would you like to define the devices by IP', ['file', 'manual', 'quit'])
     ip_list = []
-    # Choose a file from a list of options
-    if method_resp == "file":
-        path = list_dir + "*.ips"
-        files=glob.glob(path)
-        if files:
-            file_resp = getOptionAnswer('Choose a file to use', files)
-            # Print out all the IPs/SITEs
-            for line in fileinput.input(file_resp):
-                line = line.rstrip()
-                if line != '':
-                    ip_list += extract_ips(line)
-        else:
-            print "No valid files in {0}".format(path)
+    looping = True
 
-    # Define one or more IPs individually
-    elif method_resp == "manual":
-        print 'Provide IPs - Correct format: X.X.X.X or X.X.X.X/X:'
-        answer = ""
-        while( answer != 'x' ):
-            answer = getInputAnswer('Enter an ip address (x) to exit')
-            if( answer != 'x'):
-                ip_list += extract_ips(answer)
-    else:
-        print "Exiting menu..."
+    while looping:
+        method_resp = getOptionAnswer('How would you like to define the devices by IP', ['file', 'manual'])
+        # Choose a file from a list of options
+        if method_resp == "file":
+            path = list_dir + "*.ips"
+            files=glob.glob(path)
+            if files:
+                file_resp = getOptionAnswer('Choose a file to use', files)
+                # Print out all the IPs/SITEs
+                if file_resp != 'Quit':
+                    for line in fileinput.input(file_resp):
+                        line = line.rstrip()
+                        if line != '':
+                            ip_list += extract_ips(line)
+                        looping = False
+            else:
+                print "No valid files in {0}".format(path)
+        # Define one or more IPs individually
+        elif method_resp == "manual":
+            print 'Provide IPs - Correct format: X.X.X.X or X.X.X.X/X:'
+            answer = ""
+            while( answer != 'x' ):
+                answer = getInputAnswer('Enter an ip address (x) to exit')
+                if( answer != 'x'):
+                    ip_list += extract_ips(answer)
+            looping = False
+        else:
+            print "Exiting menu..."
+            return False
 
     # Print the IPs that will be used
     if ip_list:
@@ -665,13 +671,29 @@ def get_now_time():
     now = datetime.datetime.now()
     return now.strftime("%Y-%m-%d_%H%M")
 
-# Prints output to a log file and the screen
-def screen_and_log(output, log_file=None):
-    if log_file is not None:
-        with open(log_file, 'a') as myfile:
-            myfile.write(output)
-    sys.stdout.write(output)
-    sys.stdout.flush()
+# Print output to the screen and a log file (either a list or string)
+def screen_and_log(statement, file_list):
+    # Print to screen
+    stdout.write(statement)
+    stdout.flush()
+    # Print to log
+    if type(file_list) is list:
+        for log in file_list:
+            print_log(statement, log)
+    else:
+        print_log(statement, file_list)
+
+# Append output to log file only
+def log_only(statement, logfile):
+    # Print to log
+    #print "Log File: {0}".format(logfile)
+    try:
+        logobj = open(logfile, 'a')
+    except Exception as err:
+        print "Error opening log file {0}".format(err)
+    else:
+        logobj.write(statement)
+        logobj.close()
 
 # Creates list from a text file
 def txt_to_list(txt_file):

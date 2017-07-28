@@ -130,14 +130,15 @@ def oper_commands(my_ips):
     # Provide selection for sending a single command or multiple commands from a file
     if not my_ips:
         my_ips = chooseDevices(iplist_dir)
+
     if my_ips:
         command_list = []
         print "\n" + "*" * 110 + "\n"
         command_list = getMultiInputAnswer("Enter a command to run")
 
         if getTFAnswer("Continue with operational requests?"):
-            output_log = create_timestamped_log("oper_output_")
-            err_log = create_timestamped_log("oper_err_")
+            output_log = create_timestamped_log("oper_output_", "log")
+            err_log = create_timestamped_log("oper_err_", "log")
             # Header of operational command output
             screen_and_log(starHeading("OPERATIONAL COMMANDS OUTPUT", 110), output_log)
             screen_and_log(('User: {0}\n').format(username), output_log)
@@ -356,25 +357,19 @@ def standard_commands(my_ips):
         my_ips = chooseDevices(iplist_dir)
     if my_ips:
         set_file = ""
-        command_file = ""
+        command_fp = ""
         command_list = []
         if not getTFAnswer('\nProvide commands from a file'):
             command_list = getMultiInputAnswer("Enter a set command")
             if list_to_txt(temp_conf, command_list):
-                command_file = txt_to_string(temp_conf)
-            else:
-                return
+                command_fp = temp_conf
         else:
             filelist = getFileList(config_dir)
             # If the files exist...
             if filelist:
                 set_config = getOptionAnswer("Choose a config file", filelist)
-                set_file = config_dir + set_config
-                command_file = txt_to_string(set_file)
-                if command_file:
-                    command_list = command_file.splitlines()
-                else:
-                    return
+                command_fp = config_dir + set_config
+                command_list = txt_to_list(command_fp)
 
         # Print the set commands that will be pushed
         print "\n" + " " * 10 + "Set Commands Entered"
@@ -388,21 +383,22 @@ def standard_commands(my_ips):
         if getTFAnswer("Continue with set commands deployment?"):
             # Create log file for operation
             now = datetime.datetime.now()
-            output_log = create_timestamped_log("set_output_")
+            output_log = create_timestamped_log("set_output_", "log")
+            summary_csv = create_timestamped_log("summary_csv_", "csv")
+            error_log = create_timestamped_log("error_details_", "log")
 
             # Print output header, for both screen and log outputs
-            screen_and_log("*" * 110 + "\n" + " " * 40 + "SET COMMANDS OUTPUT\n" + "*" * 110 + "\n", output_log)
+            screen_and_log(starHeading("OPERATIONAL COMMANDS OUTPUT", 110), output_log)
             screen_and_log(('User: {0}\n').format(username), output_log)
             screen_and_log(('Performed: {0}\n').format(get_now_time()), output_log)
             screen_and_log(('Output Log: {0}\n').format(output_log), output_log)
-            screen_and_log("*" * 110 + "\n" + " " * 40 + "COMMANDS TO EXECUTE\n" + "*" * 110 + "\n", output_log)
+            screen_and_log(starHeading("COMMANDS TO EXECUTE", 110), output_log)
             for line in command_list:
                 screen_and_log(" -> {0}\n".format(line), output_log)
             screen_and_log("*" * 110 + "\n\n", output_log)
 
             # Loop over all devices in the rack
-            exit(0)
-            screen_and_log("*" * 50 + " START LOAD " + "*" * 50 + "\n", output_log)
+            screen_and_log(starHeading("START PROCESS", 110), output_log)
             dev_status = []
             devs_accessed = []
             devs_successful = []
@@ -410,7 +406,7 @@ def standard_commands(my_ips):
             devs_unsuccessful = []
             loop = 0
             for ip in my_ips:
-                dev_dict = {'IP': ip, 'HOSTNAME': 'Unknown', 'CONNECTED': 'Unknown', 'LOAD_SUCCESS': 'Unknown', 'ERROR': 'None'}
+                dev_dict = {'IP': ip, 'HOSTNAME': 'Unknown', 'CONNECTED': 'No', 'LOAD_SUCCESS': 'No', 'ERROR': 'None'}
                 loop += 1
                 stdout.write("[{0} of {1}] - Connecting to {2} ... ".format(loop, len(my_ips), ip))
                 dev = connect(ip)
@@ -423,7 +419,7 @@ def standard_commands(my_ips):
                         hostname = "Unknown"
                     dev_dict['HOSTNAME'] = hostname
                     # Try to load the changes
-                    results = load_with_pyez()
+                    results = load_with_pyez(command_fp, output_log, ip, hostname, username, password)
                     if results == "Completed":
                         devs_successful.append(ip)
                         dev_dict['LOAD_SUCCESS'] = 'Yes'
@@ -431,22 +427,39 @@ def standard_commands(my_ips):
                         print "Moving to next device..."
                         devs_unsuccessful.append(ip)
                         dev_dict['LOAD_SUCCESS'] = 'No'
-                        dev_dict['ERROR'] = results
+                        # Add brief error to CSV
+                        brief_error = results.split(" - ERROR")[0]
+                        dev_dict['ERROR'] = brief_error
+                        # Add extensive error to "error" log
+                        log_only(results, error_log)
                 else:
                     print "Unable to Connect!"
                     screen_and_log("{0}: Unable to connect\n".format(ip), output_log)
                     devs_unreachable.append(ip)
                     dev_dict['CONNECTED'] = 'No'
-            screen_and_log("*" * 50 + " END LOAD " + "*" * 50 + '\n', output_log)
+                dev_status.append(dev_dict)
+                print "\n" + "-" * 110
+            screen_and_log(starHeading("END PROCESS", 110), output_log)
             # Results of commands
-            screen_and_log("*" * 32 + " Process Summary " + "*" * 31 + '\n\n', output_log)
+            screen_and_log(starHeading("PROCESS SUMMARY", 110), output_log)
             screen_and_log("Devices Accessed:       {0}\n".format(len(devs_accessed)), output_log)
             screen_and_log("Devices Successful:     {0}\n".format(len(devs_successful)), output_log)
             screen_and_log("Devices Unreachable:    {0}\n".format(len(devs_unreachable)), output_log)
             screen_and_log("Devices Unsuccessful:   {0}\n".format(len(devs_unsuccessful)), output_log)
             screen_and_log("Total Devices:          {0}\n\n".format(len(my_ips)), output_log)
-            screen_and_log('*' * 80 + '\n\n', output_log)
-
+            screen_and_log(starHeading("", 110), output_log)
+            """
+            screen_and_log(starHeading("STATUS LISTDICT", 110), output_log)
+            t = PrettyTable(['HOSTNAME', 'IP', 'CONNECTED', 'LOAD_SUCCESS', 'ERROR'])
+            for record in dev_status:
+                t.add_row([record['HOSTNAME'], record['IP'], record['CONNECTED'], record['LOAD_SUCCESS'],
+                           record['ERROR']])
+            print t
+            screen_and_log(starHeading("", 110), output_log)
+            """
+            # Print to a CSV file
+            keys = ['HOSTNAME', 'IP', 'CONNECTED', 'LOAD_SUCCESS', 'ERROR']
+            listDictCSV(dev_status, summary_csv, keys)
         else:
             print "\n!!! Configuration deployment aborted... No changes made !!!\n"
 
@@ -456,9 +469,9 @@ def quit():
     sys.exit(0)
 
 # Create a log
-def create_timestamped_log(prefix):
+def create_timestamped_log(prefix, extension):
     now = datetime.datetime.now()
-    return log_dir + prefix + now.strftime("%Y%m%d-%H%M") + ".log"
+    return log_dir + prefix + now.strftime("%Y%m%d-%H%M") + "." + extension
 
 # Main execution loop
 if __name__ == "__main__":

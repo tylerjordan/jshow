@@ -23,6 +23,7 @@ from jnpr.junos.exception import ConfigLoadError
 from jnpr.junos.exception import CommitError
 from ncclient import manager  # https://github.com/ncclient/ncclient
 from ncclient.transport import errors
+from sys import stdout
 
 # --------------------------------------
 # ANSWER METHODS
@@ -679,9 +680,9 @@ def screen_and_log(statement, file_list):
     # Print to log
     if type(file_list) is list:
         for log in file_list:
-            print_log(statement, log)
+            log_only(statement, log)
     else:
-        print_log(statement, file_list)
+        log_only(statement, file_list)
 
 # Append output to log file only
 def log_only(statement, logfile):

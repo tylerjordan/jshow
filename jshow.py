@@ -413,7 +413,7 @@ def standard_commands(my_ips):
                 if dev:
                     devs_accessed.append(ip)
                     dev_dict['CONNECTED'] = 'Yes'
-                    print "Connected!"
+                    screen_and_log("Connected!\n", output_log)
                     hostname = dev.facts['hostname']
                     if not hostname:
                         hostname = "Unknown"
@@ -424,7 +424,7 @@ def standard_commands(my_ips):
                         devs_successful.append(ip)
                         dev_dict['LOAD_SUCCESS'] = 'Yes'
                     else:
-                        print "Moving to next device..."
+                        screen_and_log("Moving to next device...\n", output_log)
                         devs_unsuccessful.append(ip)
                         dev_dict['LOAD_SUCCESS'] = 'No'
                         # Add brief error to CSV
@@ -433,12 +433,12 @@ def standard_commands(my_ips):
                         # Add extensive error to "error" log
                         log_only(results, error_log)
                 else:
-                    print "Unable to Connect!"
+                    screen_and_log("Unable to Connect!\n", output_log)
                     screen_and_log("{0}: Unable to connect\n".format(ip), output_log)
                     devs_unreachable.append(ip)
                     dev_dict['CONNECTED'] = 'No'
                 dev_status.append(dev_dict)
-                print "\n" + "-" * 110
+                screen_and_log("\n" + ("-" * 110) + "\n", output_log)
             screen_and_log(starHeading("END PROCESS", 110), output_log)
             # Results of commands
             screen_and_log(starHeading("PROCESS SUMMARY", 110), output_log)

@@ -144,7 +144,7 @@ def oper_commands(my_ips):
             screen_and_log(('User: {0}\n').format(username), output_log)
             screen_and_log(('Performed: {0}\n').format(get_now_time()), output_log)
             screen_and_log(('Output Log: {0}\n').format(output_log), output_log)
-            screen_and_log(('Error Log: {0}\n').format(err_log, output_log))
+            screen_and_log(('Error Log: {0}\n').format(err_log), output_log)
             screen_and_log(starHeading("COMMANDS EXECUTED", 110), output_log)
             for command in command_list:
                 screen_and_log(' -> {0}\n'.format(command), output_log)
@@ -156,7 +156,7 @@ def oper_commands(my_ips):
             devs_with_output = []
             loop = 0
             try:
-                screen_and_log("-" * 110 + "\n")
+                screen_and_log("-" * 110 + "\n", output_log)
                 for ip in my_ips:
                     command_output = ""
                     loop += 1
@@ -191,15 +191,13 @@ def oper_commands(my_ips):
                         else:
                             devs_no_output.append(ip)
                             stdout.write(" No Output!\n")
+                        # Close connection to device
+                        dev.close()
                     else:
-                        print "Unable to Connect!"
                         screen_and_log("{0}: Unable to connect\n".format(ip), err_log)
                         devs_unreachable.append(ip)
-                    # Close connection to device
-                    dev.close()
-                    screen_and_log("-" * 110 + "\n", output_log)
+                screen_and_log("-" * 110 + "\n", output_log)
                 screen_and_log(starHeading("COMMANDS COMPLETED", 110), output_log)
-
                 # Results of commands
                 screen_and_log(starHeading("PROCESS SUMMARY", 110), output_log)
                 screen_and_log("Devices With Output:  {0}\n".format(len(devs_with_output)), output_log)

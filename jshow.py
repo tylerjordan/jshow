@@ -25,6 +25,7 @@ from getpass import getpass
 from prettytable import PrettyTable
 from Spinner import *
 from sys import stdout
+from lxml import etree
 
 credsCSV = ""
 username = ""
@@ -172,6 +173,12 @@ def oper_commands(my_ips):
                         # Loop over the commands provided
                         for command in command_list:
                             command_output += "\n" + hostname + ": Executing -> {0}\n".format(command)
+                            #print "Command: {0}\nRPC: {1}\n".format(command, dev.cli_to_rpc_string(command))
+                            #com = dev.cli_to_rpc_string(command)
+                            #com = dev.rpc.get_chassis_inventory()
+                            #print " | Output |"
+                            #print "model: %s" % com.findtext('chassis/description')
+                            #print "serial-number: %s" % com.findtext('chassis/serial-number')
                             try:
                                 results = dev.cli(command + " | no-more")
                             except Exception as err:

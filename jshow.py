@@ -169,16 +169,55 @@ def oper_commands(my_ips):
                         if not hostname:
                             hostname = "Unknown"
                         got_output = False
+
+                        # Testing context
+                        root = dev.rpc.get_chassis_inventory()
+                        print " [#] Output [#]"
+                        inventory_listdict = []
+
+                        # Check to see if chassis exists
+                        if root.findtext('chassis'):
+                            # Gather chassis attribs
+                            for base in root.findall('chassis'):
+                                item = collect_attribs(base, hostname)
+                                if item:
+                                    inventory_listdict.append(item)
+                                # Gather module attribs
+                                if base.findtext('chassis-module'):
+                                    for module in base.findall('chassis-module'):
+                                        item = collect_attribs(module, hostname)
+                                        if item:
+                                            inventory_listdict.append(item)
+                                        # Gather attribs
+                                        if module.findtext('chassis-sub-module'):
+                                            for submodule in module.findall('chassis-sub-module'):
+                                                item = collect_attribs(submodule, hostname)
+                                                if item:
+                                                    inventory_listdict.append(item)
+                                                # Gather attribs
+                                                if submodule.findtext('chassis-sub-sub-module'):
+                                                    for subsubmodule in submodule.findall('chassis-sub-sub-module'):
+                                                        item = collect_attribs(subsubmodule, hostname)
+                                                        if item:
+                                                            inventory_listdict.append(item)
+                                                        # Gather attribs
+                                                        if subsubmodule.findtext('chassis-sub-sub-sub-module'):
+                                                            for subsubsubmodule in subsubmodule.findall('chassis-sub-sub-sub-module'):
+                                                                item = collect_attribs(subsubsubmodule, hostname)
+                                                                if item:
+                                                                    inventory_listdict.append(item)
+
+                        item_key = ['hostname', 'name', 'description', 'version', 'location', 'part-number', 'serial-number']
+                        inv_csv = os.path.join(csv_dir, "inventory.csv")
+                        listDictCSV(inventory_listdict, inv_csv, item_key)
+                        '''
                         stdout.write(hostname + ": Executing commands ")
                         # Loop over the commands provided
                         for command in command_list:
                             command_output += "\n" + hostname + ": Executing -> {0}\n".format(command)
                             #print "Command: {0}\nRPC: {1}\n".format(command, dev.cli_to_rpc_string(command))
                             #com = dev.cli_to_rpc_string(command)
-                            #com = dev.rpc.get_chassis_inventory()
-                            #print " | Output |"
-                            #print "model: %s" % com.findtext('chassis/description')
-                            #print "serial-number: %s" % com.findtext('chassis/serial-number')
+
                             try:
                                 results = dev.cli(command + " | no-more")
                             except Exception as err:
@@ -198,6 +237,7 @@ def oper_commands(my_ips):
                         else:
                             devs_no_output.append(ip)
                             stdout.write(" No Output!\n")
+                        '''
                         # Close connection to device
                         dev.close()
                     else:
@@ -218,6 +258,25 @@ def oper_commands(my_ips):
             print "\n!!! Configuration deployment aborted... No changes made !!!\n"
     else:
         print "\n!! Configuration deployment aborted... No IPs defined !!!\n"
+
+# Collects the attributes from the object and returns a dictionary
+def collect_attribs(dev_obj, hostname):
+    item_dict = {'hostname': '', 'name': '', 'description': '', 'version': '', 'location': '',
+                 'part-number': '', 'serial-number': ''}
+    items = ['name', 'description', 'version', 'part-number', 'serial-number']
+
+    location = "LOCATION"
+    # Gather chassis attribs
+    item_dict['hostname'] = hostname
+    item_dict['location'] = location
+    for item in items:
+        if dev_obj.findtext(item):
+            if item == 'name' and dev_obj.findtext(item) == 'CPU':
+                return False
+            else:
+                item_dict[item] = dev_obj.findtext(item).replace(',', '')
+
+    return item_dict
 
 # Adds device specific content to a template file
 def populate_template(record, template_file):

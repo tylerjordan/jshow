@@ -179,7 +179,7 @@ def oper_commands(my_ips):
                                 #com = dev.cli_to_rpc_string(command)
 
                                 try:
-                                    results = dev.cli(command + " | no-more")
+                                    results = dev.cli(command)
                                 except Exception as err:
                                     stdout.write("\n")
                                     screen_and_log("{0}: Error executing '{1}'. ERROR: {2}\n".format(ip, command, err), err_log)
@@ -263,12 +263,11 @@ def get_chassis_inventory(dev, hostname):
                                             item = collect_attribs(subsubsubmodule, hostname)
                                             if item:
                                                 inventory_listdict.append(item)
-
-
+    # Add the content to the inventory CSV
+    print "\t- Adding to CSV..."
     item_key = ['hostname', 'name', 'description', 'version', 'location', 'part-number', 'serial-number']
     inv_csv = os.path.join(csv_dir, "inventory.csv")
     listDictCSV(inventory_listdict, inv_csv, item_key)
-    print "\t- Added to CSV"
 
 # Collects the attributes from the object and returns a dictionary
 def collect_attribs(dev_obj, hostname):

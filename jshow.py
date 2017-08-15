@@ -19,6 +19,7 @@ import pprint
 from jnpr.junos import Device
 from jnpr.junos.utils.sw import SW
 from jnpr.junos.exception import *
+from ncclient.operations.errors import TimeoutExpiredError
 from utility import *
 from os.path import join
 from getpass import getpass
@@ -169,77 +170,42 @@ def oper_commands(my_ips):
                         if not hostname:
                             hostname = "Unknown"
                         got_output = False
-
-                        # Testing context
-                        root = dev.rpc.get_chassis_inventory()
-                        print " [#] Output [#]"
-                        inventory_listdict = []
-
-                        # Check to see if chassis exists
-                        if root.findtext('chassis'):
-                            # Gather chassis attribs
-                            for base in root.findall('chassis'):
-                                item = collect_attribs(base, hostname)
-                                if item:
-                                    inventory_listdict.append(item)
-                                # Gather module attribs
-                                if base.findtext('chassis-module'):
-                                    for module in base.findall('chassis-module'):
-                                        item = collect_attribs(module, hostname)
-                                        if item:
-                                            inventory_listdict.append(item)
-                                        # Gather attribs
-                                        if module.findtext('chassis-sub-module'):
-                                            for submodule in module.findall('chassis-sub-module'):
-                                                item = collect_attribs(submodule, hostname)
-                                                if item:
-                                                    inventory_listdict.append(item)
-                                                # Gather attribs
-                                                if submodule.findtext('chassis-sub-sub-module'):
-                                                    for subsubmodule in submodule.findall('chassis-sub-sub-module'):
-                                                        item = collect_attribs(subsubmodule, hostname)
-                                                        if item:
-                                                            inventory_listdict.append(item)
-                                                        # Gather attribs
-                                                        if subsubmodule.findtext('chassis-sub-sub-sub-module'):
-                                                            for subsubsubmodule in subsubmodule.findall('chassis-sub-sub-sub-module'):
-                                                                item = collect_attribs(subsubsubmodule, hostname)
-                                                                if item:
-                                                                    inventory_listdict.append(item)
-
-                        item_key = ['hostname', 'name', 'description', 'version', 'location', 'part-number', 'serial-number']
-                        inv_csv = os.path.join(csv_dir, "inventory.csv")
-                        listDictCSV(inventory_listdict, inv_csv, item_key)
-                        '''
-                        stdout.write(hostname + ": Executing commands ")
                         # Loop over the commands provided
-                        for command in command_list:
-                            command_output += "\n" + hostname + ": Executing -> {0}\n".format(command)
-                            #print "Command: {0}\nRPC: {1}\n".format(command, dev.cli_to_rpc_string(command))
-                            #com = dev.cli_to_rpc_string(command)
+                        if command_list:
+                            stdout.write(hostname + ": Executing commands ")
+                            for command in command_list:
+                                command_output += "\n" + hostname + ": Executing -> {0}\n".format(command)
+                                #print "Command: {0}\nRPC: {1}\n".format(command, dev.cli_to_rpc_string(command))
+                                #com = dev.cli_to_rpc_string(command)
 
-                            try:
-                                results = dev.cli(command + " | no-more")
-                            except Exception as err:
-                                stdout.write("\n")
-                                screen_and_log("{0}: Error executing '{1}'. ERROR: {2}\n".format(ip, command, err), err_log)
+                                try:
+                                    results = dev.cli(command + " | no-more")
+                                except Exception as err:
+                                    stdout.write("\n")
+                                    screen_and_log("{0}: Error executing '{1}'. ERROR: {2}\n".format(ip, command, err), err_log)
+                                    stdout.write("\n")
+                                else:
+                                    if results:
+                                        command_output += results
+                                        got_output = True
+                                    stdout.write(".")
+                                    stdout.flush()
+                            if got_output:
+                                devs_with_output.append(ip)
+                                screen_and_log(command_output, output_log)
                                 stdout.write("\n")
                             else:
-                                if results:
-                                    command_output += results
-                                    got_output = True
-                                stdout.write(".")
-                                stdout.flush()
-                        if got_output:
-                            devs_with_output.append(ip)
-                            screen_and_log(command_output, output_log)
-                            stdout.write("\n")
+                                devs_no_output.append(ip)
+                                stdout.write(" No Output!\n")
+                        # If no commands are provided, run the get_chassis_inventory on devices
                         else:
-                            devs_no_output.append(ip)
-                            stdout.write(" No Output!\n")
-                        '''
+                            get_chassis_inventory(dev, hostname)
                         # Close connection to device
-                        dev.close()
+                        try:
+                            dev.close()
+                        except TimeoutExpiredError as err:
+                            print "Error: {0}".format(err)
+                            break
                     else:
                         screen_and_log("{0}: Unable to connect\n".format(ip), err_log)
                         devs_unreachable.append(ip)
@@ -258,6 +224,51 @@ def oper_commands(my_ips):
             print "\n!!! Configuration deployment aborted... No changes made !!!\n"
     else:
         print "\n!! Configuration deployment aborted... No IPs defined !!!\n"
+
+# Grabs the devices chassis hardware info and places it in
+def get_chassis_inventory(dev, hostname):
+    # Testing context
+    root = dev.rpc.get_chassis_inventory()
+    print "\t- Gathering chassis hardware information..."
+    inventory_listdict = []
+
+    # Check to see if chassis exists
+    if root.findtext('chassis'):
+        # Gather chassis attribs
+        for base in root.findall('chassis'):
+            item = collect_attribs(base, hostname)
+            if item:
+                inventory_listdict.append(item)
+            # Gather module attribs
+            if base.findtext('chassis-module'):
+                for module in base.findall('chassis-module'):
+                    item = collect_attribs(module, hostname)
+                    if item:
+                        inventory_listdict.append(item)
+                    # Gather attribs
+                    if module.findtext('chassis-sub-module'):
+                        for submodule in module.findall('chassis-sub-module'):
+                            item = collect_attribs(submodule, hostname)
+                            if item:
+                                inventory_listdict.append(item)
+                            # Gather attribs
+                            if submodule.findtext('chassis-sub-sub-module'):
+                                for subsubmodule in submodule.findall('chassis-sub-sub-module'):
+                                    item = collect_attribs(subsubmodule, hostname)
+                                    if item:
+                                        inventory_listdict.append(item)
+                                    # Gather attribs
+                                    if subsubmodule.findtext('chassis-sub-sub-sub-module'):
+                                        for subsubsubmodule in subsubmodule.findall('chassis-sub-sub-sub-module'):
+                                            item = collect_attribs(subsubsubmodule, hostname)
+                                            if item:
+                                                inventory_listdict.append(item)
+
+
+    item_key = ['hostname', 'name', 'description', 'version', 'location', 'part-number', 'serial-number']
+    inv_csv = os.path.join(csv_dir, "inventory.csv")
+    listDictCSV(inventory_listdict, inv_csv, item_key)
+    print "\t- Added to CSV"
 
 # Collects the attributes from the object and returns a dictionary
 def collect_attribs(dev_obj, hostname):

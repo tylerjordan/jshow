@@ -423,6 +423,47 @@ def template_commands():
     else:
         print "Unable to find mandatory 'mgmt_ip' column in {0}. Please check the column headers.".format(csv_file)
 
+def push_commands():
+    dev_dict = {'IP': ip, 'HOSTNAME': 'Unknown', 'MODEL': 'Unknown', 'JUNOS': 'Unknown', 'CONNECTED': 'No',
+                'LOAD_SUCCESS': 'No', 'ERROR': 'None', 'dev_status': False, 'devs_accessed': False,
+                'devs_successful': False, 'devs_unreachable': False, 'devs_unsuccessful': False}
+    dev = connect(ip)
+    if dev:
+        devs_accessed.append(ip)
+        dev_dict['CONNECTED'] = 'Yes'
+        screen_and_log("Connected!\n", output_log)
+        # Get the hostname
+        hostname = dev.facts['hostname']
+        if not hostname:
+            hostname = "Unknown"
+        dev_dict['HOSTNAME'] = hostname
+        # Get the model number
+        dev_dict['MODEL'] = dev.facts['model']
+        # Get the version
+        dev_dict['JUNOS'] = dev.facts['version']
+        # Try to load the changes
+        results = load_with_pyez(command_fp, output_log, ip, hostname, username, password)
+        if results == "Completed":
+            devs_successful.append(ip)
+            dev_dict['LOAD_SUCCESS'] = 'Yes'
+        else:
+            screen_and_log("Moving to next device...\n", output_log)
+            devs_unsuccessful.append(ip)
+            dev_dict['LOAD_SUCCESS'] = 'No'
+            # Add brief error to CSV
+            brief_error = results.split(" - ERROR")[0]
+            dev_dict['ERROR'] = brief_error
+            # Add extensive error to "error" log
+            log_only(results, error_log)
+    else:
+        screen_and_log("Unable to Connect!\n", output_log)
+        screen_and_log("{0}: Unable to connect\n".format(ip), output_log)
+        devs_unreachable.append(ip)
+        dev_dict['CONNECTED'] = 'No'
+    dev_status.append(dev_dict)
+
+    return dev_dict
+
 # Function to push set commands to multiple devices
 def standard_commands(my_ips):
     print "*" * 50 + "\n" + " " * 10 + "SET COMMANDS\n" + "*" * 50
@@ -471,56 +512,34 @@ def standard_commands(my_ips):
                 screen_and_log(" -> {0}\n".format(line), output_log)
             screen_and_log("*" * 110 + "\n\n", output_log)
 
-            # Loop over all devices in the rack
+            # Define the attributes and show the start of the process
             screen_and_log(starHeading("START PROCESS", 110), output_log)
             dev_status = []
             devs_accessed = []
             devs_successful = []
             devs_unreachable = []
             devs_unsuccessful = []
+
+            # Loop over all devices in the rack
             loop = 0
             for ip in my_ips:
-                dev_dict = {'IP': ip, 'HOSTNAME': 'Unknown', 'MODEL': 'Unknown', 'JUNOS': 'Unknown', 'CONNECTED': 'No', 'LOAD_SUCCESS': 'No', 'ERROR': 'None'}
                 loop += 1
                 stdout.write("[{0} of {1}] - Connecting to {2} ... ".format(loop, len(my_ips), ip))
-                dev = connect(ip)
-                if dev:
-                    devs_accessed.append(ip)
-                    dev_dict['CONNECTED'] = 'Yes'
-                    screen_and_log("Connected!\n", output_log)
-                    # Get the hostname
-                    hostname = dev.facts['hostname']
-                    if not hostname:
-                        hostname = "Unknown"
-                    dev_dict['HOSTNAME'] = hostname
-                    # Get the model number
-                    model = dev.facts['model']
-                    dev_dict['MODEL'] = model
-                    # Get the version
-                    junos = dev.facts['version']
-                    dev_dict['JUNOS'] = junose
-                    # Try to load the changes
-                    results = load_with_pyez(command_fp, output_log, ip, hostname, username, password)
-                    if results == "Completed":
-                        devs_successful.append(ip)
-                        dev_dict['LOAD_SUCCESS'] = 'Yes'
-                    else:
-                        screen_and_log("Moving to next device...\n", output_log)
-                        devs_unsuccessful.append(ip)
-                        dev_dict['LOAD_SUCCESS'] = 'No'
-                        # Add brief error to CSV
-                        brief_error = results.split(" - ERROR")[0]
-                        dev_dict['ERROR'] = brief_error
-                        # Add extensive error to "error" log
-                        log_only(results, error_log)
-                else:
-                    screen_and_log("Unable to Connect!\n", output_log)
-                    screen_and_log("{0}: Unable to connect\n".format(ip), output_log)
-                    devs_unreachable.append(ip)
-                    dev_dict['CONNECTED'] = 'No'
-                dev_status.append(dev_dict)
+                results = push_commands(command_fp, ip)
                 screen_and_log("\n" + ("-" * 110) + "\n", output_log)
+                if results['dev_status']: dev_status.append(ip)
+                if results['devs_accessed']: devs_accessed.append(ip)
+                if results['devs_successful']: devs_successful.append(ip)
+                if results['devs_unreachable']: devs_unreachable.append(ip)
+                if results['devs_unsuccessful']: devs_unsuccessful.append(ip)
+
+                # Print to a CSV file
+                keys = ['HOSTNAME', 'IP', 'MODEL', 'JUNOS', 'CONNECTED', 'LOAD_SUCCESS', 'ERROR']
+                listDictCSV(results, summary_csv, keys)
+
+            # Display the end of the process
             screen_and_log(starHeading("END PROCESS", 110), output_log)
+
             # Results of commands
             screen_and_log(starHeading("PROCESS SUMMARY", 110), output_log)
             screen_and_log("Devices Accessed:       {0}\n".format(len(devs_accessed)), output_log)
@@ -529,18 +548,7 @@ def standard_commands(my_ips):
             screen_and_log("Devices Unsuccessful:   {0}\n".format(len(devs_unsuccessful)), output_log)
             screen_and_log("Total Devices:          {0}\n\n".format(len(my_ips)), output_log)
             screen_and_log(starHeading("", 110), output_log)
-            """
-            screen_and_log(starHeading("STATUS LISTDICT", 110), output_log)
-            t = PrettyTable(['HOSTNAME', 'IP', 'CONNECTED', 'LOAD_SUCCESS', 'ERROR'])
-            for record in dev_status:
-                t.add_row([record['HOSTNAME'], record['IP'], record['CONNECTED'], record['LOAD_SUCCESS'],
-                           record['ERROR']])
-            print t
-            screen_and_log(starHeading("", 110), output_log)
-            """
-            # Print to a CSV file
-            keys = ['HOSTNAME', 'IP', 'MODEL', 'JUNOS', 'CONNECTED', 'LOAD_SUCCESS', 'ERROR']
-            listDictCSV(dev_status, summary_csv, keys)
+
         else:
             print "\n!!! Configuration deployment aborted... No changes made !!!\n"
 

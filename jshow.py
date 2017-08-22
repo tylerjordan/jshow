@@ -423,7 +423,8 @@ def template_commands():
     else:
         print "Unable to find mandatory 'mgmt_ip' column in {0}. Please check the column headers.".format(csv_file)
 
-def push_commands():
+# Function actually pushing the commands to a device
+def push_commands(commands_fp, ip):
     dev_dict = {'IP': ip, 'HOSTNAME': 'Unknown', 'MODEL': 'Unknown', 'JUNOS': 'Unknown', 'CONNECTED': 'No',
                 'LOAD_SUCCESS': 'No', 'ERROR': 'None', 'dev_status': False, 'devs_accessed': False,
                 'devs_successful': False, 'devs_unreachable': False, 'devs_unsuccessful': False}
@@ -442,7 +443,7 @@ def push_commands():
         # Get the version
         dev_dict['JUNOS'] = dev.facts['version']
         # Try to load the changes
-        results = load_with_pyez(command_fp, output_log, ip, hostname, username, password)
+        results = load_with_pyez(commands_fp, output_log, ip, hostname, username, password)
         if results == "Completed":
             devs_successful.append(ip)
             dev_dict['LOAD_SUCCESS'] = 'Yes'
@@ -464,6 +465,59 @@ def push_commands():
 
     return dev_dict
 
+def deploy_config(commands_fp, my_ips):
+    now = datetime.datetime.now()
+    output_log = create_timestamped_log("set_output_", "log")
+    summary_csv = create_timestamped_log("summary_csv_", "csv")
+    error_log = create_timestamped_log("error_details_", "log")
+
+    # Print output header, for both screen and log outputs
+    screen_and_log(starHeading("OPERATIONAL COMMANDS OUTPUT", 110), output_log)
+    screen_and_log(('User: {0}\n').format(username), output_log)
+    screen_and_log(('Performed: {0}\n').format(get_now_time()), output_log)
+    screen_and_log(('Output Log: {0}\n').format(output_log), output_log)
+    screen_and_log(starHeading("COMMANDS TO EXECUTE", 110), output_log)
+    for line in command_list:
+        screen_and_log(" -> {0}\n".format(line), output_log)
+    screen_and_log("*" * 110 + "\n\n", output_log)
+
+    # Define the attributes and show the start of the process
+    screen_and_log(starHeading("START PROCESS", 110), output_log)
+    dev_status = []
+    devs_accessed = []
+    devs_successful = []
+    devs_unreachable = []
+    devs_unsuccessful = []
+
+    # Loop over all devices in my_ips list
+    loop = 0
+    for ip in my_ips:
+        loop += 1
+        stdout.write("[{0} of {1}] - Connecting to {2} ... ".format(loop, len(my_ips), ip))
+        results = push_commands(commands_fp, ip)
+        screen_and_log("\n" + ("-" * 110) + "\n", output_log)
+        if results['dev_status']: dev_status.append(ip)
+        if results['devs_accessed']: devs_accessed.append(ip)
+        if results['devs_successful']: devs_successful.append(ip)
+        if results['devs_unreachable']: devs_unreachable.append(ip)
+        if results['devs_unsuccessful']: devs_unsuccessful.append(ip)
+
+        # Print to a CSV file
+        keys = ['HOSTNAME', 'IP', 'MODEL', 'JUNOS', 'CONNECTED', 'LOAD_SUCCESS', 'ERROR']
+        listDictCSV(results, summary_csv, keys)
+
+    # Display the end of the process
+    screen_and_log(starHeading("END PROCESS", 110), output_log)
+
+    # Results of commands
+    screen_and_log(starHeading("PROCESS SUMMARY", 110), output_log)
+    screen_and_log("Devices Accessed:       {0}\n".format(len(devs_accessed)), output_log)
+    screen_and_log("Devices Successful:     {0}\n".format(len(devs_successful)), output_log)
+    screen_and_log("Devices Unreachable:    {0}\n".format(len(devs_unreachable)), output_log)
+    screen_and_log("Devices Unsuccessful:   {0}\n".format(len(devs_unsuccessful)), output_log)
+    screen_and_log("Total Devices:          {0}\n\n".format(len(my_ips)), output_log)
+    screen_and_log(starHeading("", 110), output_log)
+
 # Function to push set commands to multiple devices
 def standard_commands(my_ips):
     print "*" * 50 + "\n" + " " * 10 + "SET COMMANDS\n" + "*" * 50
@@ -472,19 +526,19 @@ def standard_commands(my_ips):
         my_ips = chooseDevices(iplist_dir)
     if my_ips:
         set_file = ""
-        command_fp = ""
+        commands_fp = ""
         command_list = []
         if not getTFAnswer('\nProvide commands from a file'):
             command_list = getMultiInputAnswer("Enter a set command")
             if list_to_txt(temp_conf, command_list):
-                command_fp = temp_conf
+                commands_fp = temp_conf
         else:
             filelist = getFileList(config_dir)
             # If the files exist...
             if filelist:
                 set_config = getOptionAnswer("Choose a config file", filelist)
-                command_fp = config_dir + set_config
-                command_list = txt_to_list(command_fp)
+                commands_fp = config_dir + set_config
+                command_list = txt_to_list(commands_fp)
 
         # Print the set commands that will be pushed
         print "\n" + " " * 10 + "Set Commands Entered"
@@ -496,59 +550,8 @@ def standard_commands(my_ips):
 
         # Verify that user wants to continue with this deployment
         if getTFAnswer("Continue with set commands deployment?"):
-            # Create log file for operation
-            now = datetime.datetime.now()
-            output_log = create_timestamped_log("set_output_", "log")
-            summary_csv = create_timestamped_log("summary_csv_", "csv")
-            error_log = create_timestamped_log("error_details_", "log")
-
-            # Print output header, for both screen and log outputs
-            screen_and_log(starHeading("OPERATIONAL COMMANDS OUTPUT", 110), output_log)
-            screen_and_log(('User: {0}\n').format(username), output_log)
-            screen_and_log(('Performed: {0}\n').format(get_now_time()), output_log)
-            screen_and_log(('Output Log: {0}\n').format(output_log), output_log)
-            screen_and_log(starHeading("COMMANDS TO EXECUTE", 110), output_log)
-            for line in command_list:
-                screen_and_log(" -> {0}\n".format(line), output_log)
-            screen_and_log("*" * 110 + "\n\n", output_log)
-
-            # Define the attributes and show the start of the process
-            screen_and_log(starHeading("START PROCESS", 110), output_log)
-            dev_status = []
-            devs_accessed = []
-            devs_successful = []
-            devs_unreachable = []
-            devs_unsuccessful = []
-
-            # Loop over all devices in the rack
-            loop = 0
-            for ip in my_ips:
-                loop += 1
-                stdout.write("[{0} of {1}] - Connecting to {2} ... ".format(loop, len(my_ips), ip))
-                results = push_commands(command_fp, ip)
-                screen_and_log("\n" + ("-" * 110) + "\n", output_log)
-                if results['dev_status']: dev_status.append(ip)
-                if results['devs_accessed']: devs_accessed.append(ip)
-                if results['devs_successful']: devs_successful.append(ip)
-                if results['devs_unreachable']: devs_unreachable.append(ip)
-                if results['devs_unsuccessful']: devs_unsuccessful.append(ip)
-
-                # Print to a CSV file
-                keys = ['HOSTNAME', 'IP', 'MODEL', 'JUNOS', 'CONNECTED', 'LOAD_SUCCESS', 'ERROR']
-                listDictCSV(results, summary_csv, keys)
-
-            # Display the end of the process
-            screen_and_log(starHeading("END PROCESS", 110), output_log)
-
-            # Results of commands
-            screen_and_log(starHeading("PROCESS SUMMARY", 110), output_log)
-            screen_and_log("Devices Accessed:       {0}\n".format(len(devs_accessed)), output_log)
-            screen_and_log("Devices Successful:     {0}\n".format(len(devs_successful)), output_log)
-            screen_and_log("Devices Unreachable:    {0}\n".format(len(devs_unreachable)), output_log)
-            screen_and_log("Devices Unsuccessful:   {0}\n".format(len(devs_unsuccessful)), output_log)
-            screen_and_log("Total Devices:          {0}\n\n".format(len(my_ips)), output_log)
-            screen_and_log(starHeading("", 110), output_log)
-
+            # Deploy commands to list of ips
+            deploy_config(commands_fp, my_ips)
         else:
             print "\n!!! Configuration deployment aborted... No changes made !!!\n"
 

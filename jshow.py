@@ -423,7 +423,7 @@ def template_commands():
     else:
         print "Unable to find mandatory 'mgmt_ip' column in {0}. Please check the column headers.".format(csv_file)
 
-# Function actually pushing the commands to a device
+# Function for pushing the commands to a device
 def push_commands(commands_fp, ip):
     dev_dict = {'IP': ip, 'HOSTNAME': 'Unknown', 'MODEL': 'Unknown', 'JUNOS': 'Unknown', 'CONNECTED': 'No',
                 'LOAD_SUCCESS': 'No', 'ERROR': 'None', 'dev_status': False, 'devs_accessed': False,
@@ -465,6 +465,7 @@ def push_commands(commands_fp, ip):
 
     return dev_dict
 
+# Function to capture all logging and stats
 def deploy_config(commands_fp, my_ips):
     now = datetime.datetime.now()
     output_log = create_timestamped_log("set_output_", "log")

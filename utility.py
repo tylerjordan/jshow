@@ -314,10 +314,35 @@ def listDictCSV(myListDict, filePathName, keys):
 
         for part in myListDict:
             for bkey in keys[:-1]:
-                #print "Key: " + bkey + "  Value: " + str(part[bkey])
+                #print "BKey: " + bkey + "  Value: " + part[bkey]
                 f.write(str(part[bkey]) + ",")
             f.write(str(part[keys[-1]]))
             f.write("\n")
+        f.close()
+        print "\nCompleted appending to CSV."
+
+# Adds a dictionary to a CSV file
+def dictCSV(myDict, filePathName, keys):
+    addKeys = True
+    if (os.path.isfile(filePathName)):
+        addKeys = False
+    try:
+        f = open(filePathName, 'a')
+    except Exception as err:
+        print "Failure opening file in append mode - ERROR: {0}".format(err)
+        print "Be sure {0} isn't open in another program.".format(filePathName)
+    else:
+        if addKeys:
+            #Write all the headings in the CSV
+            for akey in keys[:-1]:							# Runs for every element, except the last
+                f.write(akey + ",")							# Writes most elements
+            f.write(keys[-1])								# Writes last element
+            f.write("\n")
+
+        for key in keys[:-1]:
+            f.write(str(myDict[key]) + ",")
+        f.write(str([keys[-1]]))
+        f.write("\n")
         f.close()
         print "\nCompleted appending to CSV."
 

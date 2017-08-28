@@ -341,7 +341,7 @@ def dictCSV(myDict, filePathName, keys):
 
         for key in keys[:-1]:
             f.write(str(myDict[key]) + ",")
-        f.write(str([keys[-1]]))
+        f.write(str(myDict[keys[-1]]))
         f.write("\n")
         f.close()
         print "\nCompleted appending to CSV."

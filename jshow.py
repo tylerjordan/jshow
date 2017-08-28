@@ -316,7 +316,7 @@ def populate_template(record, template_file):
 # Function actually pushing the commands to a device
 def push_commands(commands_fp, output_log, ip):
     dev_dict = {'IP': ip, 'HOSTNAME': 'Unknown', 'MODEL': 'Unknown', 'JUNOS': 'Unknown', 'CONNECTED': 'No',
-                'LOAD_SUCCESS': 'No', 'ERROR': 'None', 'devs_accessed': False, 'devs_successful': False,
+                'LOAD_SUCCESS': 'No', 'ERROR': 'No', 'devs_accessed': False, 'devs_successful': False,
                 'devs_unreachable': False, 'devs_unsuccessful': False}
     dev = connect(ip)
     if dev:
@@ -344,8 +344,6 @@ def push_commands(commands_fp, output_log, ip):
             # Add brief error to CSV
             brief_error = results.split(" - ERROR")[0]
             dev_dict['ERROR'] = brief_error
-            # Add extensive error to "error" log
-            log_only(results, error_log)
     else:
         screen_and_log("Unable to Connect!\n", output_log)
         screen_and_log("{0}: Unable to connect\n".format(ip), output_log)
@@ -359,7 +357,6 @@ def deploy_config(commands_fp, command_list, my_ips):
     now = datetime.datetime.now()
     output_log = create_timestamped_log("set_output_", "log")
     summary_csv = create_timestamped_log("summary_csv_", "csv")
-    error_log = create_timestamped_log("error_details_", "log")
 
     # Print output header, for both screen and log outputs
     screen_and_log(starHeading("DEPLOY COMMANDS LOG", 110), output_log)
@@ -517,7 +514,6 @@ def template_commands():
             print "\n!!! Configuration deployment aborted... No changes made !!!\n"
     else:
         print "Unable to find mandatory 'mgmt_ip' column in {0}. Please check the column headers.".format(csv_file)
-
 
 # Function to push set commands to multiple devices
 def standard_commands(my_ips):

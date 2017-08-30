@@ -311,7 +311,9 @@ def populate_template(record, template_file):
                 #else:
                     #print("Standard Command: {0}").format(command)
             new_command_list.append(command)
-    return new_command_list
+    # Convert list to a file
+    commands_file = list_to_txt(temp_conf, new_command_list)
+    return command_file
 
 # Function actually pushing the commands to a device
 def push_commands(commands_fp, output_log, ip):
@@ -352,28 +354,88 @@ def push_commands(commands_fp, output_log, ip):
 
     return dev_dict
 
+
+# Function to push set commands to multiple devices
+def standard_commands(my_ips):
+    print "*" * 50 + "\n" + " " * 10 + "SET COMMANDS\n" + "*" * 50
+    # Provide option for using a file to supply configuration commands
+    if not my_ips:
+        my_ips = chooseDevices(iplist_dir)
+    if my_ips:
+        set_file = ""
+        commands_fp = ""
+        command_list = []
+        if not getTFAnswer('\nProvide commands from a file'):
+            command_list = getMultiInputAnswer("Enter a set command")
+            if list_to_txt(temp_conf, command_list):
+                commands_fp = temp_conf
+        else:
+            filelist = getFileList(config_dir)
+            # If the files exist...
+            if filelist:
+                set_config = getOptionAnswer("Choose a config file", filelist)
+                commands_fp = config_dir + set_config
+                command_list = txt_to_list(commands_fp)
+
+        # Print the set commands that will be pushed
+        print "\n" + " " * 10 + "Set Commands Entered"
+        print "-" * 50
+        if command_list:
+            for one_comm in command_list:
+                print " -> {0}".format(one_comm)
+        print "-" * 50 + "\n"
+
+        # Verify that user wants to continue with this deployment
+        if getTFAnswer("Continue with set commands deployment?"):
+            # ---------- STARTING LOGGING ------------
+            # Start Logging and other stuff
+            now = datetime.datetime.now()
+            output_log = create_timestamped_log("set_output_", "log")
+            summary_csv = create_timestamped_log("summary_csv_", "csv")
+
+            # Print output header, for both screen and log outputs
+            screen_and_log(starHeading("DEPLOY COMMANDS LOG", 110), output_log)
+            screen_and_log(('User: {0}\n').format(username), output_log)
+            screen_and_log(('Performed: {0}\n').format(get_now_time()), output_log)
+            screen_and_log(('Output Log: {0}\n').format(output_log), output_log)
+
+            # Print the commands that will be executed
+            screen_and_log(starHeading("COMMANDS TO EXECUTE", 110), output_log)
+            for line in command_list:
+                screen_and_log(" -> {0}\n".format(line), output_log)
+            screen_and_log("*" * 110 + "\n\n", output_log)
+
+            # Define the attributes and show the start of the process
+            screen_and_log(starHeading("START PROCESS", 110), output_log)
+
+            # ---------- MAIN EXECUTION ----------
+            # Deploy commands to list of ips
+            results = deploy_config(commands_fp, command_list, my_ips)
+
+            # ---------- ENDING LOGGING -----------
+            # Display the end of the process
+            screen_and_log(starHeading("END PROCESS", 110), output_log)
+
+            # Results of commands
+            screen_and_log(starHeading("PROCESS SUMMARY", 110), output_log)
+            screen_and_log("Devices Accessed:       {0}\n".format(len(results['devs_accessed'])), output_log)
+            screen_and_log("Devices Successful:     {0}\n".format(len(results['devs_successful'])), output_log)
+            screen_and_log("Devices Unreachable:    {0}\n".format(len(results['devs_unreachable'])), output_log)
+            screen_and_log("Devices Unsuccessful:   {0}\n".format(len(results['devs_unsuccessful'])), output_log)
+            screen_and_log("Total Devices:          {0}\n\n".format(len(my_ips)), output_log)
+            screen_and_log(starHeading("", 110), output_log)
+        else:
+            print "\n!!! Configuration deployment aborted... No changes made !!!\n"
+
 # Function for capturing output and initiaing push function
-def deploy_config(commands_fp, command_list, my_ips):
-    now = datetime.datetime.now()
-    output_log = create_timestamped_log("set_output_", "log")
-    summary_csv = create_timestamped_log("summary_csv_", "csv")
-
-    # Print output header, for both screen and log outputs
-    screen_and_log(starHeading("DEPLOY COMMANDS LOG", 110), output_log)
-    screen_and_log(('User: {0}\n').format(username), output_log)
-    screen_and_log(('Performed: {0}\n').format(get_now_time()), output_log)
-    screen_and_log(('Output Log: {0}\n').format(output_log), output_log)
-    screen_and_log(starHeading("COMMANDS TO EXECUTE", 110), output_log)
-    for line in command_list:
-        screen_and_log(" -> {0}\n".format(line), output_log)
-    screen_and_log("*" * 110 + "\n\n", output_log)
-
-    # Define the attributes and show the start of the process
-    screen_and_log(starHeading("START PROCESS", 110), output_log)
+def deploy_config(commands_fp, my_ips, output_log):
+    # Lists
     devs_accessed = []
     devs_successful = []
     devs_unreachable = []
     devs_unsuccessful = []
+    dict_of_lists = {'devs_accessed': [], 'devs_successful': [], 'devs_unreachable': [],
+                     'devs_unsuccessful': []}
 
     # Loop over all devices in my_ips list
     loop = 0
@@ -391,17 +453,15 @@ def deploy_config(commands_fp, command_list, my_ips):
         keys = ['HOSTNAME', 'IP', 'MODEL', 'JUNOS', 'CONNECTED', 'LOAD_SUCCESS', 'ERROR']
         dictCSV(results, summary_csv, keys)
 
-    # Display the end of the process
-    screen_and_log(starHeading("END PROCESS", 110), output_log)
+    # Populate dict with lists
+    dict_of_lists['devs_accessed'] = devs_accessed
+    dict_of_lists['devs_successful'] = devs_successful
+    dict_of_lists['devs_unreachable'] = devs_unreachable
+    dict_of_lists['devs_unsuccessful'] = devs_unsuccessful
 
-    # Results of commands
-    screen_and_log(starHeading("PROCESS SUMMARY", 110), output_log)
-    screen_and_log("Devices Accessed:       {0}\n".format(len(devs_accessed)), output_log)
-    screen_and_log("Devices Successful:     {0}\n".format(len(devs_successful)), output_log)
-    screen_and_log("Devices Unreachable:    {0}\n".format(len(devs_unreachable)), output_log)
-    screen_and_log("Devices Unsuccessful:   {0}\n".format(len(devs_unsuccessful)), output_log)
-    screen_and_log("Total Devices:          {0}\n\n".format(len(my_ips)), output_log)
-    screen_and_log(starHeading("", 110), output_log)
+    return dict_of_lists
+
+
 
 # Template function for bulk set command deployment
 def template_commands():
@@ -450,107 +510,79 @@ def template_commands():
         print "Total IPs: {0}".format(len(list_dict))
 
         if getTFAnswer("Continue with template deployment?"):
-            # Create log file for operation
+            # ---------- STARTING LOGGING ------------
+            # Start Logging and other stuff
             now = datetime.datetime.now()
-            output_log = log_dir + "temp_cmd_" + now.strftime("%Y%m%d-%H%M") + ".log"
-            print('\nInformation logged in {0}'.format(output_log))
+            output_log = create_timestamped_log("set_output_", "log")
+            summary_csv = create_timestamped_log("summary_csv_", "csv")
 
             # Print output header, for both screen and log outputs
-            screen_and_log("*" * 110 + "\n" + " " * 40 + "TEMPLATE COMMANDS OUTPUT\n" + "*" * 110 + "\n", output_log)
+            screen_and_log(starHeading("DEPLOY COMMANDS LOG", 110), output_log)
             screen_and_log(('User: {0}\n').format(username), output_log)
-            screen_and_log(('Performed: {0}\n').format(now), output_log)
-            screen_and_log('*' * 110 + '\n' + " " * 40 + "COMMANDS TO EXECUTE\n" + "*" * 110 + '\n', output_log)
-            for line in txt_to_list(template_file):
+            screen_and_log(('Performed: {0}\n').format(get_now_time()), output_log)
+            screen_and_log(('Output Log: {0}\n').format(output_log), output_log)
+
+            # Print the unpopulated template file to be used to create the configs
+            screen_and_log(starHeading("COMMANDS TO EXECUTE", 110), output_log)
+            command_list = txt_to_list(template_file)
+            for line in command_list:
                 screen_and_log(" -> {0}\n".format(line), output_log)
             screen_and_log("*" * 110 + "\n\n", output_log)
 
-            # Try to load configurations onto defined devices
-            screen_and_log("-" * 49 + " START LOAD " + "-" * 49 + '\n', output_log)
-            devs_accessed = 0
-            devs_unreachable = 0
-            loop = 0
-            for record in list_dict:
-                loop += 1
-                ip = record['mgmt_ip']
-                if ping(ip):
-                    devs_accessed += 1
-                    hostname = get_fact(ip, username, password, "hostname")
-                    if not hostname:
-                        hostname = "Unknown"
-                    screen_and_log('*' * 110 + '\n', output_log)
-                    screen_and_log(' ' * 30 + '[{0} at {1}]'.format(hostname, ip), output_log)
-                    screen_and_log(' ({0} of {1})\n'.format(loop, len(list_dict)), output_log)
-                    screen_and_log('*' * 110 + '\n', output_log)
-                    screen_and_log("-" * 50 + " COMMANDS " + "-" * 50 + '\n', output_log)
-                    try:
-                        command_list = populate_template(record, template_file)
-                        exit(0)
-                    except Exception as err:
-                        print "Issues with populating the template. ERROR: {0}".format(err)
-                        break
-                    for command in command_list:
-                        screen_and_log((" -> {0}\n".format(command)), output_log)
-                    screen_and_log("-" * 110 + '\n', output_log)
-                    try:
-                        screen_and_log("-" * 50 + " EXECUTE " + "-" * 51 + '\n\n', output_log)
-                        set_command(ip, username, password, ssh_port, output_log, command_list)
-                        screen_and_log("\n" + ("-" * 110) + '\n\n', output_log)
-                    except Exception as err:
-                        print "Problem changing configuration. ERROR: {0}".format(err)
-                else:
-                    devs_unreachable += 1
-                    screen_and_log("-" * 110 + '\n', output_log)
-                    screen_and_log("Unable to ping {0}, skipping. ({1} of {2})\n".format(ip, str(loop), len(list_dict)), output_log)
-                    screen_and_log("-" * 110 + '\n\n', output_log)
+            # Define the attributes and show the start of the process
+            screen_and_log(starHeading("START PROCESS", 110), output_log)
 
-            screen_and_log("-" * 50 + " END LOAD " + "-" * 50 + '\n\n', output_log)
+            # Deploy commands to list of ips
+            results = deploy_template_config(template_file, list_dict)
+
+            # Display the end of the process
+            screen_and_log(starHeading("END PROCESS", 110), output_log)
+
             # Results of commands
-            screen_and_log("*" * 32 + " Process Summary " + "*" * 31 + '\n\n', output_log)
-            screen_and_log("Devices Accessed:    {0}\n".format(devs_accessed), output_log)
-            screen_and_log("Devices Unreachable: {0}\n".format(devs_unreachable), output_log)
-            screen_and_log("Total Devices:       {0}\n\n".format(loop), output_log)
-            screen_and_log('*' * 80 + '\n\n', output_log)
+            screen_and_log(starHeading("PROCESS SUMMARY", 110), output_log)
+            screen_and_log("Devices Accessed:       {0}\n".format(len(results['devs_accessed'])), output_log)
+            screen_and_log("Devices Successful:     {0}\n".format(len(results['devs_successful'])), output_log)
+            screen_and_log("Devices Unreachable:    {0}\n".format(len(results['devs_unreachable'])), output_log)
+            screen_and_log("Devices Unsuccessful:   {0}\n".format(len(results['devs_unsuccessful'])), output_log)
+            screen_and_log("Total Devices:          {0}\n\n".format(len(list_dict)), output_log)
+            screen_and_log(starHeading("", 110), output_log)
         else:
             print "\n!!! Configuration deployment aborted... No changes made !!!\n"
     else:
         print "Unable to find mandatory 'mgmt_ip' column in {0}. Please check the column headers.".format(csv_file)
 
-# Function to push set commands to multiple devices
-def standard_commands(my_ips):
-    print "*" * 50 + "\n" + " " * 10 + "SET COMMANDS\n" + "*" * 50
-    # Provide option for using a file to supply configuration commands
-    if not my_ips:
-        my_ips = chooseDevices(iplist_dir)
-    if my_ips:
-        set_file = ""
-        commands_fp = ""
-        command_list = []
-        if not getTFAnswer('\nProvide commands from a file'):
-            command_list = getMultiInputAnswer("Enter a set command")
-            if list_to_txt(temp_conf, command_list):
-                commands_fp = temp_conf
-        else:
-            filelist = getFileList(config_dir)
-            # If the files exist...
-            if filelist:
-                set_config = getOptionAnswer("Choose a config file", filelist)
-                commands_fp = config_dir + set_config
-                command_list = txt_to_list(commands_fp)
+# Function for capturing output and initiaing push function
+def deploy_template_config(template_file, list_dict):
+    devs_accessed = []
+    devs_successful = []
+    devs_unreachable = []
+    devs_unsuccessful = []
+    dict_of_lists = {'devs_accessed': [], 'devs_successful': [], 'devs_unreachable': [], 'devs_unsuccessful': []}
 
-        # Print the set commands that will be pushed
-        print "\n" + " " * 10 + "Set Commands Entered"
-        print "-" * 50
-        if command_list:
-            for one_comm in command_list:
-                print " -> {0}".format(one_comm)
-        print "-" * 50 + "\n"
+    # Loop over all devices in list of dictionaries
+    loop = 0
+    for device in list_dict:
+        loop += 1
+        stdout.write("[{0} of {1}] - Connecting to {2} ... ".format(loop, len(list_dict), device['mgmt_ip']))
+        results = push_commands(populate_template(record, template_file), output_log, device['mgmt_ip'])
+        screen_and_log("\n" + ("-" * 110) + "\n", output_log)
+        if results['devs_accessed']: devs_accessed.append(device['mgmt_ip'])
+        if results['devs_successful']: devs_successful.append(device['mgmt_ip'])
+        if results['devs_unreachable']: devs_unreachable.append(device['mgmt_ip'])
+        if results['devs_unsuccessful']: devs_unsuccessful.append(device['mgmt_ip'])
 
-        # Verify that user wants to continue with this deployment
-        if getTFAnswer("Continue with set commands deployment?"):
-            # Deploy commands to list of ips
-            deploy_config(commands_fp, command_list, my_ips)
-        else:
-            print "\n!!! Configuration deployment aborted... No changes made !!!\n"
+        # Print to a CSV file
+        keys = ['HOSTNAME', 'IP', 'MODEL', 'JUNOS', 'CONNECTED', 'LOAD_SUCCESS', 'ERROR']
+        dictCSV(results, summary_csv, keys)
+
+    # Populate dict with lists
+    dict_of_lists['devs_accessed'] = devs_accessed
+    dict_of_lists['devs_successful'] = devs_successful
+    dict_of_lists['devs_unreachable'] = devs_unreachable
+    dict_of_lists['devs_unsuccessful'] = devs_unsuccessful
+
+    return dict_of_lists
+
 
 # Function to exit program
 def quit():

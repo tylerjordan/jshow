@@ -737,6 +737,7 @@ def txt_to_list(txt_file):
 def list_to_txt(dest_file, src_list):
     text_config = ""
     try:
+        # Overwrites an existing file, if there is one
         with open(dest_file, 'w') as text_config:
             for line in src_list:
                 text_config.write("{0}\n".format(line))

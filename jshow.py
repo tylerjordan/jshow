@@ -354,7 +354,6 @@ def push_commands(commands_fp, output_log, ip):
 
     return dev_dict
 
-
 # Function to push set commands to multiple devices
 def standard_commands(my_ips):
     print "*" * 50 + "\n" + " " * 10 + "SET COMMANDS\n" + "*" * 50

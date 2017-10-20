@@ -175,11 +175,12 @@ def oper_commands(my_ips):
                             stdout.write(hostname + ": Executing commands ")
                             for command in command_list:
                                 command_output += "\n" + hostname + ": Executing -> {0}\n".format(command)
-                                #print "Command: {0}\nRPC: {1}\n".format(command, dev.cli_to_rpc_string(command))
-                                #com = dev.cli_to_rpc_string(command)
 
+                                com = dev.cli_to_rpc_string(command)
+                                print "Command: {0}\nRPC: {1}\n".format(command, com)
+                                #if com is None:
                                 try:
-                                    results = dev.cli(command)
+                                    results = dev.cli(command, warning=False)
                                 except Exception as err:
                                     stdout.write("\n")
                                     screen_and_log("{0}: Error executing '{1}'. ERROR: {2}\n".format(ip, command, err), err_log)
@@ -190,6 +191,21 @@ def oper_commands(my_ips):
                                         got_output = True
                                     stdout.write(".")
                                     stdout.flush()
+                                """
+                                else:
+                                    try:
+                                        results = dev.rpc.com({'format': 'text'})
+                                    except Exception as err:
+                                        stdout.write("\n")
+                                        screen_and_log("{0}: Error executing '{1}'. ERROR: {2}\n".format(ip, command, err), err_log)
+                                        stdout.write("\n")
+                                    else:
+                                        if results:
+                                            command_output += results
+                                            got_output = True
+                                        stdout.write(".")
+                                        stdout.flush()
+                                """
                             if got_output:
                                 devs_with_output.append(ip)
                                 screen_and_log(command_output, output_log)

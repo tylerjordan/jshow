@@ -175,9 +175,8 @@ def oper_commands(my_ips):
                             stdout.write(hostname + ": Executing commands ")
                             for command in command_list:
                                 command_output += "\n" + hostname + ": Executing -> {0}\n".format(command)
-
-                                com = dev.cli_to_rpc_string(command)
-                                print "Command: {0}\nRPC: {1}\n".format(command, com)
+                                #com = dev.cli_to_rpc_string(command)
+                                #print "Command: {0}\nRPC: {1}\n".format(command, com)
                                 #if com is None:
                                 try:
                                     results = dev.cli(command, warning=False)
@@ -191,21 +190,6 @@ def oper_commands(my_ips):
                                         got_output = True
                                     stdout.write(".")
                                     stdout.flush()
-                                """
-                                else:
-                                    try:
-                                        results = dev.rpc.com({'format': 'text'})
-                                    except Exception as err:
-                                        stdout.write("\n")
-                                        screen_and_log("{0}: Error executing '{1}'. ERROR: {2}\n".format(ip, command, err), err_log)
-                                        stdout.write("\n")
-                                    else:
-                                        if results:
-                                            command_output += results
-                                            got_output = True
-                                        stdout.write(".")
-                                        stdout.flush()
-                                """
                             if got_output:
                                 devs_with_output.append(ip)
                                 screen_and_log(command_output, output_log)
@@ -476,8 +460,6 @@ def deploy_config(commands_fp, my_ips, output_log):
 
     return dict_of_lists
 
-
-
 # Template function for bulk set command deployment
 def template_commands():
     print "*" * 50 + "\n" + " " * 10 + "TEMPLATE COMMANDS\n" + "*" * 50
@@ -597,7 +579,6 @@ def deploy_template_config(template_file, list_dict):
     dict_of_lists['devs_unsuccessful'] = devs_unsuccessful
 
     return dict_of_lists
-
 
 # Function to exit program
 def quit():

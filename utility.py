@@ -346,7 +346,7 @@ def dictCSV(myDict, filePathName, keys):
         f.close()
         print "\nCompleted appending to CSV."
 
-# Converts CSV file to listDict
+# Converts CSV file to listDict. First line is considered column headers.
 def csvListDict(fileName):
     myListDict = []
     try:

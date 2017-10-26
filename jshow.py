@@ -1,12 +1,12 @@
 # Author: Tyler Jordan
 # File: jshow.py
-# Last Modified: 2/2/2017
 # Description: The purpose of this script is to execute commands on multiple Juniper devices. The script works in
 # Windows, Linux, and Mac enviroments. This script can do bulk configuration pushes by using a CSV. When using the
 # template feature, it is possible to push unique configurations to devices.
 #   - execute operational commands on one or more Juniper devices
 #   - execute edit commands on one or more Juniper devices
 #   - execute a dynamic template on one or more Juniper devices
+#   - upgrade one or more Juniper devices
 
 import platform
 import subprocess
@@ -28,6 +28,7 @@ from Spinner import *
 from sys import stdout
 from lxml import etree
 
+# Global Variables
 credsCSV = ""
 username = ""
 password = ""
@@ -37,11 +38,14 @@ iplist_dir = ""
 log_dir = ""
 config_dir = ""
 csv_dir = ""
+upgrade_dir = ""
+images_dir = ""
 
 system_slash = "/"   # This is the linux/mac slash format, windows format will be used in that case
 
 remote_path = "/var/tmp"
 
+# Function to determine running enviornment (Windows/Linux/Mac) and use correct path syntax
 def detect_env():
     """ Purpose: Detect OS and create appropriate path variables. """
     global credsCSV
@@ -61,6 +65,8 @@ def detect_env():
         config_dir = ".\\configs\\"
         log_dir = ".\\logs\\"
         csv_dir = ".\\csv\\"
+        upgrade_dir = ".\\upgrade\\"
+        images_dir = ".\\images\\"
         system_slash = "\\"
     else:
         #print "Environment Linux/MAC!"
@@ -68,10 +74,13 @@ def detect_env():
         config_dir = "./configs/"
         log_dir = "./logs/"
         csv_dir = "./csv/"
+        upgrade_dir = "./upgrade/"
+        images_dir = "./images/"
 
     credsCSV = os.path.join(dir_path, "pass.csv")
     temp_conf = os.path.join(dir_path, config_dir, "temp.conf")
 
+# Handles arguments provided at the command line
 def getargs(argv):
     # Interprets and handles the command line arguments
     try:
@@ -86,6 +95,7 @@ def getargs(argv):
         elif opt in ("-u", "--user"):
             return arg
 
+# A function to open a connection to devices and capture any exceptions
 def connect(ip):
     """ Purpose: Attempt to connect to the device
 
@@ -590,6 +600,28 @@ def create_timestamped_log(prefix, extension):
     now = datetime.datetime.now()
     return log_dir + prefix + now.strftime("%Y%m%d-%H%M") + "." + extension
 
+# Create an upgrade dictionary
+def load_upgrade_dict():
+    upgrade_listdict = []
+
+    # Ask user how to select devices for upgrade (file or manually)
+    my_options = ['Use a CSV file', 'Enter IPs Individually']
+    while True:
+        print "*" * 50 + "\n" + " " * 10 + "JSHOW: UPGRADE JUNIPERS\n" + "*" * 50
+        answer = getOptionAnswerIndex('Make a Selection', my_options)
+        # Option for providing information from a file
+        if answer == "1":
+            filelist = getFileList(upgrade_dir)
+            # If the files exist...
+            if filelist:
+                selected_file = getOptionAnswer("Choose a CSV file", filelist)
+                selected_csv_fp = upgrade_dir + selected_file
+                upgrade_listdict = csvListDict(selected_csv_fp)
+        # Option for manually providing the information
+        elif answer == "2":
+            # Ask for an IP address
+            answer = getInputAnswer(question="Enter an IPv4 Address")
+
 # Main execution loop
 if __name__ == "__main__":
     # Detect the platform type
@@ -600,13 +632,13 @@ if __name__ == "__main__":
     password = getpass(prompt="\nEnter your password: ")
 
     # Define menu options
-    my_options = ['Execute Operational Commands', 'Execute Set Commands', 'Execute Template Commands', 'Quit']
+    my_options = ['Execute Operational Commands', 'Execute Set Commands', 'Execute Template Commands', 'Upgrade Junipers', 'Quit']
     my_ips = []
 
     # Get menu selection
     while True:
         stdout.write("\n\n")
-        print "*" * 50 + "\n" + " " * 10 + "JSHOW MAIN MENU\n" + "*" * 50
+        print "*" * 50 + "\n" + " " * 10 + "JSHOW: MAIN MENU\n" + "*" * 50
         answer = getOptionAnswerIndex('Make a Selection', my_options)
         if answer == "1":
             oper_commands(my_ips)
@@ -615,4 +647,6 @@ if __name__ == "__main__":
         elif answer == "3":
             template_commands()
         elif answer == "4":
+            load_upgrade_dict()
+        elif answer == "5":
             quit()

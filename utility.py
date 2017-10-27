@@ -146,14 +146,16 @@ def getTFAnswer(question):
         else:
             print "Bad Selection"
 
-# Return list of files from a directory
-def getFileList(mypath):
+# Return list of files from a directory with an optional extension filter
+def getFileList(mypath, ext_filter=False):
     fileList = []
     if exists(mypath):
         try:
-            for afile in listdir(mypath):
-                if isfile(join(mypath,afile)):
-                    fileList.append(afile)
+            if ext_filter:
+                pattern = '*.' + ext_filter
+                fileList = glob.glob(mypath, pattern)
+            else:
+                fileList = glob.glob(mypath)
         except Exception as err:
             print "Error accessing files {0} - ERROR: {1}".format(mypath, err)
     else:

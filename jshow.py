@@ -15,6 +15,7 @@ import csv
 import logging
 import datetime
 import pprint
+import netaddr
 
 from jnpr.junos import Device
 from jnpr.junos.utils.sw import SW
@@ -487,7 +488,7 @@ def template_commands():
     print "-" * 50
 
     # Choose the template csv file to use
-    filelist = getFileList(csv_dir)
+    filelist = getFileList(csv_dir, 'csv')
     csv_config = getOptionAnswer("Choose a template csv file", filelist)
     csv_file = csv_dir + csv_config
     list_dict = csvListDict(csv_file)
@@ -601,26 +602,40 @@ def create_timestamped_log(prefix, extension):
     return log_dir + prefix + now.strftime("%Y%m%d-%H%M") + "." + extension
 
 # Create an upgrade dictionary
-def load_upgrade_dict():
+def upgrade_menu():
     upgrade_listdict = []
 
     # Ask user how to select devices for upgrade (file or manually)
-    my_options = ['Use a CSV file', 'Enter IPs Individually']
+    my_options = ['Use a CSV file', 'Use a list of IPs', 'Enter IPs Individually']
     while True:
         print "*" * 50 + "\n" + " " * 10 + "JSHOW: UPGRADE JUNIPERS\n" + "*" * 50
         answer = getOptionAnswerIndex('Make a Selection', my_options)
-        # Option for providing information from a file
+        # Option for providing a file with IPs and target versions
         if answer == "1":
-            filelist = getFileList(upgrade_dir)
-            # If the files exist...
-            if filelist:
-                selected_file = getOptionAnswer("Choose a CSV file", filelist)
-                selected_csv_fp = upgrade_dir + selected_file
-                upgrade_listdict = csvListDict(selected_csv_fp)
-        # Option for manually providing the information
+            selected_file = getOptionAnswer("Choose a CSV file", getFileList(upgrade_dir, 'csv'))
+            upgrade_listdict = csvListDict(upgrade_dir + selected_file)
+        # Option for creating a listDict from a source file with IPs
         elif answer == "2":
+            ip_list = []
+            # Lets user select an "ips" file from a directory
+            selected_file = getOptionAnswer("Choose a IPS file", getFileList(upgrade_dir, 'ips'))
+            # Convert it to a list and then add them to a list dictionary
+            ip_list = txt_to_list(upgrade_dir + selected_file)
+            for ip in ip_list:
+                upgrade_listdict.append({'ip': ip, 'target': ''})
+
+        # Option for manually providing the information
+        elif answer == "3":
+            ip_list = []
             # Ask for an IP address
-            answer = getInputAnswer(question="Enter an IPv4 Address")
+            while True:
+                answer = getInputAnswer(question="Enter an IPv4 Host Address('q' when done)")
+                if answer == "q":
+                    break
+                elif netaddr.valid_ipv4(answer):
+                    ip_list.append(answer)
+
+
 
 # Main execution loop
 if __name__ == "__main__":
@@ -647,6 +662,6 @@ if __name__ == "__main__":
         elif answer == "3":
             template_commands()
         elif answer == "4":
-            load_upgrade_dict()
+            upgrade_menu()
         elif answer == "5":
             quit()

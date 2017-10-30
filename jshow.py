@@ -606,14 +606,15 @@ def upgrade_menu():
     upgrade_listdict = []
 
     # Ask user how to select devices for upgrade (file or manually)
-    my_options = ['Use a CSV file', 'Use a list of IPs', 'Enter IPs Individually']
+    my_options = ['Use a CSV file', 'Use a list of IPs', 'Enter IPs Individually', 'Done']
+    print "*" * 50 + "\n" + " " * 10 + "JSHOW: UPGRADE JUNIPERS\n" + "*" * 50
     while True:
-        print "*" * 50 + "\n" + " " * 10 + "JSHOW: UPGRADE JUNIPERS\n" + "*" * 50
         answer = getOptionAnswerIndex('Make a Selection', my_options)
+
         # Option for providing a file with IPs and target versions
         if answer == "1":
             selected_file = getOptionAnswer("Choose a CSV file", getFileList(upgrade_dir, 'csv'))
-            upgrade_listdict = csvListDict(upgrade_dir + selected_file)
+            upgrade_listdict = csvListDict(upgrade_dir + selected_file, keys=['ip', 'code'])
         # Option for creating a listDict from a source file with IPs
         elif answer == "2":
             ip_list = []
@@ -622,8 +623,7 @@ def upgrade_menu():
             # Convert it to a list and then add them to a list dictionary
             ip_list = txt_to_list(upgrade_dir + selected_file)
             for ip in ip_list:
-                upgrade_listdict.append({'ip': ip, 'target': ''})
-
+                upgrade_listdict.append({'ip': ip, 'code': ''})
         # Option for manually providing the information
         elif answer == "3":
             ip_list = []
@@ -634,7 +634,31 @@ def upgrade_menu():
                     break
                 elif netaddr.valid_ipv4(answer):
                     ip_list.append(answer)
+        # Exit option
+        elif answer == "4":
+            break
 
+    # Fix any deficiencies in the list dictionary. Verify a valid IP and valid code if the code is provided.
+    for host_dict in upgrade_listdict:
+        hostip = host_dict['ip']
+        targ_code = host_dict['code']
+        if netaddr.valid_ipv4(hostip):
+            dev = connect(hostip)
+            if dev:
+                curr_code = dev.facts['version']
+                model = dev.facts['model']
+                dev.close()
+                # Check to make sure the code provided is valid and if not provided, ask for one from the repository
+                validate_code(curr_code, targ_code, model)
+            else:
+                # System unable to connect
+                pass
+        else:
+            print "Improperly formatted host IP"
+
+# Checks the code to make sure its available and that the code is correct for the model
+def validate_code(curr_code, targ_code, model):
+    pass
 
 
 # Main execution loop

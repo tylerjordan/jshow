@@ -349,18 +349,19 @@ def dictCSV(myDict, filePathName, keys):
         print "\nCompleted appending to CSV."
 
 # Converts CSV file to listDict. First line is considered column headers.
-def csvListDict(fileName):
+def csvListDict(fileName, keys=''):
     myListDict = []
     try:
         with open(fileName) as myfile:
             firstline = True
             for line in myfile:
                 if firstline:
-                    mykeys = "".join(line.split()).split(',')
+                    if not keys:
+                        keys = "".join(line.split()).split(',')
                     firstline = False
                 else:
                     values = "".join(line.split()).split(',')
-                    myListDict.append({mykeys[n]:values[n] for n in range(0,len(mykeys))})
+                    myListDict.append({mykeys[n]:values[n] for n in range(0,len(keys))})
     except Exception as err:
         print "Failure converting CSV to listDict - ERROR: {0}".format(err)
     return myListDict

@@ -152,8 +152,8 @@ def getFileList(mypath, ext_filter=False):
     if exists(mypath):
         try:
             if ext_filter:
-                pattern = '*.' + ext_filter
-                fileList = glob.glob(mypath, pattern)
+                pattern = mypath + '*.' + ext_filter
+                fileList = glob.glob(pattern)
             else:
                 fileList = glob.glob(mypath)
         except Exception as err:
@@ -361,9 +361,12 @@ def csvListDict(fileName, keys=''):
                     firstline = False
                 else:
                     values = "".join(line.split()).split(',')
-                    myListDict.append({mykeys[n]:values[n] for n in range(0,len(keys))})
+                    myListDict.append({keys[n]:values[n] for n in range(0,len(keys))})
     except Exception as err:
         print "Failure converting CSV to listDict - ERROR: {0}".format(err)
+    else:
+        print "File Import Complete!"
+        print myListDict
     return myListDict
 
 # Converts CSV file to Dictionary

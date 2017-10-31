@@ -54,6 +54,8 @@ def detect_env():
     global config_dir
     global log_dir
     global csv_dir
+    global upgrade_dir
+    global images_dir
     global system_slash
     global ssh_port
     global dir_path
@@ -606,7 +608,7 @@ def upgrade_menu():
     upgrade_listdict = []
 
     # Ask user how to select devices for upgrade (file or manually)
-    my_options = ['Use a CSV file', 'Use a list of IPs', 'Enter IPs Individually', 'Done']
+    my_options = ['Use a CSV file', 'Use a list of IPs', 'Enter IPs Individually', 'Done', 'Quit']
     print "*" * 50 + "\n" + " " * 10 + "JSHOW: UPGRADE JUNIPERS\n" + "*" * 50
     while True:
         answer = getOptionAnswerIndex('Make a Selection', my_options)
@@ -614,16 +616,19 @@ def upgrade_menu():
         # Option for providing a file with IPs and target versions
         if answer == "1":
             selected_file = getOptionAnswer("Choose a CSV file", getFileList(upgrade_dir, 'csv'))
-            upgrade_listdict = csvListDict(upgrade_dir + selected_file, keys=['ip', 'code'])
+            upgrade_listdict = csvListDict(selected_file, keys=['ip', 'code'])
         # Option for creating a listDict from a source file with IPs
         elif answer == "2":
             ip_list = []
             # Lets user select an "ips" file from a directory
             selected_file = getOptionAnswer("Choose a IPS file", getFileList(upgrade_dir, 'ips'))
             # Convert it to a list and then add them to a list dictionary
-            ip_list = txt_to_list(upgrade_dir + selected_file)
+            ip_list = txt_to_list(selected_file)
+            # Loop over all the IPs in the list
             for ip in ip_list:
-                upgrade_listdict.append({'ip': ip, 'code': ''})
+                # Checks if the IP already exists, if it doesn't, add it
+                if not any(d['ip'] == ip for d in upgrade_listdict):
+                    upgrade_listdict.append({'ip': ip, 'code': ''})
         # Option for manually providing the information
         elif answer == "3":
             ip_list = []
@@ -632,13 +637,30 @@ def upgrade_menu():
                 answer = getInputAnswer(question="Enter an IPv4 Host Address('q' when done)")
                 if answer == "q":
                     break
+                # Check if answer is a valid IPv4 address
                 elif netaddr.valid_ipv4(answer):
-                    ip_list.append(answer)
-        # Exit option
-        elif answer == "4":
+                    # Checks if the IP already exists, if it doesn't, add it
+                    if not any(d['ip'] == answer for d in upgrade_listdict):
+                        upgrade_listdict.append({'ip': answer, 'code': ''})
+        # Finish selection and continue
+        elif answer == "4" and upgrade_listdict:
+            print upgrade_listdict
+            #format_data(upgrade_listdict)
+        # Quit this menu
+        else:
+            print "Exiting this menu..."
             break
 
-    # Fix any deficiencies in the list dictionary. Verify a valid IP and valid code if the code is provided.
+# Check if this IP has already been added
+def ip_exists(upgrade_listdict, newip):
+    if record['newip'] in upgrade_listdict:
+        True
+    else:
+        False
+
+# Fix any deficiencies in the list dictionary. Verify a valid IP and valid code if the code is provided.
+def format_data(upgrade_listdict):
+    # Loop over all devices in the list
     for host_dict in upgrade_listdict:
         hostip = host_dict['ip']
         targ_code = host_dict['code']
@@ -649,7 +671,8 @@ def upgrade_menu():
                 model = dev.facts['model']
                 dev.close()
                 # Check to make sure the code provided is valid and if not provided, ask for one from the repository
-                validate_code(curr_code, targ_code, model)
+                if curr_code and model:
+                    validate_code(curr_code, targ_code, model)
             else:
                 # System unable to connect
                 pass
@@ -658,6 +681,19 @@ def upgrade_menu():
 
 # Checks the code to make sure its available and that the code is correct for the model
 def validate_code(curr_code, targ_code, model):
+    # Check if a target code is NOT defined
+    if not targ_code:
+        # Extract the device type (ie. EX, MX, SRX)
+        dev_type = re.search(r'\D{2,3}', model)
+        print dev_type.group(0)
+        # Present user valid codes based on model
+        for img_file in getFileList(upgrade_dir, 'tgz'):
+            if re.match(r'jinstall-', img_file):
+                pass
+            #'jinstall-' + type + '-' + model + '*'
+        #selected_file = getOptionAnswer("Choose an image file", getFileList(upgrade_dir, 'tgz'))
+
+
     pass
 
 

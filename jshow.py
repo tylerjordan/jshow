@@ -60,6 +60,8 @@ def detect_env():
     global ssh_port
     global dir_path
     global temp_conf
+    global username
+    global password
 
     dir_path = os.path.dirname(os.path.abspath(__file__))
     if platform.system().lower() == "windows":
@@ -608,7 +610,7 @@ def upgrade_menu():
     upgrade_listdict = []
 
     # Ask user how to select devices for upgrade (file or manually)
-    my_options = ['Use a CSV file', 'Use a list of IPs', 'Enter IPs Individually', 'Done', 'Quit']
+    my_options = ['Add from a CSV file', 'Add from a list of IPs', 'Add IPs Individually', 'Done', 'Quit']
     print "*" * 50 + "\n" + " " * 10 + "JSHOW: UPGRADE JUNIPERS\n" + "*" * 50
     while True:
         answer = getOptionAnswerIndex('Make a Selection', my_options)
@@ -617,6 +619,7 @@ def upgrade_menu():
         if answer == "1":
             selected_file = getOptionAnswer("Choose a CSV file", getFileList(upgrade_dir, 'csv'))
             upgrade_listdict = csvListDict(selected_file, keys=['ip', 'code'])
+            print_listdict(upgrade_listdict)
         # Option for creating a listDict from a source file with IPs
         elif answer == "2":
             ip_list = []
@@ -629,6 +632,7 @@ def upgrade_menu():
                 # Checks if the IP already exists, if it doesn't, add it
                 if not any(d['ip'] == ip for d in upgrade_listdict):
                     upgrade_listdict.append({'ip': ip, 'code': ''})
+            print_listdict(upgrade_listdict)
         # Option for manually providing the information
         elif answer == "3":
             ip_list = []
@@ -642,34 +646,28 @@ def upgrade_menu():
                     # Checks if the IP already exists, if it doesn't, add it
                     if not any(d['ip'] == answer for d in upgrade_listdict):
                         upgrade_listdict.append({'ip': answer, 'code': ''})
+            print_listdict(upgrade_listdict)
         # Finish selection and continue
         elif answer == "4" and upgrade_listdict:
-            print upgrade_listdict
-            #format_data(upgrade_listdict)
+            format_data(upgrade_listdict)
         # Quit this menu
         else:
             print "Exiting this menu..."
             break
 
-# Check if this IP has already been added
-def ip_exists(upgrade_listdict, newip):
-    if record['newip'] in upgrade_listdict:
-        True
-    else:
-        False
-
 # Fix any deficiencies in the list dictionary. Verify a valid IP and valid code if the code is provided.
 def format_data(upgrade_listdict):
     # Loop over all devices in the list
     for host_dict in upgrade_listdict:
-        hostip = host_dict['ip']
         targ_code = host_dict['code']
-        if netaddr.valid_ipv4(hostip):
-            dev = connect(hostip)
+        if netaddr.valid_ipv4(host_dict['ip']):
+            print "Connect to {0}".format(host_dict['ip'])
+            dev = connect(host_dict['ip'])
             if dev:
                 curr_code = dev.facts['version']
                 model = dev.facts['model']
                 dev.close()
+                print "Connected! - Model: {0} | Version: {1}".format(model, curr_code)
                 # Check to make sure the code provided is valid and if not provided, ask for one from the repository
                 if curr_code and model:
                     validate_code(curr_code, targ_code, model)
@@ -688,13 +686,23 @@ def validate_code(curr_code, targ_code, model):
         print dev_type.group(0)
         # Present user valid codes based on model
         for img_file in getFileList(upgrade_dir, 'tgz'):
-            if re.match(r'jinstall-', img_file):
-                pass
+            print "Image File: {0}".format(img_file)
+            #if re.match(r'jinstall-', img_file):
+            #    pass
             #'jinstall-' + type + '-' + model + '*'
         #selected_file = getOptionAnswer("Choose an image file", getFileList(upgrade_dir, 'tgz'))
 
-
-    pass
+def print_listdict(list_dict):
+    """ 
+        Purpose: Display a table showing contents of the list dictionary.
+        Returns: Nothing
+    """
+    t = PrettyTable(['IP', 'Target Code'])
+    for host_dict in list_dict:
+        # print device
+        t.add_row([host_dict['ip'], host_dict['code']])
+    print t
+    print "Device Total: {0}".format(len(list_dict))
 
 
 # Main execution loop

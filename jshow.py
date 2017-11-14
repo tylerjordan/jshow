@@ -16,6 +16,7 @@ import logging
 import datetime
 import pprint
 import netaddr
+import re
 
 from jnpr.junos import Device
 from jnpr.junos.utils.sw import SW
@@ -45,6 +46,10 @@ images_dir = ""
 system_slash = "/"   # This is the linux/mac slash format, windows format will be used in that case
 
 remote_path = "/var/tmp"
+
+ex_version_list = ['10.0', '10.1', '10.2', '10.3', '10.4', '11.1', '11.2', '11.3', '11.4', '12.1', '12.2', '12.3',
+                   '13.1', '13.2', '13.2X50', '13.2X51', '13.2X52', '13.3', '14.1', '14.1X53', '14.2', '15.1',
+                   '15.1X53', '16.1', '17.1', '17.2', '17.3']
 
 # Function to determine running enviornment (Windows/Linux/Mac) and use correct path syntax
 def detect_env():
@@ -618,7 +623,7 @@ def upgrade_menu():
         # Option for providing a file with IPs and target versions
         if answer == "1":
             selected_file = getOptionAnswer("Choose a CSV file", getFileList(upgrade_dir, 'csv'))
-            upgrade_listdict = csvListDict(selected_file, keys=['ip', 'code'])
+            upgrade_listdict = csvListDict(selected_file, keys=['ip', 'target_code'])
             print_listdict(upgrade_listdict)
         # Option for creating a listDict from a source file with IPs
         elif answer == "2":
@@ -631,7 +636,7 @@ def upgrade_menu():
             for ip in ip_list:
                 # Checks if the IP already exists, if it doesn't, add it
                 if not any(d['ip'] == ip for d in upgrade_listdict):
-                    upgrade_listdict.append({'ip': ip, 'code': ''})
+                    upgrade_listdict.append({'ip': ip, 'target_code': ''})
             print_listdict(upgrade_listdict)
         # Option for manually providing the information
         elif answer == "3":
@@ -645,34 +650,71 @@ def upgrade_menu():
                 elif netaddr.valid_ipv4(answer):
                     # Checks if the IP already exists, if it doesn't, add it
                     if not any(d['ip'] == answer for d in upgrade_listdict):
-                        upgrade_listdict.append({'ip': answer, 'code': ''})
+                        upgrade_listdict.append({'ip': answer, 'target_code': ''})
             print_listdict(upgrade_listdict)
         # Finish selection and continue
         elif answer == "4" and upgrade_listdict:
             format_data(upgrade_listdict)
+            break
         # Quit this menu
         else:
             print "Exiting this menu..."
             break
 
+def get_chassis_info(ip):
+    curr_code = ""
+    model = ""
+    print "Connecting to {0}".format(ip)
+    dev = connect(ip)
+    if dev:
+        curr_code = dev.facts['version']
+        model = dev.facts['model']
+        print "Connected! - Model: {0} | Version: {1}".format(model, curr_code)
+        dev.close()
+
+    return curr_code, model
+
 # Fix any deficiencies in the list dictionary. Verify a valid IP and valid code if the code is provided.
 def format_data(upgrade_listdict):
+
     # Loop over all devices in the list
     for host_dict in upgrade_listdict:
-        targ_code = host_dict['code']
+        target_code = host_dict['target_code']
         if netaddr.valid_ipv4(host_dict['ip']):
-            print "Connect to {0}".format(host_dict['ip'])
-            dev = connect(host_dict['ip'])
-            if dev:
-                curr_code = dev.facts['version']
-                model = dev.facts['model']
-                dev.close()
-                print "Connected! - Model: {0} | Version: {1}".format(model, curr_code)
-                # Check to make sure the code provided is valid and if not provided, ask for one from the repository
-                if curr_code and model:
-                    validate_code(curr_code, targ_code, model)
+            curr_code, model = get_chassis_info(host_dict['ip'])
+            # If a target code is defined
+            if target_code:
+                # Extract code version from provided info
+                m = re.search(r'^\d{2}\.\d{1}([X|x]\d{1,2})?', target_code)
+                # Create a list of valid codes
+                print "Model: {0}".format(model)
+                dev_model = model[:4]
+                dev_type = dev_model[:2].lower()
+                dev_prefix = str(dev_model[-2:])
+
+                junos_image_regex = r''
+                print "Dev Model: {0}".format(dev_model)
+                print "Dev Type: {0}".format(dev_type)
+                print "Dev Prefix: {0}".format(dev_prefix)
+                print "Current Code: {0}".format(curr_code)
+                print "Target Code: {0}".format(m.group())
+
+                # Get the list of images to filter on
+                file_list = getFileList(images_dir, "tgz")
+                if file_list:
+                    for afile in file_list:
+                        m = re.search(r'jinstall.*', afile)
+                        print "File: {0}".format(m.group())
+                # Format of images file
+                # jinstall-ex-4200-13.2X51-D35.3-domestic-signed.tgz
+                # jinstall-ex-4500-13.2X51-D35.3-domestic-signed.tgz
+                # jinstall-ex-4500-12.3R12.4-domestic-signed.tgz
+                #re.search(r'^jinstall-<dev_type>-<dev_prefix>\d{2}-\d{2}\.\d{1}.*-domestic-signed\.tgz$')
+
+
+            # If a target code is not defined
             else:
-                # System unable to connect
+                # Ask for a version based on current version and model number
                 pass
         else:
             print "Improperly formatted host IP"
@@ -700,7 +742,7 @@ def print_listdict(list_dict):
     t = PrettyTable(['IP', 'Target Code'])
     for host_dict in list_dict:
         # print device
-        t.add_row([host_dict['ip'], host_dict['code']])
+        t.add_row([host_dict['ip'], host_dict['target_code']])
     print t
     print "Device Total: {0}".format(len(list_dict))
 

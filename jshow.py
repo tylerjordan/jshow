@@ -113,7 +113,7 @@ def connect(ip):
     :param indbase:     -   Boolean if this device is in the database or not, defaults to False if not specified
     :return dev:        -   Returns the device handle if its successfully opened.
     """
-    dev = Device(host=ip, user=username, passwd=password, auto_probe=True)
+    dev = Device(host=ip, user=username, password=password, auto_probe=True)
     # Try to open a connection to the device
     try:
         dev.open()
@@ -612,7 +612,7 @@ def create_timestamped_log(prefix, extension):
 
 # Create an upgrade dictionary
 def upgrade_menu():
-    upgrade_listdict = []
+    intial_upgrade_ld = []
 
     # Ask user how to select devices for upgrade (file or manually)
     my_options = ['Add from a CSV file', 'Add from a list of IPs', 'Add IPs Individually', 'Done', 'Quit']
@@ -623,8 +623,8 @@ def upgrade_menu():
         # Option for providing a file with IPs and target versions
         if answer == "1":
             selected_file = getOptionAnswer("Choose a CSV file", getFileList(upgrade_dir, 'csv'))
-            upgrade_listdict = csvListDict(selected_file, keys=['ip', 'target_code'])
-            print_listdict(upgrade_listdict)
+            intial_upgrade_ld = csvListDict(selected_file, keys=['ip', 'target_code'])
+            print_listdict(intial_upgrade_ld)
         # Option for creating a listDict from a source file with IPs
         elif answer == "2":
             ip_list = []
@@ -635,9 +635,9 @@ def upgrade_menu():
             # Loop over all the IPs in the list
             for ip in ip_list:
                 # Checks if the IP already exists, if it doesn't, add it
-                if not any(d['ip'] == ip for d in upgrade_listdict):
-                    upgrade_listdict.append({'ip': ip, 'target_code': ''})
-            print_listdict(upgrade_listdict)
+                if not any(d['ip'] == ip for d in intial_upgrade_ld):
+                    intial_upgrade_ld.append({'ip': ip, 'target_code': ''})
+            print_listdict(intial_upgrade_ld)
         # Option for manually providing the information
         elif answer == "3":
             ip_list = []
@@ -649,12 +649,12 @@ def upgrade_menu():
                 # Check if answer is a valid IPv4 address
                 elif netaddr.valid_ipv4(answer):
                     # Checks if the IP already exists, if it doesn't, add it
-                    if not any(d['ip'] == answer for d in upgrade_listdict):
-                        upgrade_listdict.append({'ip': answer, 'target_code': ''})
-            print_listdict(upgrade_listdict)
+                    if not any(d['ip'] == answer for d in intial_upgrade_ld):
+                        intial_upgrade_ld.append({'ip': answer, 'target_code': ''})
+            print_listdict(intial_upgrade_ld)
         # Finish selection and continue
-        elif answer == "4" and upgrade_listdict:
-            format_data(upgrade_listdict)
+        elif answer == "4" and intial_upgrade_ld:
+            format_data(intial_upgrade_ld)
             break
         # Quit this menu
         else:
@@ -675,63 +675,83 @@ def get_chassis_info(ip):
     return curr_code, model
 
 # Fix any deficiencies in the list dictionary. Verify a valid IP and valid code if the code is provided.
-def format_data(upgrade_listdict):
+def format_data(intial_upgrade_ld):
+    #
+    final_upgrade_ld = []
 
     # Loop over all devices in the list
-    for host_dict in upgrade_listdict:
+    for host_dict in intial_upgrade_ld:
         target_code = host_dict['target_code']
         if netaddr.valid_ipv4(host_dict['ip']):
             curr_code, model = get_chassis_info(host_dict['ip'])
-            # If a target code is defined
-            if target_code:
-                # Extract code version from provided info
-                m = re.search(r'^\d{2}\.\d{1}([X|x]\d{1,2})?', target_code)
-                # Create a list of valid codes
-                print "Model: {0}".format(model)
-                dev_model = model[:4]
-                dev_type = dev_model[:2].lower()
-                dev_prefix = str(dev_model[-2:])
-
-                junos_image_regex = r''
-                print "Dev Model: {0}".format(dev_model)
-                print "Dev Type: {0}".format(dev_type)
-                print "Dev Prefix: {0}".format(dev_prefix)
-                print "Current Code: {0}".format(curr_code)
-                print "Target Code: {0}".format(m.group())
-
-                # Get the list of images to filter on
-                file_list = getFileList(images_dir, "tgz")
-                if file_list:
-                    for afile in file_list:
-                        m = re.search(r'jinstall.*', afile)
-                        print "File: {0}".format(m.group())
-                # Format of images file
-                # jinstall-ex-4200-13.2X51-D35.3-domestic-signed.tgz
-                # jinstall-ex-4500-13.2X51-D35.3-domestic-signed.tgz
-                # jinstall-ex-4500-12.3R12.4-domestic-signed.tgz
-                #re.search(r'^jinstall-<dev_type>-<dev_prefix>\d{2}-\d{2}\.\d{1}.*-domestic-signed\.tgz$')
+            # Get target code and corresponding image file
+            if curr_code and model:
+                target_code_file = get_target_image(curr_code, target_code, model)
 
 
-            # If a target code is not defined
-            else:
-                # Ask for a version based on current version and model number
-                pass
         else:
             print "Improperly formatted host IP"
 
 # Checks the code to make sure its available and that the code is correct for the model
-def validate_code(curr_code, targ_code, model):
-    # Check if a target code is NOT defined
-    if not targ_code:
-        # Extract the device type (ie. EX, MX, SRX)
-        dev_type = re.search(r'\D{2,3}', model)
-        print dev_type.group(0)
-        # Present user valid codes based on model
-        for img_file in getFileList(upgrade_dir, 'tgz'):
-            print "Image File: {0}".format(img_file)
-            #if re.match(r'jinstall-', img_file):
-            #    pass
-            #'jinstall-' + type + '-' + model + '*'
+def get_target_image(curr_code, targ_code, model):
+    exact_match = []
+    partial_match = []
+    found_match = False
+
+    # Extract model, type, and prefix
+    dev_model = model[:4]
+    dev_type = dev_model[:2].lower()
+    dev_prefix = str(dev_model[-2:])
+
+    # Loop over each available image in the images directory
+    for img_file in getFileList(images_dir, "tgz"):
+        # Remove the path prefix
+        file_only = img_file.rsplit('/', 1)[1]
+        # Regex to match the current device model number
+        image_regex = r'^jinstall-' + re.escape(dev_type) + r'-' + re.escape(dev_prefix) + r'\d{2}-\d{2}\.\d{1}.*-domestic-signed\.tgz$'
+        # If this image matches the device model...
+        if re.search(image_regex, file_only):
+            found_match = True
+            # If a target code was specified for this upgrade...
+            if targ_code:
+                # Check if we can match the requested target code...
+                if targ_code in file_only:
+                    print " --> Found Exact Match: {0}".format(file_only)
+                    exact_match.append(file_only)
+                # If we can't match target code, return model matches
+                else:
+                    print " --> Found Partial Match: {0}".format(file_only)
+                    partial_match.append(file_only)
+            # If no target was prescribed, return model matches
+            else:
+                print " --> Found Partial Match: {0}".format(file_only)
+                partial_match.append(file_only)
+    print "FINISHED WITH IMAGE CHECK!"
+
+    # If a match was found...
+    if found_match:
+        if exact_match:
+            if len(exact_match) == 1:
+                print "Exact Match - Using: {0}".format(exact_match[0])
+                return exact_match[0]
+            else:
+                print "Mutiple Exact Matches Found:"
+                return getOptionAnswer("Please choose an image", exact_match)
+        else:
+            print "Partial Matches Found:"
+            return getOptionAnswer("Please choose an image", partial_match)
+    else:
+        print "No matches were found:"
+        return getOptionAnswer("Please choose an image", partial_match)
+
+    # If only one exact match exists, automatically add it as the target image
+    # If multiple exact matches exist, only display exact maches for the user to choose from
+    # If only partial matches exist, display them for the user to choose from
+    # If no matches exist, display all images
+
+        #else:
+            #print "\t --> Didn't Match: {0}".format(file_only)
+
         #selected_file = getOptionAnswer("Choose an image file", getFileList(upgrade_dir, 'tgz'))
 
 def print_listdict(list_dict):
@@ -754,6 +774,9 @@ if __name__ == "__main__":
 
     # Get a username and password from the user
     username = getargs(sys.argv[1:])
+    if not username:
+        print 'Please supply a username as an argument: jshow.py -u <username>'
+        exit()
     password = getpass(prompt="\nEnter your password: ")
 
     # Define menu options

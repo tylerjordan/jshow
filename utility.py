@@ -432,7 +432,7 @@ def topHeading(raw_text, margin):
 
     heading = " " * margin + "+" + "=" * equal_length + "+\n" + \
               " " * margin + "|   " + raw_text + "   |\n" + \
-              " " * margin + "+" + "=" * equal_length + "+\n"
+              " " * margin + "+" + "=" * equal_length + "+"
 
     return heading
 
@@ -443,7 +443,7 @@ def subHeading(raw_text, margin):
 
     heading = " " * margin + "o" + "-" * dash_length + "o\n" + \
               " " * margin + "| " + raw_text + " |\n" + \
-              " " * margin + "o" + "-" * dash_length + "o\n"
+              " " * margin + "o" + "-" * dash_length + "o"
 
     return heading
 
@@ -459,7 +459,7 @@ def starHeading(raw_text, head_len):
         heading += " " * start_text + raw_text + "\n"
     else:
         heading += raw_text + "\n"
-    heading += "*" * head_len + "\n"
+    heading += "*" * head_len
 
     return heading
 

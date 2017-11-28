@@ -602,7 +602,7 @@ def deploy_template_config(template_file, list_dict):
 
 # Function to exit program
 def quit():
-    print("Thank you for using jShow. Powered by electricity!")
+    print("Thank you for using jShow!")
     sys.exit(0)
 
 # Create a log
@@ -613,9 +613,11 @@ def create_timestamped_log(prefix, extension):
 # Create an upgrade dictionary
 def upgrade_menu():
     intial_upgrade_ld = []
+    heading_list = ['IP', 'Target_Code']
+    key_list = ['ip', 'target_code']
 
     # Ask user how to select devices for upgrade (file or manually)
-    my_options = ['Add from a CSV file', 'Add from a list of IPs', 'Add IPs Individually', 'Done', 'Quit']
+    my_options = ['Add from a CSV file', 'Add from a list of IPs', 'Add IPs Individually', 'Select Target Codes', 'Quit']
     print "*" * 50 + "\n" + " " * 10 + "JSHOW: UPGRADE JUNIPERS\n" + "*" * 50
     while True:
         answer = getOptionAnswerIndex('Make a Selection', my_options)
@@ -624,7 +626,7 @@ def upgrade_menu():
         if answer == "1":
             selected_file = getOptionAnswer("Choose a CSV file", getFileList(upgrade_dir, 'csv'))
             intial_upgrade_ld = csvListDict(selected_file, keys=['ip', 'target_code'])
-            print_listdict(intial_upgrade_ld)
+            print_listdict(intial_upgrade_ld, heading_list, key_list)
         # Option for creating a listDict from a source file with IPs
         elif answer == "2":
             ip_list = []
@@ -637,7 +639,7 @@ def upgrade_menu():
                 # Checks if the IP already exists, if it doesn't, add it
                 if not any(d['ip'] == ip for d in intial_upgrade_ld):
                     intial_upgrade_ld.append({'ip': ip, 'target_code': ''})
-            print_listdict(intial_upgrade_ld)
+            print_listdict(intial_upgrade_ld, heading_list, key_list)
         # Option for manually providing the information
         elif answer == "3":
             ip_list = []
@@ -651,32 +653,40 @@ def upgrade_menu():
                     # Checks if the IP already exists, if it doesn't, add it
                     if not any(d['ip'] == answer for d in intial_upgrade_ld):
                         intial_upgrade_ld.append({'ip': answer, 'target_code': ''})
-            print_listdict(intial_upgrade_ld)
+            print_listdict(intial_upgrade_ld, heading_list, key_list)
         # Finish selection and continue
         elif answer == "4" and intial_upgrade_ld:
-            format_data(intial_upgrade_ld)
+            final_upgrade_ld = format_data(intial_upgrade_ld)
+            # Display the list of target codes chosen
+            print ""
+            print subHeading("UPGRADE LIST", 40)
+            heading_list = ['IP', 'Model', 'Current Code', 'Target Code']
+            key_list = ['ip', 'model', 'curr_code', 'targ_code']
+            print_listdict(final_upgrade_ld, heading_list, key_list)
             break
         # Quit this menu
         else:
             print "Exiting this menu..."
             break
 
+
 def get_chassis_info(ip):
     curr_code = ""
     model = ""
+    print "\n"+"*"*30
     print "Connecting to {0}".format(ip)
+    print "*"*30
     dev = connect(ip)
     if dev:
         curr_code = dev.facts['version']
         model = dev.facts['model']
-        print "Connected! - Model: {0} | Version: {1}".format(model, curr_code)
         dev.close()
 
     return curr_code, model
 
 # Fix any deficiencies in the list dictionary. Verify a valid IP and valid code if the code is provided.
 def format_data(intial_upgrade_ld):
-    #
+    # List Dictionary to store completed list in
     final_upgrade_ld = []
 
     # Loop over all devices in the list
@@ -686,11 +696,20 @@ def format_data(intial_upgrade_ld):
             curr_code, model = get_chassis_info(host_dict['ip'])
             # Get target code and corresponding image file
             if curr_code and model:
+                print "Connected! - Model: {0} | Cuurent Version: {1} | Target Version: {2}".format(model, curr_code, target_code)
                 target_code_file = get_target_image(curr_code, target_code, model)
-
-
+                if target_code_file:
+                    final_upgrade_ld.append({'ip': host_dict['ip'], 'model': model, 'curr_code': curr_code,
+                                         'targ_code': target_code_file})
+                    print "--> Selected version {0} for {1}".format(target_code_file, host_dict['ip'])
+                else:
+                    pass
+            else:
+                print "--> ERROR: Unable to verify current code and model"
         else:
-            print "Improperly formatted host IP"
+            print "--> ERROR: Invalid IP format: {0}".format(host_dict['ip'])
+
+    return final_upgrade_ld
 
 # Checks the code to make sure its available and that the code is correct for the model
 def get_target_image(curr_code, targ_code, model):
@@ -726,22 +745,23 @@ def get_target_image(curr_code, targ_code, model):
             else:
                 print " --> Found Partial Match: {0}".format(file_only)
                 partial_match.append(file_only)
-    print "FINISHED WITH IMAGE CHECK!"
+    #print "FINISHED WITH IMAGE CHECK!"
 
     # If a match was found...
+    print ""
     if found_match:
         if exact_match:
             if len(exact_match) == 1:
-                print "Exact Match - Using: {0}".format(exact_match[0])
+                print "Exact Match!"
                 return exact_match[0]
             else:
-                print "Mutiple Exact Matches Found:"
+                print "Mutiple exact matches found!"
                 return getOptionAnswer("Please choose an image", exact_match)
         else:
-            print "Partial Matches Found:"
+            print "Partial matches found!"
             return getOptionAnswer("Please choose an image", partial_match)
     else:
-        print "No matches were found:"
+        print "No matches were found!"
         return getOptionAnswer("Please choose an image", partial_match)
 
     # If only one exact match exists, automatically add it as the target image
@@ -754,17 +774,20 @@ def get_target_image(curr_code, targ_code, model):
 
         #selected_file = getOptionAnswer("Choose an image file", getFileList(upgrade_dir, 'tgz'))
 
-def print_listdict(list_dict):
+def print_listdict(list_dict, headings, keys):
     """ 
         Purpose: Display a table showing contents of the list dictionary.
         Returns: Nothing
     """
-    t = PrettyTable(['IP', 'Target Code'])
+    t = PrettyTable(headings)
     for host_dict in list_dict:
         # print device
-        t.add_row([host_dict['ip'], host_dict['target_code']])
+        mylist = []
+        for key in keys:
+            mylist.append(host_dict[key])
+        t.add_row(mylist)
     print t
-    print "Device Total: {0}".format(len(list_dict))
+    print "Total Items: {0}".format(len(list_dict))
 
 
 # Main execution loop

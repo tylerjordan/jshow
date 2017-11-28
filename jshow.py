@@ -626,6 +626,8 @@ def upgrade_menu():
         if answer == "1":
             selected_file = getOptionAnswer("Choose a CSV file", getFileList(upgrade_dir, 'csv'))
             intial_upgrade_ld = csvListDict(selected_file, keys=['ip', 'target_code'])
+            print ""
+            print subHeading("CANDIDATE LIST", 10)
             print_listdict(intial_upgrade_ld, heading_list, key_list)
         # Option for creating a listDict from a source file with IPs
         elif answer == "2":
@@ -639,6 +641,8 @@ def upgrade_menu():
                 # Checks if the IP already exists, if it doesn't, add it
                 if not any(d['ip'] == ip for d in intial_upgrade_ld):
                     intial_upgrade_ld.append({'ip': ip, 'target_code': ''})
+            print ""
+            print subHeading("CANDIDATE LIST", 10)
             print_listdict(intial_upgrade_ld, heading_list, key_list)
         # Option for manually providing the information
         elif answer == "3":
@@ -653,6 +657,8 @@ def upgrade_menu():
                     # Checks if the IP already exists, if it doesn't, add it
                     if not any(d['ip'] == answer for d in intial_upgrade_ld):
                         intial_upgrade_ld.append({'ip': answer, 'target_code': ''})
+            print ""
+            print subHeading("CANDIDATE LIST", 10)
             print_listdict(intial_upgrade_ld, heading_list, key_list)
         # Finish selection and continue
         elif answer == "4" and intial_upgrade_ld:
@@ -669,7 +675,7 @@ def upgrade_menu():
             print "Exiting this menu..."
             break
 
-
+# Capture chassis info
 def get_chassis_info(ip):
     curr_code = ""
     model = ""
@@ -774,6 +780,7 @@ def get_target_image(curr_code, targ_code, model):
 
         #selected_file = getOptionAnswer("Choose an image file", getFileList(upgrade_dir, 'tgz'))
 
+# Print a list dictionary using PrettyTable
 def print_listdict(list_dict, headings, keys):
     """ 
         Purpose: Display a table showing contents of the list dictionary.

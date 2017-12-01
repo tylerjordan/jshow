@@ -613,8 +613,8 @@ def create_timestamped_log(prefix, extension):
 # Create an upgrade dictionary
 def upgrade_menu():
     intial_upgrade_ld = []
-    heading_list = ['IP', 'Target_Code']
-    key_list = ['ip', 'target_code']
+    heading_list = ['Hostname', 'IP', 'Model', 'Current Code', 'Target Code']
+    key_list = ['hostname', 'ip', 'model', 'curr_code', 'targ_code']
 
     # Ask user how to select devices for upgrade (file or manually)
     my_options = ['Add from a CSV file', 'Add from a list of IPs', 'Add IPs Individually', 'Select Target Codes', 'Quit']
@@ -625,7 +625,18 @@ def upgrade_menu():
         # Option for providing a file with IPs and target versions
         if answer == "1":
             selected_file = getOptionAnswer("Choose a CSV file", getFileList(upgrade_dir, 'csv'))
-            intial_upgrade_ld = csvListDict(selected_file, keys=['ip', 'target_code'])
+            temp_ld = csvListDict(selected_file, keys=['ip', 'target_code'])
+            # Loop over all CSV entries
+            print "*" * 30
+            for chassis in temp_ld:
+                ip = chassis['ip']
+                targ_code = chassis['target_code']
+                # Checks if the IP already exists, if it doesn't, add it
+                if not any(d['ip'] == ip for d in intial_upgrade_ld):
+                    intial_upgrade_ld.append(get_chassis_info(ip, targ_code))
+                else:
+                    print "IP {0} is already in the list. Skipping...".format(ip)
+            print "*" * 30
             print ""
             print subHeading("CANDIDATE LIST", 10)
             print_listdict(intial_upgrade_ld, heading_list, key_list)
@@ -637,10 +648,14 @@ def upgrade_menu():
             # Convert it to a list and then add them to a list dictionary
             ip_list = txt_to_list(selected_file)
             # Loop over all the IPs in the list
+            print "*" * 30
             for ip in ip_list:
                 # Checks if the IP already exists, if it doesn't, add it
                 if not any(d['ip'] == ip for d in intial_upgrade_ld):
-                    intial_upgrade_ld.append({'ip': ip, 'target_code': ''})
+                    intial_upgrade_ld.append(get_chassis_info(ip, targ_code=None))
+                else:
+                    print "IP {0} is already in the list. Skipping...".format(ip)
+            print "*" * 30
             print ""
             print subHeading("CANDIDATE LIST", 10)
             print_listdict(intial_upgrade_ld, heading_list, key_list)
@@ -649,14 +664,18 @@ def upgrade_menu():
             ip_list = []
             # Ask for an IP address
             while True:
-                answer = getInputAnswer(question="Enter an IPv4 Host Address('q' when done)")
-                if answer == "q":
+                ip = getInputAnswer(question="Enter an IPv4 Host Address('q' when done)")
+                if ip == "q":
                     break
                 # Check if answer is a valid IPv4 address
-                elif netaddr.valid_ipv4(answer):
+                elif netaddr.valid_ipv4(ip):
                     # Checks if the IP already exists, if it doesn't, add it
-                    if not any(d['ip'] == answer for d in intial_upgrade_ld):
-                        intial_upgrade_ld.append({'ip': answer, 'target_code': ''})
+                    if not any(d['ip'] == ip for d in intial_upgrade_ld):
+                        print "*" * 30
+                        intial_upgrade_ld.append(get_chassis_info(ip, targ_code=None))
+                        print "*" * 30
+                    else:
+                        print "IP {0} is already in the list. Skipping...".format(ip)
             print ""
             print subHeading("CANDIDATE LIST", 10)
             print_listdict(intial_upgrade_ld, heading_list, key_list)
@@ -666,29 +685,126 @@ def upgrade_menu():
             # Display the list of target codes chosen
             print ""
             print subHeading("UPGRADE LIST", 40)
-            heading_list = ['IP', 'Model', 'Current Code', 'Target Code']
-            key_list = ['ip', 'model', 'curr_code', 'targ_code']
             print_listdict(final_upgrade_ld, heading_list, key_list)
+            # Start upgrade process
+            upgrade_loop(final_upgrade_ld)
             break
         # Quit this menu
-        else:
-            print "Exiting this menu..."
+        elif answer == "5":
             break
+    print "Exiting JSHOW: UPGRADE JUNIPERS"
+
+def upgrade_loop(upgrade_ld):
+    # Get Reboot Preference
+    reboot = "askReboot"
+    myoptions = ['Reboot ALL devices automatically', 'Do not reboot ANY device', 'Ask for ALL devices']
+    answer = getOptionAnswerIndex("How would you like to handle reboots", myoptions)
+
+    if answer == "1":
+        reboot = "doReboot"
+    elif answer == "2":
+        reboot = "noReboot"
+    else:
+        reboot = "askReboot"
+
+    print subHeading("UPGRADE LIST", 40)
+    t = PrettyTable(['IP', 'Model', 'Current Code', 'Target Code', 'Reboot'])
+    for device in upgrade_ld:
+        t.add_row([device['ip'], device['model'], device['curr_code'], device['targ_code'], reboot])
+    print t
+    # Last confirmation before entering loop
+    verified = getTFAnswer("Please Verify the information above. Continue")
+
+    # Upgrade Loop
+    # verified = 'y'
+    if verified:
+        # Loop over all devices in list
+        for device in upgrade_ld:
+            # Create log file
+            now = datetime.datetime.now()
+            date_time = now.strftime("%Y-%m-%d-%H%M")
+            install_log = log_dir + "install-log_" + device['ip'] + "_" + date_time + ".log"
+
+            # Assemble image file path
+            image_path_file = image_dir + device['targ_code']
+            if os.path.isfile(image_path_file):
+                #statusDict = upgrade_device(device['ip'], ], device['curr_code'], device['targ_code'], reboot)
+                pass
+
+
+# Upgrade the Juniper device
+def upgrade_device(host, package, logfile, reboot, remote_path='/var/tmp', validate=True):
+    # Start logging if required
+    logging.basicConfig(filename=logfile, level=logging.INFO, format='%(asctime)s:%(name)s: %(message)s')
+    logging.getLogger().name = host
+    logging.getLogger().addHandler(logging.StreamHandler())
+    logging.info('Information logged in {0}'.format(logfile))
+
+    # Verify package is present
+    if not (os.path.isfile(package)):
+        msg = 'Software package does not exist: {0}. '.format(package)
+        logging.error(msg)
+        sys.exit()
+
+    dev = Device(host=host, user=username, passwd=password)
+    try:
+        dev.open()
+    except ConnectError as err:
+        logging.error('Cannot connect to device: {0}\n'.format(err))
+        return False
+
+    # Create an instance of SW
+    sw = SW(dev)
+
+    try:
+        logging.info('Starting the software upgrade process: {0}'.format(package))
+        ok = sw.install(package=package, remote_path = remote_path, progress=update_progress, validate=validate)
+    except Exception as err:
+        msg = 'Unable to install software, {0}'.format(err)
+        logging.error(msg)
+        ok = False
+        dev.close()
+        return False
+
+    if ok is True:
+        logging.info('Software installation complete. Rebooting.')
+        rsp = sw.reboot()
+        logging.info('Upgrade pending reboot cycle, please be patient.')
+        logging.info(rsp)
+    else:
+        msg = 'Unable to install software, {0}'.format(ok)
+        logging.error(msg)
+        dev.close()
+        return False
+
+    # End the NDTCONF session and close the connection
+    dev.close()
+    return True
+
+# Log the upgrade progress
+def update_progress(dev, report):
+    # Log the progress of the installation process
+    logging.info(report)
 
 # Capture chassis info
-def get_chassis_info(ip):
-    curr_code = ""
-    model = ""
-    print "\n"+"*"*30
-    print "Connecting to {0}".format(ip)
-    print "*"*30
+def get_chassis_info(ip, targ_code):
+    chassis_dict = {}
+    stdout.write("Connecting to {0} ... ".format(ip))
     dev = connect(ip)
     if dev:
-        curr_code = dev.facts['version']
-        model = dev.facts['model']
-        dev.close()
+        try:
+            chassis_dict['curr_code'] = dev.facts['version']
+            chassis_dict['model'] = dev.facts['model']
+            chassis_dict['hostname'] = dev.facts['hostname']
+        except Exception as err:
+            print " Error detected: {0}".format(err)
+        else:
+            print " Information Successfully Collected!"
+    chassis_dict['ip'] = ip
+    chassis_dict['targ_code'] = targ_code
+    dev.close()
 
-    return curr_code, model
+    return chassis_dict
 
 # Fix any deficiencies in the list dictionary. Verify a valid IP and valid code if the code is provided.
 def format_data(intial_upgrade_ld):
@@ -697,23 +813,24 @@ def format_data(intial_upgrade_ld):
 
     # Loop over all devices in the list
     for host_dict in intial_upgrade_ld:
-        target_code = host_dict['target_code']
-        if netaddr.valid_ipv4(host_dict['ip']):
-            curr_code, model = get_chassis_info(host_dict['ip'])
-            # Get target code and corresponding image file
-            if curr_code and model:
-                print "Connected! - Model: {0} | Cuurent Version: {1} | Target Version: {2}".format(model, curr_code, target_code)
-                target_code_file = get_target_image(curr_code, target_code, model)
-                if target_code_file:
-                    final_upgrade_ld.append({'ip': host_dict['ip'], 'model': model, 'curr_code': curr_code,
+        # Get target code and corresponding image file
+        if host_dict['curr_code'] and host_dict['model']:
+            print "Hostname.........{0}".format(host_dict['hostname'])
+            print "IP...............{0}".format(host_dict['ip'])
+            print "Model............{0}".format(host_dict['model'])
+            print "Current Code.....{0}".format(host_dict['curr_code'])
+            print "Requested Code...{0}".format(host_dict['targ_code'])
+
+            target_code_file = get_target_image(host_dict['curr_code'], host_dict['targ_code'], host_dict['model'])
+            if target_code_file:
+                final_upgrade_ld.append({'hostname': host_dict['hostname'], 'ip': host_dict['ip'],
+                                         'model': host_dict['model'], 'curr_code': host_dict['curr_code'],
                                          'targ_code': target_code_file})
-                    print "--> Selected version {0} for {1}".format(target_code_file, host_dict['ip'])
-                else:
-                    pass
+                print "--> Selected version {0} for {1}".format(target_code_file, host_dict['ip'])
             else:
-                print "--> ERROR: Unable to verify current code and model"
+                pass
         else:
-            print "--> ERROR: Invalid IP format: {0}".format(host_dict['ip'])
+            print "--> ERROR: Unable to verify current code and model"
 
     return final_upgrade_ld
 

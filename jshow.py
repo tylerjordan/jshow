@@ -697,7 +697,7 @@ def upgrade_menu():
 def upgrade_loop(upgrade_ld):
     # Get Reboot Preference
     reboot = "askReboot"
-    myoptions = ['Reboot ALL devices automatically', 'Do not reboot ANY device', 'Ask for ALL devices']
+    myoptions = ['Reboot ALL devices AFTER upgrade', 'Do not reboot ANY device AFTER upgrade', 'Ask for ALL devices']
     answer = getOptionAnswerIndex("How would you like to handle reboots", myoptions)
 
     if answer == "1":
@@ -708,9 +708,9 @@ def upgrade_loop(upgrade_ld):
         reboot = "askReboot"
 
     print subHeading("UPGRADE LIST", 40)
-    t = PrettyTable(['IP', 'Model', 'Current Code', 'Target Code', 'Reboot'])
+    t = PrettyTable(['Hostname', 'IP', 'Model', 'Current Code', 'Target Code', 'Reboot'])
     for device in upgrade_ld:
-        t.add_row([device['ip'], device['model'], device['curr_code'], device['targ_code'], reboot])
+        t.add_row([device['hostname'], device['ip'], device['model'], device['curr_code'], device['targ_code'], reboot])
     print t
     # Last confirmation before entering loop
     verified = getTFAnswer("Please Verify the information above. Continue")
@@ -723,14 +723,13 @@ def upgrade_loop(upgrade_ld):
             # Create log file
             now = datetime.datetime.now()
             date_time = now.strftime("%Y-%m-%d-%H%M")
-            install_log = log_dir + "install-log_" + device['ip'] + "_" + date_time + ".log"
+            install_log = log_dir + "install-log_" + device['hostname'] + "_" + date_time + ".log"
 
             # Assemble image file path
-            image_path_file = image_dir + device['targ_code']
-            if os.path.isfile(image_path_file):
-                #statusDict = upgrade_device(device['ip'], ], device['curr_code'], device['targ_code'], reboot)
-                pass
+            image_path_file = images_dir + device['targ_code']
 
+            # Upgrade the device
+            upgrade_device(device['hostname'], image_path_file, install_log, reboot)
 
 # Upgrade the Juniper device
 def upgrade_device(host, package, logfile, reboot, remote_path='/var/tmp', validate=True):
@@ -758,6 +757,7 @@ def upgrade_device(host, package, logfile, reboot, remote_path='/var/tmp', valid
 
     try:
         logging.info('Starting the software upgrade process: {0}'.format(package))
+        exit()
         ok = sw.install(package=package, remote_path = remote_path, progress=update_progress, validate=validate)
     except Exception as err:
         msg = 'Unable to install software, {0}'.format(err)

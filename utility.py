@@ -43,7 +43,10 @@ def getOptionAnswer(question, options):
         try:
             if int(answer) >= 1 and int(answer) <= loop:
                 index = int(answer) - 1
-                return options[index]
+                if options[index] == 'Quit':
+                    return False
+                else:
+                    return options[index]
         except Exception as err:
             print "Invalid Entry - ERROR: {0}".format(err)
         else:

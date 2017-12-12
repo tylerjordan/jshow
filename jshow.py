@@ -628,18 +628,19 @@ def upgrade_menu():
             temp_ld = csvListDict(selected_file, keys=['ip', 'target_code'])
             # Loop over all CSV entries
             print "*" * 30
-            for chassis in temp_ld:
-                ip = chassis['ip']
-                targ_code = chassis['target_code']
-                # Checks if the IP already exists, if it doesn't, add it
-                if not any(d['ip'] == ip for d in intial_upgrade_ld):
-                    intial_upgrade_ld.append(get_chassis_info(ip, targ_code))
-                else:
-                    print "IP {0} is already in the list. Skipping...".format(ip)
-            print "*" * 30
-            print ""
-            print subHeading("CANDIDATE LIST", 10)
-            print_listdict(intial_upgrade_ld, heading_list, key_list)
+            if selected_file:
+                for chassis in temp_ld:
+                    ip = chassis['ip']
+                    targ_code = chassis['target_code']
+                    # Checks if the IP already exists, if it doesn't, add it
+                    if not any(d['ip'] == ip for d in intial_upgrade_ld):
+                        intial_upgrade_ld.append(get_chassis_info(ip, targ_code))
+                    else:
+                        print "IP {0} is already in the list. Skipping...".format(ip)
+                print "*" * 30
+                print ""
+                print subHeading("CANDIDATE LIST", 10)
+                print_listdict(intial_upgrade_ld, heading_list, key_list)
         # Option for creating a listDict from a source file with IPs
         elif answer == "2":
             ip_list = []
@@ -649,16 +650,17 @@ def upgrade_menu():
             ip_list = txt_to_list(selected_file)
             # Loop over all the IPs in the list
             print "*" * 30
-            for ip in ip_list:
-                # Checks if the IP already exists, if it doesn't, add it
-                if not any(d['ip'] == ip for d in intial_upgrade_ld):
-                    intial_upgrade_ld.append(get_chassis_info(ip, targ_code=None))
-                else:
-                    print "IP {0} is already in the list. Skipping...".format(ip)
-            print "*" * 30
-            print ""
-            print subHeading("CANDIDATE LIST", 10)
-            print_listdict(intial_upgrade_ld, heading_list, key_list)
+            if selected_file:
+                for ip in ip_list:
+                    # Checks if the IP already exists, if it doesn't, add it
+                    if not any(d['ip'] == ip for d in intial_upgrade_ld):
+                        intial_upgrade_ld.append(get_chassis_info(ip, targ_code=None))
+                    else:
+                        print "IP {0} is already in the list. Skipping...".format(ip)
+                print "*" * 30
+                print ""
+                print subHeading("CANDIDATE LIST", 10)
+                print_listdict(intial_upgrade_ld, heading_list, key_list)
         # Option for manually providing the information
         elif answer == "3":
             ip_list = []

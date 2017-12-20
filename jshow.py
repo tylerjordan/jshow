@@ -617,11 +617,11 @@ def upgrade_menu():
     key_list = ['hostname', 'ip', 'model', 'curr_code', 'targ_code']
 
     # Ask user how to select devices for upgrade (file or manually)
-    my_options = ['Add from a CSV file', 'Add from a list of IPs', 'Add IPs Individually', 'Select Target Codes', 'Quit']
+    my_options = ['Add from a CSV file', 'Add from a list of IPs', 'Add IPs Individually', 'Continue', 'Quit']
     print "*" * 50 + "\n" + " " * 10 + "JSHOW: UPGRADE JUNIPERS\n" + "*" * 50
     while True:
         answer = getOptionAnswerIndex('Make a Selection', my_options)
-
+        print subHeading("ADD CANDIDATES", 10)
         # Option for providing a file with IPs and target versions
         if answer == "1":
             selected_file = getOptionAnswer("Choose a CSV file", getFileList(upgrade_dir, 'csv'))
@@ -634,7 +634,12 @@ def upgrade_menu():
                     targ_code = chassis['target_code']
                     # Checks if the IP already exists, if it doesn't, add it
                     if not any(d['ip'] == ip for d in intial_upgrade_ld):
-                        intial_upgrade_ld.append(get_chassis_info(ip, targ_code))
+                        chassis_info = get_chassis_info(ip, targ_code=None)
+                        # Check if we are able to capture chassis info,
+                        if chassis_info:
+                            intial_upgrade_ld.append(chassis_info)
+                        else:
+                            print "Skipping..."
                     else:
                         print "IP {0} is already in the list. Skipping...".format(ip)
                 print "*" * 30
@@ -654,7 +659,12 @@ def upgrade_menu():
                 for ip in ip_list:
                     # Checks if the IP already exists, if it doesn't, add it
                     if not any(d['ip'] == ip for d in intial_upgrade_ld):
-                        intial_upgrade_ld.append(get_chassis_info(ip, targ_code=None))
+                        chassis_info = get_chassis_info(ip, targ_code=None)
+                        # Check if we are able to capture chassis info,
+                        if chassis_info:
+                            intial_upgrade_ld.append(chassis_info)
+                        else:
+                            print "Skipping..."
                     else:
                         print "IP {0} is already in the list. Skipping...".format(ip)
                 print "*" * 30
@@ -674,7 +684,12 @@ def upgrade_menu():
                     # Checks if the IP already exists, if it doesn't, add it
                     if not any(d['ip'] == ip for d in intial_upgrade_ld):
                         print "*" * 30
-                        intial_upgrade_ld.append(get_chassis_info(ip, targ_code=None))
+                        chassis_info = get_chassis_info(ip, targ_code=None)
+                        # Check if we are able to capture chassis info,
+                        if chassis_info:
+                            intial_upgrade_ld.append(chassis_info)
+                        else:
+                            print "Skipping..."
                         print "*" * 30
                     else:
                         print "IP {0} is already in the list. Skipping...".format(ip)
@@ -720,26 +735,40 @@ def upgrade_loop(upgrade_ld):
     # Upgrade Loop
     # verified = 'y'
     if verified:
+        # Create log file
+        now = datetime.datetime.now()
+        date_time = now.strftime("%Y-%m-%d-%H%M")
+        install_log = log_dir + "install-log_" + date_time + ".log"
+        host = "PyEZ Server"
+
+        # Start logging if required
+        logging.basicConfig(filename=install_log, level=logging.INFO, format='%(asctime)s:%(name)s: %(message)s')
+        logging.getLogger().name = host
+        logging.getLogger().addHandler(logging.StreamHandler())
+        logging.info('Information logged in {0}'.format(install_log))
+
         # Loop over all devices in list
         for device in upgrade_ld:
-            # Create log file
-            now = datetime.datetime.now()
-            date_time = now.strftime("%Y-%m-%d-%H%M")
-            install_log = log_dir + "install-log_" + device['hostname'] + "_" + date_time + ".log"
-
+            # Define the Device being upgraded
+            logging.info('-' * 30)
+            logging.info('Upgrading {0} IP: {1}'.format(device['hostname'], device['ip']))
+            logging.info('Model ........ {0}'.format(device['model']))
+            logging.info('Current OS ... {0}'.format(device['curr_code']))
+            logging.info('Target OS .... {0}'.format(device['targ_code']))
+            logging.info('-' * 30)
+            '''
             # Assemble image file path
             image_path_file = images_dir + device['targ_code']
 
             # Upgrade the device
-            upgrade_device(device['hostname'], image_path_file, install_log, reboot)
+            upgrade_device(device['ip'], image_path_file, logging, reboot)
+            '''
+        # Attempt to deactivate logging
+        print "Attempt to deactivate logging..."
+        logging.disable('CRITICAL')
 
 # Upgrade the Juniper device
-def upgrade_device(host, package, logfile, reboot, remote_path='/var/tmp', validate=True):
-    # Start logging if required
-    logging.basicConfig(filename=logfile, level=logging.INFO, format='%(asctime)s:%(name)s: %(message)s')
-    logging.getLogger().name = host
-    logging.getLogger().addHandler(logging.StreamHandler())
-    logging.info('Information logged in {0}'.format(logfile))
+def upgrade_device(host, package, logging, reboot, remote_path='/var/tmp', validate=True):
 
     # Verify package is present
     if not (os.path.isfile(package)):
@@ -759,23 +788,34 @@ def upgrade_device(host, package, logfile, reboot, remote_path='/var/tmp', valid
 
     try:
         logging.info('Starting the software upgrade process: {0}'.format(package))
-        exit()
         ok = sw.install(package=package, remote_path = remote_path, progress=update_progress, validate=validate)
     except Exception as err:
-        msg = 'Unable to install software, {0}'.format(err)
-        logging.error(msg)
+        logging.error('Unable to install software, {0}'.format(err))
         ok = False
         dev.close()
+        logging.shutdown()
         return False
 
     if ok is True:
-        logging.info('Software installation complete. Rebooting.')
-        rsp = sw.reboot()
-        logging.info('Upgrade pending reboot cycle, please be patient.')
-        logging.info(rsp)
+        logging.info('Software installation complete.')
+        # Check rebooting status...
+        if reboot == "askReboot":
+            answer = getYNAnswer('Would you like to reboot')
+            if answer == 'y':
+                reboot = "doReboot"
+            else:
+                reboot = "noReboot"
+        if reboot == "doReboot":
+            rsp = sw.reboot()
+            logging.info('Upgrade pending reboot cycle, please be patient.')
+            logging.info(rsp)
+            # Open a command terminal to monitor device connectivity
+            # os.system("start cmd /c ping -t " + ip)
+        elif reboot == "noReboot":
+            logging.info('Reboot NOT performed. System must be rebooted to complete upgrade.')
     else:
-        msg = 'Unable to install software, {0}'.format(ok)
-        logging.error(msg)
+        logging.error('Issue installing software')
+        logging.shutdown()
         dev.close()
         return False
 
@@ -795,6 +835,8 @@ def get_chassis_info(ip, targ_code):
     dev = connect(ip)
     if dev:
         try:
+            chassis_dict['ip'] = ip
+            chassis_dict['targ_code'] = targ_code
             chassis_dict['curr_code'] = dev.facts['version']
             chassis_dict['model'] = dev.facts['model']
             chassis_dict['hostname'] = dev.facts['hostname']
@@ -802,10 +844,7 @@ def get_chassis_info(ip, targ_code):
             print " Error detected: {0}".format(err)
         else:
             print " Information Successfully Collected!"
-    chassis_dict['ip'] = ip
-    chassis_dict['targ_code'] = targ_code
-    dev.close()
-
+        dev.close()
     return chassis_dict
 
 # Fix any deficiencies in the list dictionary. Verify a valid IP and valid code if the code is provided.
@@ -910,7 +949,10 @@ def print_listdict(list_dict, headings, keys):
         # print device
         mylist = []
         for key in keys:
-            mylist.append(host_dict[key])
+            if key in host_dict.keys():
+                mylist.append(host_dict[key])
+            else:
+                mylist.append("")
         t.add_row(mylist)
     print t
     print "Total Items: {0}".format(len(list_dict))

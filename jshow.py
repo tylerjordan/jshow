@@ -627,7 +627,7 @@ def upgrade_menu():
             selected_file = getOptionAnswer("Choose a CSV file", getFileList(upgrade_dir, 'csv'))
             temp_ld = csvListDict(selected_file, keys=['ip', 'target_code'])
             # Loop over all CSV entries
-            print "*" * 30
+            print "*" * 50
             if selected_file:
                 for chassis in temp_ld:
                     ip = chassis['ip']
@@ -642,7 +642,7 @@ def upgrade_menu():
                             print "Skipping..."
                     else:
                         print "IP {0} is already in the list. Skipping...".format(ip)
-                print "*" * 30
+                print "*" * 50
                 print ""
                 print subHeading("CANDIDATE LIST", 10)
                 print_listdict(intial_upgrade_ld, heading_list, key_list)
@@ -654,7 +654,7 @@ def upgrade_menu():
             # Convert it to a list and then add them to a list dictionary
             ip_list = txt_to_list(selected_file)
             # Loop over all the IPs in the list
-            print "*" * 30
+            print "*" * 50
             if selected_file:
                 for ip in ip_list:
                     # Checks if the IP already exists, if it doesn't, add it
@@ -667,7 +667,7 @@ def upgrade_menu():
                             print "Skipping..."
                     else:
                         print "IP {0} is already in the list. Skipping...".format(ip)
-                print "*" * 30
+                print "*" * 50
                 print ""
                 print subHeading("CANDIDATE LIST", 10)
                 print_listdict(intial_upgrade_ld, heading_list, key_list)
@@ -683,14 +683,14 @@ def upgrade_menu():
                 elif netaddr.valid_ipv4(ip):
                     # Checks if the IP already exists, if it doesn't, add it
                     if not any(d['ip'] == ip for d in intial_upgrade_ld):
-                        print "*" * 30
+                        print "*" * 50
                         chassis_info = get_chassis_info(ip, targ_code=None)
                         # Check if we are able to capture chassis info,
                         if chassis_info:
                             intial_upgrade_ld.append(chassis_info)
                         else:
                             print "Skipping..."
-                        print "*" * 30
+                        print "*" * 50
                     else:
                         print "IP {0} is already in the list. Skipping...".format(ip)
             print ""
@@ -756,13 +756,13 @@ def upgrade_loop(upgrade_ld):
             logging.info('Current OS ... {0}'.format(device['curr_code']))
             logging.info('Target OS .... {0}'.format(device['targ_code']))
             logging.info('-' * 30)
-            '''
+
             # Assemble image file path
             image_path_file = images_dir + device['targ_code']
 
             # Upgrade the device
             upgrade_device(device['ip'], image_path_file, logging, reboot)
-            '''
+
         # Attempt to deactivate logging
         print "Attempt to deactivate logging..."
         logging.disable('CRITICAL')

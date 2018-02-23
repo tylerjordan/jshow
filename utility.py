@@ -1,6 +1,6 @@
 # File: utility.py
 # Author: Tyler Jordan
-# Modified: 1/27/2017
+# Modified: 2/23/2018
 # Purpose: Assist CBP engineers with Juniper configuration tasks
 
 import sys, re, os, csv
@@ -156,13 +156,14 @@ def getFileList(mypath, ext_filter=False):
         try:
             if ext_filter:
                 pattern = mypath + '*.' + ext_filter
-                fileList = glob.glob(pattern)
+                fileList = [os.path.basename(x) for x in glob.glob(pattern)]
             else:
-                fileList = glob.glob(mypath)
+                fileList = [os.path.basename(x) for x in glob.glob(mypath + '*')]
         except Exception as err:
             print "Error accessing files {0} - ERROR: {1}".format(mypath, err)
     else:
         print "Path: {0} does not exist!".format(mypath)
+
     return fileList
 
 # Method for requesting IP address target
@@ -446,7 +447,7 @@ def subHeading(raw_text, margin):
 
     heading = " " * margin + "o" + "-" * dash_length + "o\n" + \
               " " * margin + "| " + raw_text + " |\n" + \
-              " " * margin + "o" + "-" * dash_length + "o"
+              " " * margin + "o" + "-" * dash_length + "o" + "\n"
 
     return heading
 
@@ -462,7 +463,7 @@ def starHeading(raw_text, head_len):
         heading += " " * start_text + raw_text + "\n"
     else:
         heading += raw_text + "\n"
-    heading += "*" * head_len
+    heading += "*" * head_len + "\n"
 
     return heading
 
@@ -618,6 +619,8 @@ def load_with_pyez(conf_file, output_log, ip, hostname, username, password):
             username        -   username for logging in
             password        -   password for username
     """
+    #print "Conf file:"
+    #print conf_file
     screen_and_log("Starting load procedure on {0} ({1})\n".format(hostname, ip), output_log)
     try:
         dev = Device(ip, user=username, password=password)
@@ -630,8 +633,8 @@ def load_with_pyez(conf_file, output_log, ip, hostname, username, password):
         screen_and_log("Opened > ", output_log)
     # Bind the config to the cu object
     dev.bind(cu=Config)
-
-    #print("Try locking the configuration...")
+    # Lock the configuration
+    screen_and_log("Locking the configuration...", output_log)
     try:
         dev.cu.lock()
     except LockError as err:
@@ -640,31 +643,31 @@ def load_with_pyez(conf_file, output_log, ip, hostname, username, password):
         dev.close()
         return err_message
     else:
-        screen_and_log("Locked > ", output_log)
-
-    #print("Try loading configuration changes...")
+        screen_and_log("Locked!\n", output_log)
+    # Load the configuration changes
+    screen_and_log("Loading configuration changes...", output_log)
     try:
         dev.cu.load(path=conf_file, merge=True, format="set")
     except (ConfigLoadError, Exception) as err:
-        if err.rpc_error['severity'] == 'warning':
-            pass
-        elif 'statement not found' in err.message:
-            pass
+        #if err.rpc_error['severity'] == 'warning':
+        #   pass
+        #elif 'statement not found' in err.message:
+        #    pass
+        #else:
+        err_message = "{0}: Unable to load configuration changes - ERROR: {1}".format(hostname, err)
+        screen_and_log("\n{0}\n".format(err_message), output_log)
+        try:
+            dev.cu.unlock()
+        except UnlockError as err:
+            screen_and_log("\n{0}: Unable to unlock configuration - ERROR: {1}\n".format(hostname, err), output_log)
+            dev.close()
+            return err_message
         else:
-            err_message = "{0}: Unable to load configuration changes - ERROR: {1}".format(hostname, err)
-            screen_and_log("\n{0}\n".format(err_message), output_log)
-            try:
-                dev.cu.unlock()
-            except UnlockError as err:
-                screen_and_log("\n{0}: Unable to unlock configuration - ERROR: {1}\n".format(hostname, err), output_log)
-                dev.close()
-                return err_message
-            else:
-                return err_message
+            return err_message
     else:
-        screen_and_log("Loaded > ", output_log)
-
-    #print("Try committing the configuration...")
+        screen_and_log("Loaded!\n", output_log)
+    # Commit the configuration changes
+    screen_and_log("Committing the configuration...", output_log)
     try:
         dev.cu.commit()
     except CommitError as err:
@@ -679,8 +682,9 @@ def load_with_pyez(conf_file, output_log, ip, hostname, username, password):
         else:
             return err_message
     else:
-        screen_and_log("Committed > ", output_log)
-    #print("Try Unlocking the configuration...")
+        screen_and_log("Committed!\n", output_log)
+    # Unlock after a successful commit
+    screen_and_log("Unlocking the configuration...", output_log)
     try:
         dev.cu.unlock()
     except UnlockError as err:
@@ -689,7 +693,8 @@ def load_with_pyez(conf_file, output_log, ip, hostname, username, password):
         dev.close()
         return err_message
     else:
-        screen_and_log("Unlocked > ", output_log)
+        screen_and_log("Unlocked!\n", output_log)
+
     # End the NETCONF session and close the connection
     dev.close()
     err_message = "Completed"

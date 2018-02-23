@@ -309,31 +309,40 @@ def collect_attribs(dev_obj, hostname):
     return item_dict
 
 # Adds device specific content to a template file
-def populate_template(record, template_file):
+def populate_template(template_file):
     command_list = txt_to_list(template_file)
     new_command_list = []
     if command_list:
         # Loop over commands
         for command in command_list:
-            #print("Command: {0}").format(command)
-            if not re.match(r'^\s*$', command):
+            print("Command: {0}").format(command)
+            # Check if this is an empty line, if it is, skip it
+            if not re.match(r'^\s*$', command) or re.match(r'^#.*$', command):
+                # If this line contains a variable...
                 if re.match(r'.*\{\{.*\}\}.*', command):
-                    #print("Template Command: {0}").format(command)
+                    print("Template Command: {0}").format(command)
                     matches = re.findall(r"\{\{.*?\}\}", command)
-                    #print("Template Matches: {0}").format(matches)
+                    print("Template Matches: {0}").format(matches)
                     for match in matches:
                         term = match[3:-3]
                         vareg = r"{{ " + term + " }}"
                         print "Term: ".format(term)
                         print "Var regex: {0}".format(vareg)
                         command = re.sub(vareg, record[term], command)
+                        exit()
                         #print "New String: {0}".format(command)
-                #else:
+                # If this line doesn't contain a variable, use it as is
+                else:
                     #print("Standard Command: {0}").format(command)
-            new_command_list.append(command)
+                    new_command_list.append(command)
     # Convert list to a file
-    commands_file = list_to_txt(temp_conf, new_command_list)
-    return command_file
+    try:
+        commands_file = list_to_txt(temp_conf, new_command_list)
+    except Exception as err:
+        print "ERROR Converting List to a File: {0}".format(err)
+        return False
+    else:
+        return temp_conf
 
 # Function actually pushing the commands to a device
 def push_commands(commands_fp, output_log, ip):
@@ -485,91 +494,103 @@ def template_commands():
     print "*" * 50 + "\n" + " " * 10 + "TEMPLATE COMMANDS\n" + "*" * 50
 
     # Choose the template configuration file to use
-    filelist = getFileList(config_dir)
-    template_config = getOptionAnswer("Choose a template config file", filelist)
-    template_file = config_dir + template_config
-    print "-" * 50
-    print " " * 10 + "File: " + template_config
-    print "-" * 50
-    # Display the commands in the configuration file
-    for line in txt_to_list(template_file):
-        print " -> {0}".format(line)
-    print "-" * 50
+    filelist = getFileList(config_dir, 'txt')
+    template_config = getOptionAnswer("Choose a template command (.txt) file", filelist)
+    if template_config:
+        template_file = config_dir + template_config
+        print "-" * 50
+        print " " * 10 + "File: " + template_config
+        print "-" * 50
+        # Display the commands in the configuration file
+        for line in txt_to_list(template_file):
+            print " -> {0}".format(line)
+        print "-" * 50
+    else:
+        print "Quit Template Menu..."
+        return False
 
     # Choose the template csv file to use
     filelist = getFileList(csv_dir, 'csv')
-    csv_config = getOptionAnswer("Choose a template csv file", filelist)
-    csv_file = csv_dir + csv_config
-    list_dict = csvListDict(csv_file)
-    print " " * 10 + "File: " + csv_config
-    print "-" * 50
-
-    # Capture the headers of the CSV file
-    with open(csv_file, 'r') as f:
-        first_line = f.readline().strip()
-    keys = first_line.split(',')
-
-    # Sort headers with mgmt_ip being the first key
-    sorted_keys = []
-    if 'mgmt_ip' in keys:
-        sorted_keys.append('mgmt_ip')
-        for one_key in keys:
-            if one_key != 'mgmt_ip':
-                sorted_keys.append(one_key)
-        # Print the CSV file and the
-        for device in list_dict:
-            for key in sorted_keys:
-                if key == 'mgmt_ip':
-                    print " -> {0}".format(device[key])
-                else:
-                    print " ---> {0}: {1}".format(key, device[key])
+    csv_config = getOptionAnswer("Choose a template csv (.csv) file", filelist)
+    if csv_config:
+        csv_file = csv_dir + csv_config
+        list_dict = csvListDict(csv_file)
         print "-" * 50
-        print "Total IPs: {0}".format(len(list_dict))
+        print " " * 10 + "File: " + csv_config
+        print "-" * 50
 
-        if getTFAnswer("Continue with template deployment?"):
-            # ---------- STARTING LOGGING ------------
-            # Start Logging and other stuff
-            now = datetime.datetime.now()
-            output_log = create_timestamped_log("set_output_", "log")
-            summary_csv = create_timestamped_log("summary_csv_", "csv")
+        # Capture the headers of the CSV file
+        with open(csv_file, 'r') as f:
+            first_line = f.readline().strip()
+        keys = first_line.split(',')
 
-            # Print output header, for both screen and log outputs
-            screen_and_log(starHeading("DEPLOY COMMANDS LOG", 110), output_log)
-            screen_and_log(('User: {0}\n').format(username), output_log)
-            screen_and_log(('Performed: {0}\n').format(get_now_time()), output_log)
-            screen_and_log(('Output Log: {0}\n').format(output_log), output_log)
+        # Sort headers with mgmt_ip being the first key
+        sorted_keys = []
+        if 'mgmt_ip' in keys:
+            sorted_keys.append('mgmt_ip')
+            for one_key in keys:
+                if one_key != 'mgmt_ip':
+                    sorted_keys.append(one_key)
+            # Print the CSV file and the
+            for device in list_dict:
+                for key in sorted_keys:
+                    if key == 'mgmt_ip':
+                        print " -> {0}".format(device[key])
+                    else:
+                        print " ---> {0}: {1}".format(key, device[key])
+            print "-" * 50
+            print "Total IPs: {0}".format(len(list_dict))
 
-            # Print the unpopulated template file to be used to create the configs
-            screen_and_log(starHeading("COMMANDS TO EXECUTE", 110), output_log)
-            command_list = txt_to_list(template_file)
-            for line in command_list:
-                screen_and_log(" -> {0}\n".format(line), output_log)
-            screen_and_log("*" * 110 + "\n\n", output_log)
+            if getTFAnswer("Continue with template deployment?"):
+                # ---------- STARTING LOGGING ------------
+                # Start Logging and other stuff
+                now = datetime.datetime.now()
+                output_log = create_timestamped_log("set_output_", "log")
+                summary_csv = create_timestamped_log("summary_csv_", "csv")
 
-            # Define the attributes and show the start of the process
-            screen_and_log(starHeading("START PROCESS", 110), output_log)
+                # Print output header, for both screen and log outputs
+                screen_and_log(starHeading("DEPLOY COMMANDS LOG", 110), output_log)
+                screen_and_log(('User: {0}\n').format(username), output_log)
+                screen_and_log(('Performed: {0}\n').format(get_now_time()), output_log)
+                screen_and_log(('Output Log: {0}\n').format(output_log), output_log)
 
-            # Deploy commands to list of ips
-            results = deploy_template_config(template_file, list_dict)
+                # Print the unpopulated template file to be used to create the configs
+                screen_and_log(starHeading("COMMANDS TO EXECUTE", 110), output_log)
+                command_list = txt_to_list(template_file)
+                for line in command_list:
+                    screen_and_log(" -> {0}\n".format(line), output_log)
+                screen_and_log("*" * 110 + "\n\n", output_log)
 
-            # Display the end of the process
-            screen_and_log(starHeading("END PROCESS", 110), output_log)
+                # Define the attributes and show the start of the process
+                screen_and_log(starHeading("START PROCESS", 110), output_log)
 
-            # Results of commands
-            screen_and_log(starHeading("PROCESS SUMMARY", 110), output_log)
-            screen_and_log("Devices Accessed:       {0}\n".format(len(results['devs_accessed'])), output_log)
-            screen_and_log("Devices Successful:     {0}\n".format(len(results['devs_successful'])), output_log)
-            screen_and_log("Devices Unreachable:    {0}\n".format(len(results['devs_unreachable'])), output_log)
-            screen_and_log("Devices Unsuccessful:   {0}\n".format(len(results['devs_unsuccessful'])), output_log)
-            screen_and_log("Total Devices:          {0}\n\n".format(len(list_dict)), output_log)
-            screen_and_log(starHeading("", 110), output_log)
+                # Deploy commands to list of ips
+                results = deploy_template_config(template_file, list_dict, output_log, summary_csv)
+
+                # Display the end of the process
+                screen_and_log(starHeading("END PROCESS", 110), output_log)
+
+                # Results of commands
+                screen_and_log(starHeading("PROCESS SUMMARY", 110), output_log)
+                screen_and_log("Devices Accessed:       {0}\n".format(len(results['devs_accessed'])), output_log)
+                screen_and_log("Devices Successful:     {0}\n".format(len(results['devs_successful'])), output_log)
+                screen_and_log("Devices Unreachable:    {0}\n".format(len(results['devs_unreachable'])), output_log)
+                screen_and_log("Devices Unsuccessful:   {0}\n".format(len(results['devs_unsuccessful'])), output_log)
+                screen_and_log("Total Devices:          {0}\n\n".format(len(list_dict)), output_log)
+                screen_and_log(starHeading("", 110), output_log)
+                return True
+            else:
+                print "\n!!! Configuration deployment aborted... No changes made !!!\n"
+                return False
         else:
-            print "\n!!! Configuration deployment aborted... No changes made !!!\n"
+            print "Unable to find mandatory 'mgmt_ip' column in {0}. Please check the column headers.".format(csv_file)
+            return False
     else:
-        print "Unable to find mandatory 'mgmt_ip' column in {0}. Please check the column headers.".format(csv_file)
+        print "Quit Template Menu..."
+        return False
 
 # Function for capturing output and initiaing push function
-def deploy_template_config(template_file, list_dict):
+def deploy_template_config(template_file, list_dict, output_log, summary_csv):
     devs_accessed = []
     devs_successful = []
     devs_unreachable = []
@@ -580,8 +601,8 @@ def deploy_template_config(template_file, list_dict):
     loop = 0
     for device in list_dict:
         loop += 1
-        stdout.write("[{0} of {1}] - Connecting to {2} ... ".format(loop, len(list_dict), device['mgmt_ip']))
-        results = push_commands(populate_template(record, template_file), output_log, device['mgmt_ip'])
+        stdout.write("[{0} of {1}] - Connecting to {2}\n".format(loop, len(list_dict), device['mgmt_ip']))
+        results = push_commands(populate_template(template_file), output_log, device['mgmt_ip'])
         screen_and_log("\n" + ("-" * 110) + "\n", output_log)
         if results['devs_accessed']: devs_accessed.append(device['mgmt_ip'])
         if results['devs_successful']: devs_successful.append(device['mgmt_ip'])

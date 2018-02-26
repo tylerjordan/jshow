@@ -732,6 +732,7 @@ def upgrade_menu():
             break
     print "Exiting JSHOW: UPGRADE JUNIPERS"
 
+# Function to loop over all devices chosen for upgrades
 def upgrade_loop(upgrade_ld):
     # Get Reboot Preference
     reboot = "askReboot"

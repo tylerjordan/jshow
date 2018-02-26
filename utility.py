@@ -11,6 +11,8 @@ import paramiko  # https://github.com/paramiko/paramiko for -c -mc -put -get
 import subprocess
 import datetime
 import platform
+import operator
+import time
 
 from os import listdir
 from os.path import isfile, join, exists
@@ -151,19 +153,21 @@ def getTFAnswer(question):
 
 # Return list of files from a directory with an optional extension filter
 def getFileList(mypath, ext_filter=False):
+    tmpList = []
     fileList = []
     if exists(mypath):
-        try:
-            if ext_filter:
-                pattern = mypath + '*.' + ext_filter
-                fileList = [os.path.basename(x) for x in glob.glob(pattern)]
-            else:
-                fileList = [os.path.basename(x) for x in glob.glob(mypath + '*')]
-        except Exception as err:
-            print "Error accessing files {0} - ERROR: {1}".format(mypath, err)
+        if ext_filter:
+            pattern = mypath + '*.' + ext_filter
+            # Sorts the files by modification time
+            tmpList = sorted([x for x in glob.glob(pattern)], key=os.path.getmtime, reverse=True)
+        else:
+            tmpList = sorted([x for x in glob.glob(mypath + '*')], key=os.path.getmtime, reverse=True)
+        #except Exception as err:
+        #    print "Error accessing files {0} - ERROR: {1}".format(mypath, err)
+        for f in tmpList:
+            fileList.append(f[len(mypath):])
     else:
         print "Path: {0} does not exist!".format(mypath)
-
     return fileList
 
 # Method for requesting IP address target
@@ -619,11 +623,16 @@ def load_with_pyez(conf_file, output_log, ip, hostname, username, password):
             username        -   username for logging in
             password        -   password for username
     """
-    #print "Conf file:"
+    #print "Commands To Be Run:"
     #print conf_file
+    #with open(conf_file, 'r') as f:
+    #    for line in f:
+    #        print(line,)
+    #    f.close()
+    # Procedure to load configuration
     screen_and_log("Starting load procedure on {0} ({1})\n".format(hostname, ip), output_log)
     try:
-        dev = Device(ip, user=username, password=password)
+        dev = Device(ip, user=username, password=password, auto_probe=10)
         dev.open()
     except ConnectError as err:
         err_message = "{0}: Cannot connect to device - ERROR: {1}".format(hostname, err)
@@ -659,7 +668,8 @@ def load_with_pyez(conf_file, output_log, ip, hostname, username, password):
         try:
             dev.cu.unlock()
         except UnlockError as err:
-            screen_and_log("\n{0}: Unable to unlock configuration - ERROR: {1}\n".format(hostname, err), output_log)
+            err_message = "{0}: Unable to unlock configuration - ERROR: {1}".format(hostname, err)
+            screen_and_log("\n{0}\n".format(err_message), output_log)
             dev.close()
             return err_message
         else:
@@ -676,7 +686,8 @@ def load_with_pyez(conf_file, output_log, ip, hostname, username, password):
         try:
             dev.cu.unlock()
         except UnlockError as err:
-            screen_and_log("\n{0}: Unable to unlock configuration - ERROR: {1}\n".format(hostname, err), output_log)
+            err_message = "{0}: Unable to unlock configuration - ERROR: {1}".format(hostname, err)
+            screen_and_log("\n{0}\n".format(err_message), output_log)
             dev.close()
             return err_message
         else:

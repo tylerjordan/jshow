@@ -610,6 +610,7 @@ def run(ip, username, password, port):
     else:
         return connection
 
+# Pushes the configuration using PyEZ
 def load_with_pyez(conf_file, output_log, ip, hostname, username, password):
     """ Purpose: Perform the actual loading of the config file. Catch any errors.
         Parameters:
@@ -631,6 +632,7 @@ def load_with_pyez(conf_file, output_log, ip, hostname, username, password):
     #    f.close()
     # Procedure to load configuration
     screen_and_log("Starting load procedure on {0} ({1})\n".format(hostname, ip), output_log)
+    screen_and_log("Opening a connection...", output_log)
     try:
         dev = Device(ip, user=username, password=password, auto_probe=10)
         dev.open()
@@ -639,7 +641,7 @@ def load_with_pyez(conf_file, output_log, ip, hostname, username, password):
         screen_and_log("\n{0}\n".format(err_message), output_log)
         return err_message
     else:
-        screen_and_log("Opened > ", output_log)
+        screen_and_log("Opened!\n", output_log)
     # Bind the config to the cu object
     dev.bind(cu=Config)
     # Lock the configuration

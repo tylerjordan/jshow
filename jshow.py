@@ -29,6 +29,7 @@ from prettytable import PrettyTable
 from Spinner import *
 from sys import stdout
 from lxml import etree
+from multiprocessing import Pool
 
 # Global Variables
 credsCSV = ""
@@ -589,6 +590,50 @@ def template_commands():
         print "Quit Template Menu..."
         return False
 
+# Function actually pushing the commands to a device
+# List:
+# - commands_fp..: 0
+# - output_log...: 1
+# - ip...........: 2
+def push_commands_multi(attr):
+    dev_dict = {'IP': attr[2], 'HOSTNAME': 'Unknown', 'MODEL': 'Unknown', 'JUNOS': 'Unknown', 'CONNECTED': 'No',
+                'LOAD_SUCCESS': 'No', 'ERROR': 'No', 'devs_accessed': False, 'devs_successful': False,
+                'devs_unreachable': False, 'devs_unsuccessful': False}
+    dev = connect(attr[2])
+    if dev:
+        dev_dict['devs_accessed'] = attr[2]
+        dev_dict['CONNECTED'] = 'Yes'
+        screen_and_log("Connected!\n", attr[1])
+        # Get the hostname
+        hostname = dev.facts['hostname']
+        if not hostname:
+            hostname = "Unknown"
+        dev_dict['HOSTNAME'] = hostname
+        # Get the model number
+        dev_dict['MODEL'] = dev.facts['model']
+        # Get the version
+        dev_dict['JUNOS'] = dev.facts['version']
+        # Try to load the changes
+        results = load_with_pyez(attr[0], attr[1], attr[2], hostname, username, password)
+        if results == "Completed":
+            dev_dict['devs_successful'] = attr[2]
+            dev_dict['LOAD_SUCCESS'] = 'Yes'
+        else:
+            screen_and_log("Moving to next device...\n", attr[1])
+            dev_dict['devs_unsuccessful'] = attr[2]
+            dev_dict['LOAD_SUCCESS'] = 'No'
+            # Add brief error to CSV
+            brief_error = results.split(" - ERROR")[0]
+            dev_dict['ERROR'] = brief_error
+    else:
+        screen_and_log("Unable to Connect!\n", attr[1])
+        screen_and_log("{0}: Unable to connect\n".format(attr[2]), attr[1])
+        dev_dict['devs_unreachable'] = attr[2]
+        dev_dict['CONNECTED'] = 'No'
+
+    return dev_dict
+
+
 # Function for capturing output and initiaing push function
 def deploy_template_config(template_file, list_dict, output_log, summary_csv):
     devs_accessed = []
@@ -597,6 +642,19 @@ def deploy_template_config(template_file, list_dict, output_log, summary_csv):
     devs_unsuccessful = []
     dict_of_lists = {'devs_accessed': [], 'devs_successful': [], 'devs_unreachable': [], 'devs_unsuccessful': []}
 
+    ##### MULTIPROCESSING #####
+    # Create Tuples
+    temp_conf = populate_template(template_file)
+    ip_pool_1 = [temp_conf, output_log, "10.159.96.214"]
+    ip_pool_2 = [temp_conf, output_log, "10.159.96.215"]
+    ip_pool_3 = [temp_conf, output_log, "10.159.96.216"]
+    ip_pool = (ip_pool_1, ip_pool_2, ip_pool_3)
+    # Pool Commands
+    p = Pool(2)
+    p.map(push_commands_multi, ip_pool)
+    ##### MULTIPROCESSING #####
+    '''
+    ##### STANDARD PROCESSING #####
     # Loop over all devices in list of dictionaries
     loop = 0
     for device in list_dict:
@@ -612,7 +670,8 @@ def deploy_template_config(template_file, list_dict, output_log, summary_csv):
         # Print to a CSV file
         keys = ['HOSTNAME', 'IP', 'MODEL', 'JUNOS', 'CONNECTED', 'LOAD_SUCCESS', 'ERROR']
         dictCSV(results, summary_csv, keys)
-
+    ##### STANDARD PROCESSING #####
+    '''
     # Populate dict with lists
     dict_of_lists['devs_accessed'] = devs_accessed
     dict_of_lists['devs_successful'] = devs_successful

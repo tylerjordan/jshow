@@ -350,11 +350,12 @@ def push_commands(commands_fp, output_log, ip):
     dev_dict = {'IP': ip, 'HOSTNAME': 'Unknown', 'MODEL': 'Unknown', 'JUNOS': 'Unknown', 'CONNECTED': 'No',
                 'LOAD_SUCCESS': 'No', 'ERROR': 'No', 'devs_accessed': False, 'devs_successful': False,
                 'devs_unreachable': False, 'devs_unsuccessful': False}
+    screen_and_log("{0}: Opening a connection...\n".format(ip), output_log)
     dev = connect(ip)
     if dev:
         dev_dict['devs_accessed'] = ip
         dev_dict['CONNECTED'] = 'Yes'
-        screen_and_log("Connected!\n", output_log)
+        screen_and_log("{0}: Connected!\n".format(ip), output_log)
         # Get the hostname
         hostname = dev.facts['hostname']
         if not hostname:
@@ -370,18 +371,17 @@ def push_commands(commands_fp, output_log, ip):
             dev_dict['devs_successful'] = ip
             dev_dict['LOAD_SUCCESS'] = 'Yes'
         else:
-            screen_and_log("Moving to next device...\n", output_log)
+            screen_and_log("{0}: Moving to next device...\n".format(ip), output_log)
             dev_dict['devs_unsuccessful'] = ip
             dev_dict['LOAD_SUCCESS'] = 'No'
             # Add brief error to CSV
             brief_error = results.split(" - ERROR")[0]
             dev_dict['ERROR'] = brief_error
     else:
-        screen_and_log("Unable to Connect!\n", output_log)
         screen_and_log("{0}: Unable to connect\n".format(ip), output_log)
         dev_dict['devs_unreachable'] = ip
         dev_dict['CONNECTED'] = 'No'
-
+    dev.close()
     return dev_dict
 
 # Function to push set commands to multiple devices
@@ -603,7 +603,7 @@ def push_commands_multi(attr):
     if dev:
         dev_dict['devs_accessed'] = attr[2]
         dev_dict['CONNECTED'] = 'Yes'
-        screen_and_log("Connected!\n", attr[1])
+        screen_and_log("{0}: Connected!\n".format(attr[2]), attr[1])
         # Get the hostname
         hostname = dev.facts['hostname']
         if not hostname:
@@ -614,7 +614,7 @@ def push_commands_multi(attr):
         # Get the version
         dev_dict['JUNOS'] = dev.facts['version']
         # Try to load the changes
-        results = load_with_pyez(attr[0], attr[1], attr[2], hostname, username, password)
+        results = load_with_pyez(dev, attr[0], attr[1], attr[2], hostname, username, password)
         if results == "Completed":
             dev_dict['devs_successful'] = attr[2]
             dev_dict['LOAD_SUCCESS'] = 'Yes'
@@ -626,11 +626,10 @@ def push_commands_multi(attr):
             brief_error = results.split(" - ERROR")[0]
             dev_dict['ERROR'] = brief_error
     else:
-        screen_and_log("Unable to Connect!\n", attr[1])
         screen_and_log("{0}: Unable to connect\n".format(attr[2]), attr[1])
         dev_dict['devs_unreachable'] = attr[2]
         dev_dict['CONNECTED'] = 'No'
-
+    dev.close()
     return dev_dict
 
 
@@ -643,12 +642,12 @@ def deploy_template_config(template_file, list_dict, output_log, summary_csv):
     dict_of_lists = {'devs_accessed': [], 'devs_successful': [], 'devs_unreachable': [], 'devs_unsuccessful': []}
 
     ##### MULTIPROCESSING #####
-    # Create Tuples
+    # Create Tuple of Devices
+    ip_pool = ()
     temp_conf = populate_template(template_file)
-    ip_pool_1 = [temp_conf, output_log, "10.159.96.214"]
-    ip_pool_2 = [temp_conf, output_log, "10.159.96.215"]
-    ip_pool_3 = [temp_conf, output_log, "10.159.96.216"]
-    ip_pool = (ip_pool_1, ip_pool_2, ip_pool_3)
+    for device in list_dict:
+        device_vars = ([temp_conf, output_log, device['mgmt_ip']], )
+        ip_pool = ip_pool + device_vars
     # Pool Commands
     p = Pool(2)
     p.map(push_commands_multi, ip_pool)

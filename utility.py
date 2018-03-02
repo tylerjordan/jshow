@@ -651,7 +651,8 @@ def load_with_pyez(dev, conf_file, output_log, ip, hostname, username, password)
     try:
         dev.cu.lock()
     except LockError as err:
-        screen_and_log("{0}: Unable to lock configuration - ERROR: {1}\n".format(hostname, err), output_log)
+        err_message = "Unable to lock configuration"
+        screen_and_log("{0}: ERROR - {1}: {2}\n".format(hostname, err_message, err), output_log)
         return err_message
     else:
         screen_and_log("{0}: Locked Configuration.\n".format(hostname), output_log)
@@ -665,11 +666,13 @@ def load_with_pyez(dev, conf_file, output_log, ip, hostname, username, password)
         #elif 'statement not found' in err.message:
         #    pass
         #else:
-        screen_and_log("{0}: Unable to load configuration - ERROR: {1}\n".format(hostname, err), output_log)
+        err_message = "Unable to load configuration"
+        screen_and_log("{0}: ERROR - {1}: {2}\n".format(hostname, err_message, err), output_log)
         try:
             dev.cu.unlock()
         except UnlockError as err:
-            screen_and_log("{0}: Unable to unlock configuration - ERROR: {1}\n".format(hostname, err), output_log)
+            err_message = "Unable to unlock configuration"
+            screen_and_log("{0}: ERROR - {1}: {2}\n".format(hostname, err_message, err), output_log)
             return err_message
         else:
             return err_message
@@ -680,11 +683,13 @@ def load_with_pyez(dev, conf_file, output_log, ip, hostname, username, password)
     try:
         dev.cu.commit()
     except CommitError as err:
-        screen_and_log("{0}: Unable to commit configuration - ERROR: {1}\n".format(hostname, err), output_log)
+        err_message = "Unable to commit configuration"
+        screen_and_log("{0}: ERROR - {1}: {2}\n".format(hostname, err_message, err), output_log)
         try:
             dev.cu.unlock()
         except UnlockError as err:
-            screen_and_log("{0}: Unable to unlock configuration - ERROR: {1}\n".format(hostname, err), output_log)
+            err_message = "Unable to unlock configuration"
+            screen_and_log("{0}: ERROR - {1}: {2}\n".format(hostname, err_message, err), output_log)
             return err_message
         else:
             return err_message
@@ -695,7 +700,8 @@ def load_with_pyez(dev, conf_file, output_log, ip, hostname, username, password)
     try:
         dev.cu.unlock()
     except UnlockError as err:
-        screen_and_log("{0}: Unable to unlock configuration - ERROR: {1}\n".format(hostname, err), output_log)
+        err_message = "Unable to unlock configuration"
+        screen_and_log("{0}: ERROR - {1}: {2}\n".format(hostname, err_message, err), output_log)
         return err_message
     else:
         screen_and_log("{0}: Unlocked Configuration.\n".format(hostname), output_log)

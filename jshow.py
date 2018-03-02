@@ -115,6 +115,7 @@ def connect(ip):
     :return dev:        -   Returns the device handle if its successfully opened.
     """
     dev = Device(host=ip, user=username, password=password, auto_probe=True)
+
     # Try to open a connection to the device
     try:
         dev.open()
@@ -138,6 +139,7 @@ def connect(ip):
     except ConnectError as err:
         message = "Unknown connection issue."
         stdout.write("Connect Fail - " + message + " |")
+        return [dev, message]
         return False
     except Exception as err:
         message = "Undefined exception."
@@ -596,12 +598,10 @@ def template_commands():
 # - output_log...: 1
 # - ip...........: 2
 def push_commands_multi(attr):
-    dev_dict = {'IP': attr[2], 'HOSTNAME': 'Unknown', 'MODEL': 'Unknown', 'JUNOS': 'Unknown', 'CONNECTED': 'No',
-                'LOAD_SUCCESS': 'No', 'ERROR': 'No', 'devs_accessed': False, 'devs_successful': False,
-                'devs_unreachable': False, 'devs_unsuccessful': False}
+    dev_dict = {'IP': attr[2], 'HOSTNAME': 'Unknown', 'MODEL': 'Unknown', 'JUNOS': 'Unknown', 'REACHABLE': False,
+                'CONNECTED': False, 'LOAD_SUCCESS': False, 'ERROR': False}
     dev = connect(attr[2])
     if dev:
-        dev_dict['devs_accessed'] = attr[2]
         dev_dict['CONNECTED'] = 'Yes'
         screen_and_log("{0}: Connected!\n".format(attr[2]), attr[1])
         # Get the hostname
@@ -626,7 +626,10 @@ def push_commands_multi(attr):
             brief_error = results.split(" - ERROR")[0]
             dev_dict['ERROR'] = brief_error
     else:
-        screen_and_log("{0}: Unable to connect\n".format(attr[2]), attr[1])
+        if hostname == "Unknown":
+            screen_and_log("{0}: Unable to connect\n".format(attr[2]), attr[1])
+        else:
+            screen_and_log("{0}: Unable to connect\n".format(hostname), attr[1])
         dev_dict['devs_unreachable'] = attr[2]
         dev_dict['CONNECTED'] = 'No'
     dev.close()

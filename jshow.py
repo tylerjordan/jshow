@@ -689,6 +689,12 @@ def create_timestamped_log(prefix, extension):
     now = datetime.datetime.now()
     return log_dir + prefix + now.strftime("%Y%m%d-%H%M") + "." + extension
 
+"""
+###############
+UPGRADE CONTENT
+###############
+"""
+
 # Create an upgrade dictionary
 def upgrade_menu():
     intial_upgrade_ld = []

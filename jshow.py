@@ -115,6 +115,7 @@ def connect(ip):
     :return dev:        -   Returns the device handle if its successfully opened.
     """
     dev = Device(host=ip, user=username, password=password, auto_probe=True)
+    message = ""
 
     # Try to open a connection to the device
     try:
@@ -123,31 +124,30 @@ def connect(ip):
     except ConnectRefusedError as err:
         message = "Host Reachable, but NETCONF not configured."
         stdout.write("Connect Fail - " + message + " |")
-        return False
+        return [False, message]
     except ConnectAuthError as err:
         message = "Unable to connect with credentials. User:" + username
         stdout.write("Connect Fail - " + message + " |")
-        return False
+        return [False, message]
     except ConnectTimeoutError as err:
         message = "Timeout error, possible IP reachability issues."
         stdout.write("Connect Fail - " + message + " |")
-        return False
+        return [False, message]
     except ProbeError as err:
         message = "Probe timeout, possible IP reachability issues."
         stdout.write("Connect Fail - " + message + " |")
-        return False
+        return [False, message]
     except ConnectError as err:
         message = "Unknown connection issue."
         stdout.write("Connect Fail - " + message + " |")
-        return [dev, message]
-        return False
+        return [False, message]
     except Exception as err:
         message = "Undefined exception."
         stdout.write("Connect Fail - " + message + " |")
-        return False
+        return [False, message]
     # If try arguments succeeded...
     else:
-        return dev
+        return [dev, message]
 
 # Function for running operational commands to multiple devices
 def oper_commands(my_ips):
@@ -187,9 +187,10 @@ def oper_commands(my_ips):
                     loop += 1
                     stdout.write("-> Connecting to " + ip + " ... ")
                     dev = connect(ip)
-                    if dev:
+                    # If the connection is successful...
+                    if dev[0]:
                         print "Connected!"
-                        hostname = dev.facts['hostname']
+                        hostname = dev[0].facts['hostname']
                         if not hostname:
                             hostname = "Unknown"
                         got_output = False
@@ -202,7 +203,7 @@ def oper_commands(my_ips):
                                 #print "Command: {0}\nRPC: {1}\n".format(command, com)
                                 #if com is None:
                                 try:
-                                    results = dev.cli(command, warning=False)
+                                    results = dev[0].cli(command, warning=False)
                                 except Exception as err:
                                     stdout.write("\n")
                                     screen_and_log("{0}: Error executing '{1}'. ERROR: {2}\n".format(ip, command, err), err_log)
@@ -225,12 +226,13 @@ def oper_commands(my_ips):
                             get_chassis_inventory(dev, hostname)
                         # Close connection to device
                         try:
-                            dev.close()
+                            dev[0].close()
                         except TimeoutExpiredError as err:
                             print "Error: {0}".format(err)
                             break
+                    # If the connection is not successful, provide the connection failure information
                     else:
-                        screen_and_log("{0}: Unable to connect\n".format(ip), err_log)
+                        screen_and_log("{0}: Unable to connect : {1}\n".format(ip, dev[1]), err_log)
                         devs_unreachable.append(ip)
                 screen_and_log("-" * 110 + "\n", output_log)
                 screen_and_log(starHeading("COMMANDS COMPLETED", 110), output_log)
@@ -354,19 +356,19 @@ def push_commands(commands_fp, output_log, ip):
                 'devs_unreachable': False, 'devs_unsuccessful': False}
     screen_and_log("{0}: Opening a connection...\n".format(ip), output_log)
     dev = connect(ip)
-    if dev:
+    if dev[0]:
         dev_dict['devs_accessed'] = ip
         dev_dict['CONNECTED'] = 'Yes'
         screen_and_log("{0}: Connected!\n".format(ip), output_log)
         # Get the hostname
-        hostname = dev.facts['hostname']
+        hostname = dev[0].facts['hostname']
         if not hostname:
             hostname = "Unknown"
         dev_dict['HOSTNAME'] = hostname
         # Get the model number
-        dev_dict['MODEL'] = dev.facts['model']
+        dev_dict['MODEL'] = dev[0].facts['model']
         # Get the version
-        dev_dict['JUNOS'] = dev.facts['version']
+        dev_dict['JUNOS'] = dev[0].facts['version']
         # Try to load the changes
         results = load_with_pyez(commands_fp, output_log, ip, hostname, username, password)
         if results == "Completed":
@@ -380,10 +382,10 @@ def push_commands(commands_fp, output_log, ip):
             brief_error = results.split(" - ERROR")[0]
             dev_dict['ERROR'] = brief_error
     else:
-        screen_and_log("{0}: Unable to connect\n".format(ip), output_log)
+        screen_and_log("{0}: Unable to connect : {1}\n".format(ip, dev[1]), output_log)
         dev_dict['devs_unreachable'] = ip
         dev_dict['CONNECTED'] = 'No'
-    dev.close()
+    dev[0].close()
     return dev_dict
 
 # Function to push set commands to multiple devices
@@ -600,21 +602,20 @@ def template_commands():
 def push_commands_multi(attr):
     dev_dict = {'IP': attr[2], 'HOSTNAME': 'Unknown', 'MODEL': 'Unknown', 'JUNOS': 'Unknown', 'REACHABLE': False,
                 'CONNECTED': False, 'LOAD_SUCCESS': False, 'ERROR': False}
+    hostname = "Unknown"
     dev = connect(attr[2])
-    if dev:
+    if dev[0]:
         dev_dict['CONNECTED'] = 'Yes'
         screen_and_log("{0}: Connected!\n".format(attr[2]), attr[1])
         # Get the hostname
-        hostname = dev.facts['hostname']
-        if not hostname:
-            hostname = "Unknown"
+        hostname = dev[0].facts['hostname']
         dev_dict['HOSTNAME'] = hostname
         # Get the model number
-        dev_dict['MODEL'] = dev.facts['model']
+        dev_dict['MODEL'] = dev[0].facts['model']
         # Get the version
-        dev_dict['JUNOS'] = dev.facts['version']
+        dev_dict['JUNOS'] = dev[0].facts['version']
         # Try to load the changes
-        results = load_with_pyez(dev, attr[0], attr[1], attr[2], hostname, username, password)
+        results = load_with_pyez(dev[0], attr[0], attr[1], attr[2], hostname, username, password)
         if results == "Completed":
             dev_dict['devs_successful'] = attr[2]
             dev_dict['LOAD_SUCCESS'] = 'Yes'
@@ -627,14 +628,13 @@ def push_commands_multi(attr):
             dev_dict['ERROR'] = brief_error
     else:
         if hostname == "Unknown":
-            screen_and_log("{0}: Unable to connect\n".format(attr[2]), attr[1])
+            screen_and_log("{0}: Unable to connect : {1}\n".format(attr[2], dev[1]), attr[1])
         else:
-            screen_and_log("{0}: Unable to connect\n".format(hostname), attr[1])
+            screen_and_log("{0}: Unable to connect : {1}\n".format(hostname, dev[1]), attr[1])
         dev_dict['devs_unreachable'] = attr[2]
         dev_dict['CONNECTED'] = 'No'
-    dev.close()
+    dev[0].close()
     return dev_dict
-
 
 # Function for capturing output and initiaing push function
 def deploy_template_config(template_file, list_dict, output_log, summary_csv):
@@ -922,18 +922,20 @@ def get_chassis_info(ip, targ_code):
     chassis_dict = {}
     stdout.write("Connecting to {0} ... ".format(ip))
     dev = connect(ip)
-    if dev:
+    if dev[0]:
         try:
             chassis_dict['ip'] = ip
             chassis_dict['targ_code'] = targ_code
-            chassis_dict['curr_code'] = dev.facts['version']
-            chassis_dict['model'] = dev.facts['model']
-            chassis_dict['hostname'] = dev.facts['hostname']
+            chassis_dict['curr_code'] = dev[0].facts['version']
+            chassis_dict['model'] = dev[0].facts['model']
+            chassis_dict['hostname'] = dev[0].facts['hostname']
         except Exception as err:
             print " Error detected: {0}".format(err)
         else:
             print " Information Successfully Collected!"
-        dev.close()
+        dev[0].close()
+    else:
+        print "{0}: Unable to connect : {1}\n".format(ip, dev[1])
     return chassis_dict
 
 # Fix any deficiencies in the list dictionary. Verify a valid IP and valid code if the code is provided.

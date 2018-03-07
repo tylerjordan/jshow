@@ -308,7 +308,7 @@ def collect_attribs(dev_obj, hostname):
     return item_dict
 
 # Adds device specific content to a template file
-def populate_template(template_file):
+def populate_template(template_file, device):
     command_list = txt_to_list(template_file)
     new_command_list = []
     if command_list:
@@ -323,13 +323,13 @@ def populate_template(template_file):
                     matches = re.findall(r"\{\{.*?\}\}", command)
                     print("Template Matches: {0}").format(matches)
                     for match in matches:
+                        print "Match: {0}".format(match)
                         term = match[3:-3]
                         vareg = r"{{ " + term + " }}"
-                        print "Term: ".format(term)
+                        print "Term: {0}".format(term)
                         print "Var regex: {0}".format(vareg)
-                        command = re.sub(vareg, record[term], command)
-                        exit()
-                        #print "New String: {0}".format(command)
+                        command = re.sub(vareg, device[term], command)
+                        print "New String: {0}".format(command)
                 # If this line doesn't contain a variable, use it as is
                 else:
                     #print("Standard Command: {0}").format(command)
@@ -640,14 +640,23 @@ def deploy_template_config(template_file, list_dict, output_log, summary_csv):
 
     ##### MULTIPROCESSING #####
     # Create Tuple of Devices
+    queue_num = 4   # The max number of devices that can be connected to at one time
     ip_pool = ()
-    temp_conf = populate_template(template_file)
     for device in list_dict:
+        temp_conf = populate_template(template_file, device)
         device_vars = ([temp_conf, output_log, device['mgmt_ip']], )
         ip_pool = ip_pool + device_vars
     # Pool Commands
-    p = Pool(2)
-    p.map(push_commands_multi, ip_pool)
+    p = Pool(queue_num)
+    myresults = p.map(push_commands_multi, ip_pool)
+    print myresults
+    # Print to a CSV file
+    keys = ['HOSTNAME', 'IP', 'MODEL', 'JUNOS', 'CONNECTED', 'LOAD_SUCCESS', 'ERROR']
+    if listDictCSV(myresults, summary_csv, keys):
+        print "Successfully wrote to {0}".format(summary_csv)
+    else:
+        print "Problem writing to {0}".format(summary_csv)
+
     ##### MULTIPROCESSING #####
     '''
     ##### STANDARD PROCESSING #####

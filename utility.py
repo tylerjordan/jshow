@@ -652,10 +652,10 @@ def load_with_pyez(dev, conf_file, output_log, ip, hostname, username, password)
         dev.cu.lock()
     except LockError as err:
         err_message = "Unable to lock configuration"
-        screen_and_log("{0}: ERROR - {1}: {2}\n".format(hostname, err_message, err), output_log)
+        screen_and_log("{0} ({1}): ERROR - {2}: {3}\n".format(ip, hostname, err_message, err), output_log)
         return err_message
     else:
-        screen_and_log("{0}: Locked Configuration.\n".format(hostname), output_log)
+        screen_and_log("{0} ({1}): Locked Configuration.\n".format(ip, hostname), output_log)
 
     # Load the configuration changes
     try:
@@ -667,48 +667,48 @@ def load_with_pyez(dev, conf_file, output_log, ip, hostname, username, password)
         #    pass
         #else:
         err_message = "Unable to load configuration"
-        screen_and_log("{0}: ERROR - {1}: {2}\n".format(hostname, err_message, err), output_log)
+        screen_and_log("{0} ({1}): ERROR - {2}: {3}\n".format(ip, hostname, err_message, err), output_log)
         try:
             dev.cu.unlock()
         except UnlockError as err:
             err_message = "Unable to unlock configuration"
-            screen_and_log("{0}: ERROR - {1}: {2}\n".format(hostname, err_message, err), output_log)
+            screen_and_log("{0} ({1}): ERROR - {2}: {3}\n".format(ip, hostname, err_message, err), output_log)
             return err_message
         else:
             return err_message
     else:
-        screen_and_log("{0}: Loaded Configuration.\n".format(hostname), output_log)
+        screen_and_log("{0} ({1}): Loaded Configuration.\n".format(ip, hostname), output_log)
 
     # Commit the configuration changes
     try:
         dev.cu.commit()
     except CommitError as err:
         err_message = "Unable to commit configuration"
-        screen_and_log("{0}: ERROR - {1}: {2}\n".format(hostname, err_message, err), output_log)
+        screen_and_log("{0} ({1}): ERROR - {2}: {3}\n".format(ip, hostname, err_message, err), output_log)
         try:
             dev.cu.unlock()
         except UnlockError as err:
             err_message = "Unable to unlock configuration"
-            screen_and_log("{0}: ERROR - {1}: {2}\n".format(hostname, err_message, err), output_log)
+            screen_and_log("{0} ({1}): ERROR - {2}: {3}\n".format(ip, hostname, err_message, err), output_log)
             return err_message
         else:
             return err_message
     else:
-        screen_and_log("{0}: Committed Configuration.\n".format(hostname), output_log)
+        screen_and_log("{0} ({1}): Committed Configuration.\n".format(ip, hostname), output_log)
 
     # Unlock after a successful commit
     try:
         dev.cu.unlock()
     except UnlockError as err:
         err_message = "Unable to unlock configuration"
-        screen_and_log("{0}: ERROR - {1}: {2}\n".format(hostname, err_message, err), output_log)
+        screen_and_log("{0} ({1}): ERROR - {2}: {3}\n".format(ip, hostname, err_message, err), output_log)
         return err_message
     else:
-        screen_and_log("{0}: Unlocked Configuration.\n".format(hostname), output_log)
+        screen_and_log("{0} ({1}): Unlocked Configuration.\n".format(ip, hostname), output_log)
 
     # End the NETCONF session and close the connection
     err_message = "Completed"
-    screen_and_log("{0}: Completed Push!\n".format(hostname), output_log)
+    screen_and_log("{0} ({1}): Completed Push!\n".format(ip, hostname), output_log)
     return err_message
 
 # Return a specifically formatted timestamp

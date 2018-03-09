@@ -303,62 +303,25 @@ def template_commands():
         print "Quit Template Menu..."
         return False
 
-# Function actually pushing the commands to a device
-# List:
-# - commands_fp..: 0
-# - output_log...: 1
-# - ip...........: 2
-def push_commands_multi(attr):
-    dev_dict = {'IP': attr[2], 'HOSTNAME': 'Unknown', 'MODEL': 'Unknown', 'JUNOS': 'Unknown', 'REACHABLE': False,
-                'LOAD_SUCCESS': False, 'ERROR': ''}
-    hostname = "Unknown"
-    dev, message = connect(attr[2])
-    # If we can connect to the device...
-    if dev:
-        dev_dict['REACHABLE'] = True
-        screen_and_log("{0}: Connected!\n".format(attr[2]), attr[1])
-        # Get the hostname
-        hostname = dev.facts['hostname']
-        dev_dict['HOSTNAME'] = hostname
-        # Get the model number
-        dev_dict['MODEL'] = dev.facts['model']
-        # Get the version
-        dev_dict['JUNOS'] = dev.facts['version']
-        # Try to load the changes
-        results = load_with_pyez(dev, attr[0], attr[1], attr[2], hostname, username, password)
-        # If the load was successful...
-        if results == "Completed":
-            dev_dict['LOAD_SUCCESS'] = True
-        # If the load failed...
-        else:
-            #screen_and_log("Moving to next device...\n", attr[1])
-            dev_dict['ERROR'] = "Issue Loading Configuration : " + results
-    # If there were errors connecting to device...
-    else:
-        dev_dict['ERROR'] = "Unable to Connect : " + message
-        if hostname == "Unknown":
-            screen_and_log("{0}: {1}\n".format(attr[2], dev_dict['ERROR']), attr[1])
-        else:
-            screen_and_log("{0}: {1}\n".format(hostname, dev_dict['ERROR']), attr[1])
-
-    return dev_dict
-
 # Function for capturing output and initiaing push function
 def deploy_template_config(template_file, list_dict, output_log, summary_csv):
     ##### START MULTIPROCESSING #####
     # Create Tuple of Devices
-    queue_num = 4   # The max number of devices that can be connected to at one time
-    ip_pool = ()
+    queue_num = 3                   # The max number of devices that can be connected to at one time
+    list_seq = 1                    # Starting sequence of devices
+    list_len = len(list_dict)       # Total number of device
+    ip_pool = ()                    # List for storing process specific parameters
     for device in list_dict:
         temp_conf = populate_template(template_file, device)
-        device_vars = ([temp_conf, output_log, device['mgmt_ip']], )
+        device_vars = ([temp_conf, output_log, device['mgmt_ip'], list_len, list_seq], )
         ip_pool += device_vars
+        list_seq += 1
     # Pool Commands
-    #print "IP Pool:"
-    #print ip_pool
+    # print "IP Pool:
+    # print ip_pool
     p = Pool(queue_num)
     results = p.map(push_commands_multi, ip_pool)
-    #print results
+    # print results
     # Print to a CSV file
     keys = ['HOSTNAME', 'IP', 'MODEL', 'JUNOS', 'REACHABLE', 'LOAD_SUCCESS', 'ERROR']
     # Save content to the CSV summary file
@@ -385,6 +348,44 @@ def deploy_template_config(template_file, list_dict, output_log, summary_csv):
     ##### STANDARD PROCESSING #####
     '''
     return results
+
+# Function actually pushing the commands to a device
+# List:
+# - commands_fp..: 0
+# - output_log...: 1
+# - ip...........: 2
+def push_commands_multi(attr):
+    dev_dict = {'IP': attr[2], 'HOSTNAME': 'Unknown', 'MODEL': 'Unknown', 'JUNOS': 'Unknown', 'REACHABLE': False,
+                'LOAD_SUCCESS': False, 'ERROR': ''}
+    hostname = "Unknown"
+    dev, message = connect(attr[2])
+    # If we can connect to the device...
+    if dev:
+        dev_dict['REACHABLE'] = True
+        screen_and_log("{0}-[{1} of {2}]: Connected!\n".format(attr[2], attr[4], attr[3]), attr[1])
+        # Get the hostname
+        hostname = dev.facts['hostname']
+        dev_dict['HOSTNAME'] = hostname
+        # Get the model number
+        dev_dict['MODEL'] = dev.facts['model']
+        # Get the version
+        dev_dict['JUNOS'] = dev.facts['version']
+        # Try to load the changes
+        results = load_with_pyez(dev, attr[0], attr[1], attr[2], hostname, username, password)
+        # If the load was successful...
+        if results == "Completed":
+            dev_dict['LOAD_SUCCESS'] = True
+        # If the load failed...
+        else:
+            #screen_and_log("Moving to next device...\n", attr[1])
+            dev_dict['ERROR'] = "Issue Loading Configuration : " + results
+    # If there were errors connecting to device...
+    else:
+        dev_dict['ERROR'] = "Unable to Connect! : {0}".format(message)
+        screen_and_log("{0}-[{1} of {2}]: {3}\n".format(attr[2], attr[4], attr[3], dev_dict['ERROR']), attr[1])
+
+    return dev_dict
+
 
 # Function to exit program
 def quit():

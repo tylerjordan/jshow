@@ -386,7 +386,6 @@ def push_commands_multi(attr):
 
     return dev_dict
 
-
 # Function to exit program
 def quit():
     print("Thank you for using jShow!")

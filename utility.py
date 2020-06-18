@@ -35,13 +35,13 @@ def getOptionAnswer(question, options):
     answer = ""
     loop = 0
     while not answer:
-        print "\n" + question + ':\n'
+        print("\n" + question + ':\n')
         options.append('Quit')
         for option in options:
             loop += 1
-            print '[' + str(loop) + '] -> ' + option
+            print('[' + str(loop) + '] -> ' + option)
         answer = raw_input('\nYour Selection: ')
-        print "*" * 50
+        print("*" * 50)
         try:
             if int(answer) >= 1 and int(answer) <= loop:
                 index = int(answer) - 1
@@ -50,9 +50,9 @@ def getOptionAnswer(question, options):
                 else:
                     return options[index]
         except Exception as err:
-            print "Invalid Entry - ERROR: {0}".format(err)
+            print("Invalid Entry - ERROR: {0}".format(err))
         else:
-            print "Bad Selection"
+            print("Bad Selection")
         answer = ""
         loop = 0
 
@@ -61,12 +61,12 @@ def getOptionMultiAnswer(question, options):
     answer_str = ""
     loop = 0
     while not answer_str and options:
-        print "\n" + question + ':\n'
+        print("\n" + question + ':\n')
         for option in options:
             loop += 1
-            print '[' + str(loop) + '] -> ' + option
+            print('[' + str(loop) + '] -> ' + option)
         answer_str = raw_input('\nYour Selections: ')
-        print "*" * 50
+        print("*" * 50)
         try:
             answer_list = []
             index_list = answer_str.split(",")
@@ -75,9 +75,9 @@ def getOptionMultiAnswer(question, options):
                 answer_list.append(options[index])
             return answer_list
         except Exception as err:
-            print "Invalid Entry - ERROR: {0}".format(err)
+            print("Invalid Entry - ERROR: {0}".format(err))
         else:
-            print "Bad Selection"
+            print("Bad Selection")
         answer_str = ""
         loop = 0
 
@@ -86,19 +86,19 @@ def getOptionAnswerIndex(question, options):
     answer = ""
     loop = 0
     while not answer:
-        print "\n" + question + ':\n'
+        print("\n" + question + ':\n')
         for option in options:
             loop += 1
-            print '[' + str(loop) + '] -> ' + option
+            print('[' + str(loop) + '] -> ' + option)
         answer = raw_input('\nYour Selection: ')
-        print "*" * 50
+        print("*" * 50)
         try:
             if int(answer) >= 1 and int(answer) <= loop:
                 return answer
         except Exception as err:
-            print "Invalid Entry - ERROR: {0}".format(err)
+            print("Invalid Entry - ERROR: {0}".format(err))
         else:
-            print "Bad Selection"
+            print("Bad Selection")
         answer = ""
         loop = 0
 
@@ -123,15 +123,15 @@ def getMultiInputAnswer(question):
 def getYNAnswer(question):
     answer = ""
     while not answer:
-        print ""
+        print("")
         answer = raw_input(question + '(y/n): ')
-        print ""
+        print("")
         if answer == 'Y' or answer == 'y':
             answer = 'y'
         elif answer == 'N' or answer == 'n':
             answer = 'n'
         else:
-            print "Bad Selection"
+            print("Bad Selection")
             answer = ""
     return answer
 
@@ -139,9 +139,9 @@ def getYNAnswer(question):
 def getTFAnswer(question):
     answer = False
     while not answer:
-        print ""
+        print("")
         ynanswer = raw_input(question + '(y/n): ')
-        print ""
+        print("")
         if ynanswer == 'Y' or ynanswer == 'y':
             answer = True
             return answer
@@ -149,7 +149,7 @@ def getTFAnswer(question):
             answer = False
             return answer
         else:
-            print "Bad Selection"
+            print("Bad Selection")
 
 # Return list of files from a directory with an optional extension filter
 def getFileList(mypath, ext_filter=False):
@@ -167,14 +167,14 @@ def getFileList(mypath, ext_filter=False):
         for f in tmpList:
             fileList.append(f[len(mypath):])
     else:
-        print "Path: {0} does not exist!".format(mypath)
+        print("Path: {0} does not exist!".format(mypath))
     return fileList
 
 # Method for requesting IP address target
 def getTarget():
-    print 64*"="
-    print "= Scan Menu" + 52*" " + "="
-    print 64*"="
+    print(64*"=")
+    print("= Scan Menu" + 52*" " + "=")
+    print(64*"=")
     # Loop through the IPs from the file "ipsitelist.txt"
     loop = 0
     list = {};
@@ -183,11 +183,11 @@ def getTarget():
         loop += 1
         ip,site = line.split(",")
         list[str(loop)] = ip;
-        print '[' + str(loop) + '] ' + ip + ' -> ' + site.strip('\n')
+        print('[' + str(loop) + '] ' + ip + ' -> ' + site.strip('\n'))
 
-    print "[c] Custom IP"
-    print "[x] Exit"
-    print "\n"
+    print("[c] Custom IP")
+    print("[x] Exit")
+    print("\n")
 
     response = ""
     while not response:
@@ -203,7 +203,7 @@ def getTarget():
             response = "exit"
             return response
         else:
-            print "Bad Selection"
+            print("Bad Selection")
 
 # This function creates a list of IPs from the IP
 def extract_ips(ip):
@@ -221,17 +221,17 @@ def extract_ips(ip):
         try:
             n1 = ipaddress.ip_network(ip)
         except ValueError as err:
-            print "Invalid IP address - skipping {0}".format(ip)
+            print("Invalid IP address - skipping {0}".format(ip))
             return iplist
         else:
             for one_ip in n1.hosts():
-                print "Adding IP: {0}".format(one_ip)
+                print("Adding IP: {0}".format(one_ip))
                 iplist.append(str(one_ip))
     elif ip_only_regex.match(ip):
-        print "Adding single IP: {0}".format(ip)
+        print("Adding single IP: {0}".format(ip))
         iplist.append(ip)
     else:
-        print "Invalid IP Format: {0} ... Ignoring".format(ip)
+        print("Invalid IP Format: {0} ... Ignoring".format(ip))
 
     return iplist
 
@@ -260,10 +260,10 @@ def chooseDevices(list_dir):
                             ip_list += extract_ips(line)
                         looping = False
             else:
-                print "No valid files in {0}".format(path)
+                print("No valid files in {0}".format(path))
         # Define one or more IPs individually
         elif method_resp == "manual":
-            print 'Provide IPs - Correct format: X.X.X.X or X.X.X.X/X:'
+            print('Provide IPs - Correct format: X.X.X.X or X.X.X.X/X:')
             answer = ""
             while( answer != 'x' ):
                 answer = getInputAnswer('Enter an ip address (x) to exit')
@@ -271,18 +271,18 @@ def chooseDevices(list_dir):
                     ip_list += extract_ips(answer)
             looping = False
         else:
-            print "Exiting menu..."
+            print("Exiting menu...")
             return False
 
     # Print the IPs that will be used
     if ip_list:
         checked_sorted_list = check_sort(ip_list)
-        print "\n" + " " * 10 + "IPs Selected"
-        print "-" * 50
+        print("\n" + " " * 10 + "IPs Selected")
+        print("-" * 50)
         for ip in checked_sorted_list:
-            print ' -> {0}'.format(ip)
-        print "-" * 50
-        print "Total IPs: {0}".format(len(checked_sorted_list))
+            print(' -> {0}'.format(ip))
+        print("-" * 50)
+        print("Total IPs: {0}".format(len(checked_sorted_list)))
         return checked_sorted_list
     else:
         return ip_list
@@ -312,8 +312,8 @@ def listDictCSV(myListDict, filePathName, keys):
     try:
         f = open(filePathName, 'a')
     except Exception as err:
-        print "Failure opening file in append mode - ERROR: {0}".format(err)
-        print "Be sure {0} isn't open in another program.".format(filePathName)
+        print("Failure opening file in append mode - ERROR: {0}".format(err))
+        print("Be sure {0} isn't open in another program.".format(filePathName))
     else:
         if addKeys:
             #Write all the headings in the CSV
@@ -329,7 +329,7 @@ def listDictCSV(myListDict, filePathName, keys):
             f.write(str(part[keys[-1]]))
             f.write("\n")
         f.close()
-        print "\nCompleted appending to CSV."
+        print("\nCompleted appending to CSV.")
 
 # Adds a dictionary to a CSV file
 def dictCSV(myDict, filePathName, keys):
@@ -339,8 +339,8 @@ def dictCSV(myDict, filePathName, keys):
     try:
         f = open(filePathName, 'a')
     except Exception as err:
-        print "Failure opening file in append mode - ERROR: {0}".format(err)
-        print "Be sure {0} isn't open in another program.".format(filePathName)
+        print("Failure opening file in append mode - ERROR: {0}".format(err))
+        print("Be sure {0} isn't open in another program.".format(filePathName))
     else:
         if addKeys:
             #Write all the headings in the CSV
@@ -354,7 +354,7 @@ def dictCSV(myDict, filePathName, keys):
         f.write(str(myDict[keys[-1]]))
         f.write("\n")
         f.close()
-        print "\nCompleted appending to CSV."
+        print("\nCompleted appending to CSV.")
 
 # Converts CSV file to listDict. First line is considered column headers.
 def csvListDict(fileName, keys=''):
@@ -371,9 +371,9 @@ def csvListDict(fileName, keys=''):
                     values = "".join(line.split()).split(',')
                     myListDict.append({keys[n]:values[n] for n in range(0,len(keys))})
     except Exception as err:
-        print "Failure converting CSV to listDict - ERROR: {0}".format(err)
+        print("Failure converting CSV to listDict - ERROR: {0}".format(err))
     else:
-        print "File Import Complete!"
+        print("File Import Complete!")
     return myListDict
 
 # Converts CSV file to Dictionary
@@ -577,10 +577,10 @@ def enable_netconf(ip, username, password, port, log_file=None):
     try:
         set_command(ip, username, password, port, log_file, netconf_command)
     except Exception as err:
-        print "Failed to enable NETCONF."
+        print("Failed to enable NETCONF.")
         return False
     else:
-        print "Successfully enabled NETCONF!"
+        print("Successfully enabled NETCONF!")
         return True
 
 def run(ip, username, password, port):
@@ -603,10 +603,10 @@ def run(ip, username, password, port):
         connection.timeout = 300
     except errors.SSHError:
         output = '*' * 45 + '\n\nUnable to connect to device: %s on port: %s\n' % (ip, port)
-        print output
+        print(output)
     except errors.AuthenticationError:
         output = '*' * 45 + '\n\nBad username or password for device: %s\n' % ip
-        print output
+        print(output)
     else:
         return connection
 
@@ -739,7 +739,7 @@ def log_only(statement, logfile):
     try:
         logobj = open(logfile, 'a')
     except Exception as err:
-        print "Error opening log file {0}".format(err)
+        print("Error opening log file {0}".format(err))
     else:
         logobj.write(statement)
         logobj.close()
@@ -751,7 +751,7 @@ def txt_to_list(txt_file):
         with open(txt_file) as f:
             command_list = f.read().splitlines()
     except Exception as err:
-        print "Error turning file into list. ERROR: {0}".format(err)
+        print("Error turning file into list. ERROR: {0}".format(err))
         return False
     else:
         return command_list
@@ -765,7 +765,7 @@ def list_to_txt(dest_file, src_list):
             for line in src_list:
                 text_config.write("{0}\n".format(line))
     except Exception as err:
-        print "Error writing list to file. ERROR: {0}".format(err)
+        print("Error writing list to file. ERROR: {0}".format(err))
         return False
     else:
         return True
@@ -778,7 +778,7 @@ def txt_to_string(src_file):
         with open(src_file) as f:
             command_file = f.read()
     except Exception as err:
-        print "Problems extracting commands from file. ERROR: {0}".format(err)
+        print("Problems extracting commands from file. ERROR: {0}".format(err))
         return False
     else:
         return command_file

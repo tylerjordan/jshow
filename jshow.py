@@ -49,9 +49,9 @@ system_slash = "/"   # This is the linux/mac slash format, windows format will b
 
 remote_path = "/var/tmp"
 
-ex_version_list = ['10.0', '10.1', '10.2', '10.3', '10.4', '11.1', '11.2', '11.3', '11.4', '12.1', '12.2', '12.3',
-                   '13.1', '13.2', '13.2X50', '13.2X51', '13.2X52', '13.3', '14.1', '14.1X53', '14.2', '15.1',
-                   '15.1X53', '16.1', '17.1', '17.2', '17.3']
+ex_version_list = ['12.1', '12.2', '12.3', '13.1', '13.2', '13.2X50', '13.2X51', '13.2X52', '13.3', '14.1', '14.1X53',
+                   '14.2', '15.1', '15.1X53', '16.1', '17.1', '17.2', '17.3', '17.4', '18.1', '18.2', '18.3', '18.4',
+                   '19.1', '19.2', '19.3', '19.4', '20.1']
 
 # Function to determine running enviornment (Windows/Linux/Mac) and use correct path syntax
 def detect_env():
@@ -189,22 +189,22 @@ def populate_template(template_file, device):
 
 # Template function for bulk set command deployment
 def template_commands():
-    print "*" * 50 + "\n" + " " * 10 + "TEMPLATE COMMANDS\n" + "*" * 50
+    print("*" * 50 + "\n" + " " * 10 + "TEMPLATE COMMANDS\n" + "*" * 50)
 
     # Choose the template configuration file to use
     filelist = getFileList(config_dir, 'txt')
     template_config = getOptionAnswer("Choose a template command (.txt) file", filelist)
     if template_config:
         template_file = config_dir + template_config
-        print "-" * 50
-        print " " * 10 + "File: " + template_config
-        print "-" * 50
+        print("-" * 50)
+        print(" " * 10 + "File: " + template_config)
+        print("-" * 50)
         # Display the commands in the configuration file
         for line in txt_to_list(template_file):
-            print " -> {0}".format(line)
-        print "-" * 50
+            print(" -> {0}".format(line))
+        print("-" * 50)
     else:
-        print "Quit Template Menu..."
+        print("Quit Template Menu...")
         return False
 
     # Choose the template csv file to use
@@ -213,9 +213,9 @@ def template_commands():
     if csv_config:
         csv_file = csv_dir + csv_config
         list_dict = csvListDict(csv_file)
-        print "-" * 50
-        print " " * 10 + "File: " + csv_config
-        print "-" * 50
+        print("-" * 50)
+        print(" " * 10 + "File: " + csv_config)
+        print("-" * 50)
 
         # Capture the headers of the CSV file
         with open(csv_file, 'r') as f:
@@ -233,11 +233,11 @@ def template_commands():
             for device in list_dict:
                 for key in sorted_keys:
                     if key == 'mgmt_ip':
-                        print " -> {0}".format(device[key])
+                        print(" -> {0}".format(device[key]))
                     else:
-                        print " ---> {0}: {1}".format(key, device[key])
-            print "-" * 50
-            print "Total IPs: {0}".format(len(list_dict))
+                        print(" ---> {0}: {1}".format(key, device[key]))
+            print("-" * 50)
+            print("Total IPs: {0}".format(len(list_dict)))
 
             if getTFAnswer("Continue with template deployment?"):
                 # ---------- STARTING LOGGING ------------
@@ -294,13 +294,13 @@ def template_commands():
                 screen_and_log(starHeading("", 110), output_log)
                 return True
             else:
-                print "\n!!! Configuration deployment aborted... No changes made !!!\n"
+                print("\n!!! Configuration deployment aborted... No changes made !!!\n")
                 return False
         else:
-            print "Unable to find mandatory 'mgmt_ip' column in {0}. Please check the column headers.".format(csv_file)
+            print("Unable to find mandatory 'mgmt_ip' column in {0}. Please check the column headers.".format(csv_file))
             return False
     else:
-        print "Quit Template Menu..."
+        print("Quit Template Menu...")
         return False
 
 # Function for capturing output and initiaing push function
@@ -471,8 +471,8 @@ def deploy_config(commands_fp, my_ips, output_log):
 
 # Function to push set commands to multiple devices
 def standard_commands(my_ips):
-    print "*" * 50 + "\n" + " " * 10 + "SET COMMANDS\n" + "*" * 50
-    # Provide option for using a file to supply configuration commands
+    print("*" * 50 + "\n" + " " * 10 + "SET COMMANDS\n" + "*" * 50)
+    # Provide option for using a file sto supply configuration commands
     if not my_ips:
         my_ips = chooseDevices(iplist_dir)
     if my_ips:
@@ -492,12 +492,12 @@ def standard_commands(my_ips):
                 command_list = txt_to_list(commands_fp)
 
         # Print the set commands that will be pushed
-        print "\n" + " " * 10 + "Set Commands Entered"
-        print "-" * 50
+        print("\n" + " " * 10 + "Set Commands Entered")
+        print("-" * 50)
         if command_list:
             for one_comm in command_list:
-                print " -> {0}".format(one_comm)
-        print "-" * 50 + "\n"
+                print(" -> {0}".format(one_comm))
+        print("-" * 50 + "\n")
 
         # Verify that user wants to continue with this deployment
         if getTFAnswer("Continue with set commands deployment?"):
@@ -539,7 +539,7 @@ def standard_commands(my_ips):
             screen_and_log("Total Devices:          {0}\n\n".format(len(my_ips)), output_log)
             screen_and_log(starHeading("", 110), output_log)
         else:
-            print "\n!!! Configuration deployment aborted... No changes made !!!\n"
+            print("\n!!! Configuration deployment aborted... No changes made !!!\n")
 
 # Collects the attributes from the object and returns a dictionary
 def collect_attribs(dev_obj, hostname):
@@ -564,7 +564,7 @@ def collect_attribs(dev_obj, hostname):
 def get_chassis_inventory(dev, hostname):
     # Testing context
     root = dev.rpc.get_chassis_inventory()
-    print "\t- Gathering chassis hardware information..."
+    print("\t- Gathering chassis hardware information...")
     inventory_listdict = []
 
     # Check to see if chassis exists
@@ -599,21 +599,21 @@ def get_chassis_inventory(dev, hostname):
                                             if item:
                                                 inventory_listdict.append(item)
     # Add the content to the inventory CSV
-    print "\t- Adding to CSV..."
+    print("\t- Adding to CSV...")
     item_key = ['hostname', 'name', 'description', 'version', 'location', 'part-number', 'serial-number']
     inv_csv = os.path.join(csv_dir, "inventory.csv")
     listDictCSV(inventory_listdict, inv_csv, item_key)
 
 # Function for running operational commands to multiple devices
 def oper_commands(my_ips):
-    print "*" * 50 + "\n" + " " * 10 + "OPERATIONAL COMMANDS\n" + "*" * 50
+    print("*" * 50 + "\n" + " " * 10 + "OPERATIONAL COMMANDS\n" + "*" * 50)
     # Provide selection for sending a single command or multiple commands from a file
     if not my_ips:
         my_ips = chooseDevices(iplist_dir)
 
     if my_ips:
         command_list = []
-        print "\n" + "*" * 110 + "\n"
+        print("\n" + "*" * 110 + "\n")
         command_list = getMultiInputAnswer("Enter a command to run")
 
         if getTFAnswer("Continue with operational requests?"):
@@ -644,7 +644,7 @@ def oper_commands(my_ips):
                     dev, message = connect(ip)
                     # If the connection is successful...
                     if dev:
-                        print "Connected!"
+                        print("Connected!")
                         hostname = dev.facts['hostname']
                         if not hostname:
                             hostname = "Unknown"
@@ -683,7 +683,7 @@ def oper_commands(my_ips):
                         try:
                             dev.close()
                         except TimeoutExpiredError as err:
-                            print "Error: {0}".format(err)
+                            print("Error: {0}".format(err))
                             break
                     # If the connection is not successful, provide the connection failure information
                     else:
@@ -699,11 +699,11 @@ def oper_commands(my_ips):
                 screen_and_log("Total Devices:        {0}\n".format(len(my_ips)), output_log)
                 screen_and_log("*" * 110 + "\n", output_log)
             except KeyboardInterrupt:
-                print "Exiting Procedure..."
+                print("Exiting Procedure...")
         else:
-            print "\n!!! Configuration deployment aborted... No changes made !!!\n"
+            print("\n!!! Configuration deployment aborted... No changes made !!!\n")
     else:
-        print "\n!! Configuration deployment aborted... No IPs defined !!!\n"
+        print("\n!! Configuration deployment aborted... No IPs defined !!!\n")
 
 
 """
@@ -720,16 +720,16 @@ def upgrade_menu():
 
     # Ask user how to select devices for upgrade (file or manually)
     my_options = ['Add from a CSV file', 'Add from a list of IPs', 'Add IPs Individually', 'Continue', 'Quit']
-    print "*" * 50 + "\n" + " " * 10 + "JSHOW: UPGRADE JUNIPERS\n" + "*" * 50
+    print("*" * 50 + "\n" + " " * 10 + "JSHOW: UPGRADE JUNIPERS\n" + "*" * 50)
     while True:
         answer = getOptionAnswerIndex('Make a Selection', my_options)
-        print subHeading("ADD CANDIDATES", 10)
+        print(subHeading("ADD CANDIDATES", 10))
         # Option for providing a file with IPs and target versions
         if answer == "1":
             selected_file = getOptionAnswer("Choose a CSV file", getFileList(upgrade_dir, 'csv'))
             temp_ld = csvListDict(selected_file, keys=['ip', 'target_code'])
             # Loop over all CSV entries
-            print "*" * 50
+            print("*" * 50)
             if selected_file:
                 for chassis in temp_ld:
                     ip = chassis['ip']
@@ -741,12 +741,12 @@ def upgrade_menu():
                         if chassis_info:
                             intial_upgrade_ld.append(chassis_info)
                         else:
-                            print "Skipping..."
+                            print("Skipping...")
                     else:
-                        print "IP {0} is already in the list. Skipping...".format(ip)
-                print "*" * 50
-                print ""
-                print subHeading("CANDIDATE LIST", 10)
+                        print("IP {0} is already in the list. Skipping...".format(ip))
+                print("*" * 50)
+                print("")
+                print(subHeading("CANDIDATE LIST", 10))
                 print_listdict(intial_upgrade_ld, heading_list, key_list)
         # Option for creating a listDict from a source file with IPs
         elif answer == "2":
@@ -756,7 +756,7 @@ def upgrade_menu():
             # Convert it to a list and then add them to a list dictionary
             ip_list = txt_to_list(selected_file)
             # Loop over all the IPs in the list
-            print "*" * 50
+            print("*" * 50)
             if selected_file:
                 for ip in ip_list:
                     # Checks if the IP already exists, if it doesn't, add it
@@ -766,12 +766,12 @@ def upgrade_menu():
                         if chassis_info:
                             intial_upgrade_ld.append(chassis_info)
                         else:
-                            print "Skipping..."
+                            print("Skipping...")
                     else:
-                        print "IP {0} is already in the list. Skipping...".format(ip)
-                print "*" * 50
-                print ""
-                print subHeading("CANDIDATE LIST", 10)
+                        print("IP {0} is already in the list. Skipping...".format(ip))
+                print("*" * 50)
+                print("")
+                print(subHeading("CANDIDATE LIST", 10))
                 print_listdict(intial_upgrade_ld, heading_list, key_list)
         # Option for manually providing the information
         elif answer == "3":
@@ -785,25 +785,25 @@ def upgrade_menu():
                 elif netaddr.valid_ipv4(ip):
                     # Checks if the IP already exists, if it doesn't, add it
                     if not any(d['ip'] == ip for d in intial_upgrade_ld):
-                        print "*" * 50
+                        print("*" * 50)
                         chassis_info = get_chassis_info(ip, targ_code=None)
                         # Check if we are able to capture chassis info,
                         if chassis_info:
                             intial_upgrade_ld.append(chassis_info)
                         else:
-                            print "Skipping..."
-                        print "*" * 50
+                            print("Skipping...")
+                        print("*" * 50)
                     else:
-                        print "IP {0} is already in the list. Skipping...".format(ip)
-            print ""
-            print subHeading("CANDIDATE LIST", 10)
+                        print("IP {0} is already in the list. Skipping...".format(ip))
+            print("")
+            print(subHeading("CANDIDATE LIST", 10))
             print_listdict(intial_upgrade_ld, heading_list, key_list)
         # Finish selection and continue
         elif answer == "4" and intial_upgrade_ld:
             final_upgrade_ld = format_data(intial_upgrade_ld)
             # Display the list of target codes chosen
-            print ""
-            print subHeading("UPGRADE LIST", 40)
+            print("")
+            print(subHeading("UPGRADE LIST", 40))
             print_listdict(final_upgrade_ld, heading_list, key_list)
             # Start upgrade process
             upgrade_loop(final_upgrade_ld)
@@ -811,7 +811,7 @@ def upgrade_menu():
         # Quit this menu
         elif answer == "5":
             break
-    print "Exiting JSHOW: UPGRADE JUNIPERS"
+    print("Exiting JSHOW: UPGRADE JUNIPERS")
 
 # Function to loop over all devices chosen for upgrades
 def upgrade_loop(upgrade_ld):
@@ -827,11 +827,11 @@ def upgrade_loop(upgrade_ld):
     else:
         reboot = "askReboot"
 
-    print subHeading("UPGRADE LIST", 40)
+    print(subHeading("UPGRADE LIST", 40))
     t = PrettyTable(['Hostname', 'IP', 'Model', 'Current Code', 'Target Code', 'Reboot'])
     for device in upgrade_ld:
         t.add_row([device['hostname'], device['ip'], device['model'], device['curr_code'], device['targ_code'], reboot])
-    print t
+    print(t)
     # Last confirmation before entering loop
     verified = getTFAnswer("Please Verify the information above. Continue")
 
@@ -867,7 +867,7 @@ def upgrade_loop(upgrade_ld):
             upgrade_device(device['ip'], image_path_file, logging, reboot)
 
         # Attempt to deactivate logging
-        print "Attempt to deactivate logging..."
+        print("Attempt to deactivate logging...")
         logging.disable('CRITICAL')
 
 # Upgrade the Juniper device
@@ -944,12 +944,12 @@ def get_chassis_info(ip, targ_code):
             chassis_dict['model'] = dev.facts['model']
             chassis_dict['hostname'] = dev.facts['hostname']
         except Exception as err:
-            print " Error detected: {0}".format(err)
+            print(" Error detected: {0}".format(err))
         else:
-            print " Information Successfully Collected!"
+            print(" Information Successfully Collected!")
         dev.close()
     else:
-        print "{0}: Unable to connect : {1}\n".format(ip, message)
+        print("{0}: Unable to connect : {1}\n".format(ip, message))
     return chassis_dict
 
 # Fix any deficiencies in the list dictionary. Verify a valid IP and valid code if the code is provided.
@@ -961,22 +961,22 @@ def format_data(intial_upgrade_ld):
     for host_dict in intial_upgrade_ld:
         # Get target code and corresponding image file
         if host_dict['curr_code'] and host_dict['model']:
-            print "Hostname.........{0}".format(host_dict['hostname'])
-            print "IP...............{0}".format(host_dict['ip'])
-            print "Model............{0}".format(host_dict['model'])
-            print "Current Code.....{0}".format(host_dict['curr_code'])
-            print "Requested Code...{0}".format(host_dict['targ_code'])
+            print("Hostname.........{0}".format(host_dict['hostname']))
+            print("IP...............{0}".format(host_dict['ip']))
+            print("Model............{0}".format(host_dict['model']))
+            print("Current Code.....{0}".format(host_dict['curr_code']))
+            print("Requested Code...{0}".format(host_dict['targ_code']))
 
             target_code_file = get_target_image(host_dict['curr_code'], host_dict['targ_code'], host_dict['model'])
             if target_code_file:
                 final_upgrade_ld.append({'hostname': host_dict['hostname'], 'ip': host_dict['ip'],
                                          'model': host_dict['model'], 'curr_code': host_dict['curr_code'],
                                          'targ_code': target_code_file})
-                print "--> Selected version {0} for {1}".format(target_code_file, host_dict['ip'])
+                print("--> Selected version {0} for {1}".format(target_code_file, host_dict['ip']))
             else:
                 pass
         else:
-            print "--> ERROR: Unable to verify current code and model"
+            print("--> ERROR: Unable to verify current code and model")
 
     return final_upgrade_ld
 
@@ -1004,33 +1004,33 @@ def get_target_image(curr_code, targ_code, model):
             if targ_code:
                 # Check if we can match the requested target code...
                 if targ_code in file_only:
-                    print " --> Found Exact Match: {0}".format(file_only)
+                    print(" --> Found Exact Match: {0}".format(file_only))
                     exact_match.append(file_only)
                 # If we can't match target code, return model matches
                 else:
-                    print " --> Found Partial Match: {0}".format(file_only)
+                    print(" --> Found Partial Match: {0}".format(file_only))
                     partial_match.append(file_only)
             # If no target was prescribed, return model matches
             else:
-                print " --> Found Partial Match: {0}".format(file_only)
+                print(" --> Found Partial Match: {0}".format(file_only))
                 partial_match.append(file_only)
     #print "FINISHED WITH IMAGE CHECK!"
 
     # If a match was found...
-    print ""
+    print("")
     if found_match:
         if exact_match:
             if len(exact_match) == 1:
-                print "Exact Match!"
+                print("Exact Match!")
                 return exact_match[0]
             else:
-                print "Mutiple exact matches found!"
+                print("Mutiple exact matches found!")
                 return getOptionAnswer("Please choose an image", exact_match)
         else:
-            print "Partial matches found!"
+            print("Partial matches found!")
             return getOptionAnswer("Please choose an image", partial_match)
     else:
-        print "No matches were found!"
+        print("No matches were found!")
         return getOptionAnswer("Please choose an image", partial_match)
 
     # If only one exact match exists, automatically add it as the target image
@@ -1059,8 +1059,8 @@ def print_listdict(list_dict, headings, keys):
             else:
                 mylist.append("")
         t.add_row(mylist)
-    print t
-    print "Total Items: {0}".format(len(list_dict))
+    print(t)
+    print("Total Items: {0}".format(len(list_dict)))
 
 
 # Main execution loop
@@ -1071,7 +1071,7 @@ if __name__ == "__main__":
     # Get a username and password from the user
     username = getargs(sys.argv[1:])
     if not username:
-        print 'Please supply a username as an argument: jshow.py -u <username>'
+        print('Please supply a username as an argument: jshow.py -u <username>')
         exit()
     password = getpass(prompt="\nEnter your password: ")
 
@@ -1082,7 +1082,7 @@ if __name__ == "__main__":
     # Get menu selection
     while True:
         stdout.write("\n\n")
-        print "*" * 50 + "\n" + " " * 10 + "JSHOW: MAIN MENU\n" + "*" * 50
+        print("*" * 50 + "\n" + " " * 10 + "JSHOW: MAIN MENU\n" + "*" * 50)
         answer = getOptionAnswerIndex('Make a Selection', my_options)
         if answer == "1":
             oper_commands(my_ips)

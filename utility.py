@@ -459,7 +459,7 @@ def subHeading(raw_text, margin):
 def starHeading(raw_text, head_len):
     heading = ""
     heading += "*" * head_len + "\n"
-    if raw_text > head_len:
+    if len(raw_text) > head_len:
         half_text_len = int(math.ceil(len(raw_text) / 2))
         half_head_len = int(head_len / 2)
         start_text = half_head_len - half_text_len

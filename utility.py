@@ -40,7 +40,7 @@ def getOptionAnswer(question, options):
         for option in options:
             loop += 1
             print('[' + str(loop) + '] -> ' + option)
-        answer = raw_input('\nYour Selection: ')
+        answer = input('\nYour Selection: ')
         print("*" * 50)
         try:
             if int(answer) >= 1 and int(answer) <= loop:
@@ -65,7 +65,7 @@ def getOptionMultiAnswer(question, options):
         for option in options:
             loop += 1
             print('[' + str(loop) + '] -> ' + option)
-        answer_str = raw_input('\nYour Selections: ')
+        answer_str = input('\nYour Selections: ')
         print("*" * 50)
         try:
             answer_list = []
@@ -90,7 +90,7 @@ def getOptionAnswerIndex(question, options):
         for option in options:
             loop += 1
             print('[' + str(loop) + '] -> ' + option)
-        answer = raw_input('\nYour Selection: ')
+        answer = input('\nYour Selection: ')
         print("*" * 50)
         try:
             if int(answer) >= 1 and int(answer) <= loop:
@@ -106,7 +106,7 @@ def getOptionAnswerIndex(question, options):
 def getInputAnswer(question):
     answer = ""
     while not answer:
-        answer = raw_input(question + ': ')
+        answer = input(question + ': ')
     return answer
 
 # Method for asking a user input question that can have multiple answers
@@ -114,7 +114,7 @@ def getMultiInputAnswer(question):
     answer_list = []
     answer = "placeholder"
     while answer:
-        answer = raw_input(question + ': ')
+        answer = input(question + ': ')
         if answer:
             answer_list.append(answer)
     return answer_list
@@ -124,7 +124,7 @@ def getYNAnswer(question):
     answer = ""
     while not answer:
         print("")
-        answer = raw_input(question + '(y/n): ')
+        answer = input(question + '(y/n): ')
         print("")
         if answer == 'Y' or answer == 'y':
             answer = 'y'
@@ -140,7 +140,7 @@ def getTFAnswer(question):
     answer = False
     while not answer:
         print("")
-        ynanswer = raw_input(question + '(y/n): ')
+        ynanswer = input(question + '(y/n): ')
         print("")
         if ynanswer == 'Y' or ynanswer == 'y':
             answer = True
@@ -191,13 +191,13 @@ def getTarget():
 
     response = ""
     while not response:
-        response = raw_input("Please select an option: ")
+        response = input("Please select an option: ")
         if response >= "1" and response <= str(loop):
             return list[response]
         elif response == "c":
             capturedIp = ""
             while not capturedIp:
-                capturedIp = raw_input("Please enter an IP: ")
+                capturedIp = input("Please enter an IP: ")
                 return capturedIp
         elif response == "x":
             response = "exit"

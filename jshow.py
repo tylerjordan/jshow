@@ -6,7 +6,7 @@
 #   - execute operational commands on one or more Juniper devices
 #   - execute edit commands on one or more Juniper devices
 #   - execute a dynamic template on one or more Juniper devices
-#   - upgrade one or more Juniper devices
+#   - upgrade one or more Juniper device(s)
 
 import platform
 import subprocess

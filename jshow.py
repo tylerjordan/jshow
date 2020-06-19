@@ -417,7 +417,7 @@ def push_commands(commands_fp, output_log, ip):
         # Get the version
         dev_dict['JUNOS'] = dev.facts['version']
         # Try to load the changes
-        results = load_with_pyez(commands_fp, output_log, ip, hostname, username, password)
+        results = load_with_pyez(dev, commands_fp, output_log, ip, hostname, username, password)
         if results == "Completed":
             dev_dict['devs_successful'] = ip
             dev_dict['LOAD_SUCCESS'] = 'Yes'
@@ -436,7 +436,7 @@ def push_commands(commands_fp, output_log, ip):
     return dev_dict
 
 # Function for capturing output and initiaing push function
-def deploy_config(commands_fp, my_ips, output_log):
+def deploy_config(commands_fp, my_ips, output_log, summary_csv):
     # Lists
     devs_accessed = []
     devs_successful = []
@@ -476,6 +476,7 @@ def standard_commands(my_ips):
     if not my_ips:
         my_ips = chooseDevices(iplist_dir)
     if my_ips:
+        temp_conf = config_dir + "temp-coms.conf"
         set_file = ""
         commands_fp = ""
         command_list = []
@@ -524,7 +525,7 @@ def standard_commands(my_ips):
 
             # ---------- MAIN EXECUTION ----------
             # Deploy commands to list of ips
-            results = deploy_config(commands_fp, command_list, my_ips)
+            results = deploy_config(commands_fp, my_ips, output_log, summary_csv)
 
             # ---------- ENDING LOGGING -----------
             # Display the end of the process

@@ -17,6 +17,7 @@ import datetime
 import pprint
 import netaddr
 import re
+import multiprocessing
 
 from jnpr.junos import Device
 from jnpr.junos.utils.sw import SW
@@ -319,8 +320,14 @@ def deploy_template_config(template_file, list_dict, output_log, summary_csv):
     # Pool Commands
     # print "IP Pool:
     # print ip_pool
-    p = Pool(queue_num)
-    results = p.map(push_commands_multi, ip_pool)
+    #### OLD Python 2.7 Multiprocessing
+    #p = Pool(queue_num)
+    #results = p.map(push_commands_multi, ip_pool)
+    #### OLD
+    #### NEW Python 3 Multiprocessing
+    with multiprocessing.Pool(queue_num) as p:
+        results = p.map(push_commands_multi, ip_pool)
+    #### NEW
     # print results
     # Print to a CSV file
     keys = ['HOSTNAME', 'IP', 'MODEL', 'JUNOS', 'REACHABLE', 'LOAD_SUCCESS', 'ERROR']

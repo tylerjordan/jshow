@@ -27,7 +27,6 @@ from utility import *
 from os.path import join
 from getpass import getpass
 from prettytable import PrettyTable
-from Spinner import *
 from sys import stdout
 from lxml import etree
 from multiprocessing import Pool

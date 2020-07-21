@@ -19,6 +19,7 @@ import netaddr
 import re
 import multiprocessing
 
+from jnpr.junos.utils.start_shell import StartShell
 from jnpr.junos import Device
 from jnpr.junos.utils.sw import SW
 from jnpr.junos.exception import *
@@ -665,7 +666,12 @@ def oper_commands(my_ips):
                                 #print "Command: {0}\nRPC: {1}\n".format(command, com)
                                 #if com is None:
                                 try:
-                                    results = dev.cli(command, warning=False)
+                                    ### NEW CODE Start
+                                    ss = StartShell(dev)
+                                    with StartShell(dev) as ss:
+                                        results = ss.run('cli -c "' + command + '"', timeout=420)[1]
+                                    ### NEW CODE End
+                                    #results = dev.cli(command, warning=False)
                                 except Exception as err:
                                     stdout.write("\n")
                                     screen_and_log("{0}: Error executing '{1}'. ERROR: {2}\n".format(ip, command, err), err_log)

@@ -1,0 +1,55 @@
+**************************************************************************************************************
+OPERATIONAL COMMANDS OUTPUT
+**************************************************************************************************************
+User: pyez_script
+Performed: 2020-07-17_1535
+Output Log: ./logs/oper_output_20200717-1535.log
+Error Log: ./logs/oper_err_20200717-1535.log
+**************************************************************************************************************
+COMMANDS EXECUTED
+**************************************************************************************************************
+ -> show chassis hardware
+**************************************************************************************************************
+--------------------------------------------------------------------------------------------------------------
+
+SRX300-1: Executing -> show chassis hardware
+
+Hardware inventory:
+Item             Version  Part number  Serial number     Description
+Chassis                                CV4817AF1944      SRX300
+Routing Engine   REV 0x11 650-065039   CV4817AF1944      RE-SRX300
+FPC 0                                                    FPC
+  PIC 0                                                  6xGE,2xGE SFP Base PIC
+Power Supply 0  
+
+SRX300-2: Executing -> show chassis hardware
+
+Hardware inventory:
+Item             Version  Part number  Serial number     Description
+Chassis                                CV4216AF0146      SRX300
+Routing Engine   REV 0x08 650-065039   CV4216AF0146      RE-SRX300
+FPC 0                                                    FPC
+  PIC 0                                                  6xGE,2xGE SFP Base PIC
+Power Supply 0  
+
+SRX300-3: Executing -> show chassis hardware
+
+Hardware inventory:
+Item             Version  Part number  Serial number     Description
+Chassis                                CV3617AF0632      SRX300
+Routing Engine   REV 0x03 650-077890   CV3617AF0632      RE-SRX300
+FPC 0                                                    FPC
+  PIC 0                                                  6xGE,2xGE SFP Base PIC
+Power Supply 0  
+--------------------------------------------------------------------------------------------------------------
+**************************************************************************************************************
+COMMANDS COMPLETED
+**************************************************************************************************************
+**************************************************************************************************************
+PROCESS SUMMARY
+**************************************************************************************************************
+Devices With Output:  3
+Devices No Output:    0
+Devices Unreachable:  0
+Total Devices:        3
+**************************************************************************************************************

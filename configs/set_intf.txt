@@ -1,0 +1,2 @@
+set interfaces lo0.100 family inet address {{ loop_ip }}
+set interfaces lo0.100 description "IP: {{ loop_desc }}"

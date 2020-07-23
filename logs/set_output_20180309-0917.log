@@ -1,0 +1,66 @@
+**************************************************************************************************************
+                                              DEPLOY COMMANDS LOG
+**************************************************************************************************************
+User: lab
+Performed: 2018-03-09_0917
+Output Log: ./logs/set_output_20180309-0917.log
+**************************************************************************************************************
+                                              COMMANDS TO EXECUTE
+**************************************************************************************************************
+ -> set vlans {{ vlan_name }} vlan-id 100
+ -> set vlans {{ vlan_name }} description "Test vlan"
+ -> 
+ -> set interfaces ge-0/0/{{ intf_num }} unit 0 family ethernet-switching
+ -> set interfaces ge-0/0/{{ intf_num }} unit 0 description "Test interface"
+ -> set interfaces ge-0/0/{{ intf_num }} unit 0 family ethernet-switching vlan members {{ vlan_name }} 
+**************************************************************************************************************
+
+**************************************************************************************************************
+                                                 START PROCESS
+**************************************************************************************************************
+172.25.91.209: Unable to Connect : Probe timeout, possible IP reachability issues.
+172.25.91.207: Connected! (2 of 6)
+172.25.91.208: Connected! (3 of 6)
+172.25.91.206: Connected! (1 of 6)
+172.25.91.210: Connected! (5 of 6)
+172.25.91.207 (hdn-ex4300-2): Locked Configuration.
+172.25.91.208 (hdn-ex4300-3): Locked Configuration.
+172.25.91.207 (hdn-ex4300-2): Loaded Configuration.
+172.25.91.208 (hdn-ex4300-3): Loaded Configuration.
+172.25.91.206 (hdn-ex3300-1): Locked Configuration.
+172.25.91.206 (hdn-ex3300-1): Loaded Configuration.
+172.25.91.210 (hdn-ex4200-1): Locked Configuration.
+172.25.91.210 (hdn-ex4200-1): Loaded Configuration.
+172.25.91.208 (hdn-ex4300-3): Committed Configuration.
+172.25.91.207 (hdn-ex4300-2): Committed Configuration.
+172.25.91.208 (hdn-ex4300-3): Unlocked Configuration.
+172.25.91.208 (hdn-ex4300-3): Completed Push!
+172.25.91.207 (hdn-ex4300-2): Unlocked Configuration.
+172.25.91.207 (hdn-ex4300-2): Completed Push!
+172.25.91.211: Connected! (6 of 6)
+172.25.91.210 (hdn-ex4200-1): Committed Configuration.
+172.25.91.210 (hdn-ex4200-1): Unlocked Configuration.
+172.25.91.210 (hdn-ex4200-1): Completed Push!
+172.25.91.211 (hdn-ex4200-2): Locked Configuration.
+172.25.91.211 (hdn-ex4200-2): Loaded Configuration.
+172.25.91.206 (hdn-ex3300-1): Committed Configuration.
+172.25.91.206 (hdn-ex3300-1): Unlocked Configuration.
+172.25.91.206 (hdn-ex3300-1): Completed Push!
+172.25.91.211 (hdn-ex4200-2): Committed Configuration.
+172.25.91.211 (hdn-ex4200-2): Unlocked Configuration.
+172.25.91.211 (hdn-ex4200-2): Completed Push!
+**************************************************************************************************************
+                                                  END PROCESS
+**************************************************************************************************************
+**************************************************************************************************************
+                                                PROCESS SUMMARY
+**************************************************************************************************************
+Devices Accessed:       5
+Devices Successful:     5
+Devices Unreachable:    1
+Devices Unsuccessful:   1
+Total Devices:          6
+
+**************************************************************************************************************
+                                                       
+**************************************************************************************************************

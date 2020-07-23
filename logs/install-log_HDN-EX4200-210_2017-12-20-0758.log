@@ -1,0 +1,12 @@
+2017-12-20 07:58:32,873:HDN-EX4200-210: Information logged in ./logs/install-log_HDN-EX4200-210_2017-12-20-0758.log
+2017-12-20 07:58:33,080:HDN-EX4200-210: Cannot connect to device: ConnectUnknownHostError(HDN-EX4200-210)
+
+2017-12-20 07:58:33,081:HDN-EX4200-211: Information logged in ./logs/install-log_HDN-EX4200-211_2017-12-20-0758.log
+2017-12-20 07:58:33,290:HDN-EX4200-211: Cannot connect to device: ConnectUnknownHostError(HDN-EX4200-211)
+
+2017-12-20 07:58:33,290:HDN-EX4300-207: Information logged in ./logs/install-log_HDN-EX4300-207_2017-12-20-0758.log
+2017-12-20 07:58:33,491:HDN-EX4300-207: Cannot connect to device: ConnectUnknownHostError(HDN-EX4300-207)
+
+2017-12-20 07:58:33,491:HDN-EX4300-208: Information logged in ./logs/install-log_HDN-EX4300-208_2017-12-20-0758.log
+2017-12-20 07:58:33,697:HDN-EX4300-208: Cannot connect to device: ConnectUnknownHostError(HDN-EX4300-208)
+

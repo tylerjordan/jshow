@@ -1,0 +1,34 @@
+2017-12-20 15:27:55,685:PyEZ Server: Information logged in ./logs/install-log_2017-12-20-1527.log
+2017-12-20 15:27:55,685:PyEZ Server: Upgrading HDN-EX4300-207 IP: 172.25.91.207
+2017-12-20 15:27:55,685:PyEZ Server: Model ........ EX4300-24T
+2017-12-20 15:27:55,685:PyEZ Server: Current OS ... 15.1R5.5
+2017-12-20 15:27:55,685:PyEZ Server: Target OS .... jinstall-ex-4300-15.1R6.7-domestic-signed.tgz
+2017-12-20 15:27:55,829:ncclient.transport.ssh: Connected (version 2.0, client OpenSSH_6.6.1)
+2017-12-20 15:27:56,309:ncclient.transport.ssh: Authentication (publickey) failed.
+2017-12-20 15:27:56,437:ncclient.transport.ssh: Authentication (publickey) failed.
+2017-12-20 15:27:56,544:ncclient.transport.ssh: Authentication (password) successful!
+2017-12-20 15:27:57,327:ncclient.transport.session: initialized: session-id=1647 | server_capabilities=<dictionary-keyiterator object at 0x10c771368>
+2017-12-20 15:27:57,328:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 15:27:57,825:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 15:27:58,003:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 15:27:58,450:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 15:27:58,736:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 15:27:59,179:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 15:27:59,311:PyEZ Server: Starting the software upgrade process: ./images/jinstall-ex-4300-15.1R6.7-domestic-signed.tgz
+2017-12-20 15:27:59,312:PyEZ Server: computing checksum on local package: ./images/jinstall-ex-4300-15.1R6.7-domestic-signed.tgz
+2017-12-20 15:27:59,796:PyEZ Server: cleaning filesystem ...
+2017-12-20 15:27:59,797:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 15:28:11,546:PyEZ Server: before copy, computing checksum on remote package: /var/tmp/jinstall-ex-4300-15.1R6.7-domestic-signed.tgz
+2017-12-20 15:28:11,547:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 15:28:11,879:paramiko.transport: Connected (version 2.0, client OpenSSH_6.6.1)
+2017-12-20 15:28:12,349:paramiko.transport: Authentication (publickey) failed.
+2017-12-20 15:28:12,477:paramiko.transport: Authentication (publickey) failed.
+2017-12-20 15:28:12,585:paramiko.transport: Authentication (password) successful!
+2017-12-20 15:28:30,610:PyEZ Server: jinstall-ex-4300-15.1R6.7-domestic-signed.tgz: 17760256 / 177563772 (10%)
+2017-12-20 15:28:44,338:PyEZ Server: jinstall-ex-4300-15.1R6.7-domestic-signed.tgz: 35520512 / 177563772 (20%)
+2017-12-20 15:28:58,733:PyEZ Server: jinstall-ex-4300-15.1R6.7-domestic-signed.tgz: 53280768 / 177563772 (30%)
+2017-12-20 15:29:14,471:PyEZ Server: jinstall-ex-4300-15.1R6.7-domestic-signed.tgz: 71041024 / 177563772 (40%)
+2017-12-20 15:29:28,747:PyEZ Server: jinstall-ex-4300-15.1R6.7-domestic-signed.tgz: 88784896 / 177563772 (50%)
+2017-12-20 15:29:45,008:PyEZ Server: jinstall-ex-4300-15.1R6.7-domestic-signed.tgz: 106545152 / 177563772 (60%)
+2017-12-20 15:30:00,387:PyEZ Server: jinstall-ex-4300-15.1R6.7-domestic-signed.tgz: 124305408 / 177563772 (70%)
+2017-12-20 15:30:16,043:PyEZ Server: jinstall-ex-4300-15.1R6.7-domestic-signed.tgz: 142065664 / 177563772 (80%)

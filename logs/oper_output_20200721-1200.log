@@ -1,0 +1,65 @@
+**************************************************************************************************************
+OPERATIONAL COMMANDS OUTPUT
+**************************************************************************************************************
+User: pyez_script
+Performed: 2020-07-21_1200
+Output Log: ./logs/oper_output_20200721-1200.log
+Error Log: ./logs/oper_err_20200721-1200.log
+**************************************************************************************************************
+COMMANDS EXECUTED
+**************************************************************************************************************
+ -> request system snapshot slice alternate | no-more
+ -> show version
+**************************************************************************************************************
+--------------------------------------------------------------------------------------------------------------
+
+SRX300-1: Executing -> request system snapshot slice alternate | no-more
+cli -c "request system snapshot slice alternate | no-more"
+Formatting alternate root (/dev/da0s2a)...
+Copying '/dev/da0s1a' to '/dev/da0s2a' .. (this may take a few minutes)
+The following filesystems were archived: /
+% 
+SRX300-1: Executing -> show version
+cli -c "show version"
+Hostname: SRX300-1
+Model: srx300
+Junos: 18.4R3-S4.2
+JUNOS Software Release [18.4R3-S4.2]
+% 
+SRX300-2: Executing -> request system snapshot slice alternate | no-more
+cli -c "request system snapshot slice alternate | no-more"
+Formatting alternate root (/dev/da0s2a)...
+Copying '/dev/da0s1a' to '/dev/da0s2a' .. (this may take a few minutes)
+The following filesystems were archived: /
+% 
+SRX300-2: Executing -> show version
+cli -c "show version"
+Hostname: SRX300-2
+Model: srx300
+Junos: 18.4R3-S4.2
+JUNOS Software Release [18.4R3-S4.2]
+% 
+SRX300-3: Executing -> request system snapshot slice alternate | no-more
+cli -c "request system snapshot slice alternate | no-more"
+Formatting alternate root (/dev/da0s2a)...
+Copying '/dev/da0s1a' to '/dev/da0s2a' .. (this may take a few minutes)
+The following filesystems were archived: /
+% 
+SRX300-3: Executing -> show version
+cli -c "show version"
+Hostname: SRX300-3
+Model: srx300
+Junos: 18.4R3-S4.2
+JUNOS Software Release [18.4R3-S4.2]
+% --------------------------------------------------------------------------------------------------------------
+**************************************************************************************************************
+COMMANDS COMPLETED
+**************************************************************************************************************
+**************************************************************************************************************
+PROCESS SUMMARY
+**************************************************************************************************************
+Devices With Output:  3
+Devices No Output:    0
+Devices Unreachable:  0
+Total Devices:        3
+**************************************************************************************************************

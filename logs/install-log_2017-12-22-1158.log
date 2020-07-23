@@ -1,0 +1,25 @@
+2017-12-22 11:58:55,627:PyEZ Server: Information logged in ./logs/install-log_2017-12-22-1158.log
+2017-12-22 11:58:55,627:PyEZ Server: ------------------------------
+2017-12-22 11:58:55,627:PyEZ Server: Upgrading HDN-EX4200-210 IP: 172.25.91.210
+2017-12-22 11:58:55,627:PyEZ Server: Model ........ EX4200-24PX
+2017-12-22 11:58:55,627:PyEZ Server: Current OS ... 14.1X53-D35.3
+2017-12-22 11:58:55,627:PyEZ Server: Target OS .... jinstall-ex-4200-15.1R5.5-domestic-signed.tgz
+2017-12-22 11:58:55,627:PyEZ Server: ------------------------------
+2017-12-22 11:58:55,627:PyEZ Server: ------------------------------
+2017-12-22 11:58:55,628:PyEZ Server: Upgrading HDN-EX4200-211 IP: 172.25.91.211
+2017-12-22 11:58:55,630:PyEZ Server: Model ........ EX4200-24T
+2017-12-22 11:58:55,631:PyEZ Server: Current OS ... 15.1R6.7
+2017-12-22 11:58:55,631:PyEZ Server: Target OS .... jinstall-ex-4200-15.1R5.5-domestic-signed.tgz
+2017-12-22 11:58:55,632:PyEZ Server: ------------------------------
+2017-12-22 11:58:55,633:PyEZ Server: ------------------------------
+2017-12-22 11:58:55,634:PyEZ Server: Upgrading HDN-EX4300-207 IP: 172.25.91.207
+2017-12-22 11:58:55,634:PyEZ Server: Model ........ EX4300-24T
+2017-12-22 11:58:55,634:PyEZ Server: Current OS ... 15.1R5.5
+2017-12-22 11:58:55,634:PyEZ Server: Target OS .... jinstall-ex-4300-15.1R6.7-domestic-signed.tgz
+2017-12-22 11:58:55,634:PyEZ Server: ------------------------------
+2017-12-22 11:58:55,634:PyEZ Server: ------------------------------
+2017-12-22 11:58:55,634:PyEZ Server: Upgrading HDN-EX4300-208 IP: 172.25.91.208
+2017-12-22 11:58:55,634:PyEZ Server: Model ........ EX4300-48P
+2017-12-22 11:58:55,634:PyEZ Server: Current OS ... 15.1R5.5
+2017-12-22 11:58:55,634:PyEZ Server: Target OS .... jinstall-ex-4300-15.1R6.7-domestic-signed.tgz
+2017-12-22 11:58:55,634:PyEZ Server: ------------------------------

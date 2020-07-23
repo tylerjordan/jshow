@@ -1,0 +1,3 @@
+delete interfaces ge-0/0/{{ intf_num }}
+
+delete vlans {{ vlan_name }}

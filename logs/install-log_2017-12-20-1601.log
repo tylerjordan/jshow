@@ -1,0 +1,72 @@
+2017-12-20 16:01:48,079:PyEZ Server: Information logged in ./logs/install-log_2017-12-20-1601.log
+2017-12-20 16:01:48,079:PyEZ Server: ------------------------------
+2017-12-20 16:01:48,079:PyEZ Server: Upgrading HDN-EX4300-207 IP: 172.25.91.207
+2017-12-20 16:01:48,079:PyEZ Server: Model ........ EX4300-24T
+2017-12-20 16:01:48,079:PyEZ Server: Current OS ... 15.1R6.7
+2017-12-20 16:01:48,081:PyEZ Server: Target OS .... jinstall-ex-4300-15.1R5.5-domestic-signed.tgz
+2017-12-20 16:01:48,081:PyEZ Server: ------------------------------
+2017-12-20 16:01:48,236:ncclient.transport.ssh: Connected (version 2.0, client OpenSSH_6.9)
+2017-12-20 16:01:48,706:ncclient.transport.ssh: Authentication (publickey) failed.
+2017-12-20 16:01:48,832:ncclient.transport.ssh: Authentication (publickey) failed.
+2017-12-20 16:01:48,949:ncclient.transport.ssh: Authentication (password) successful!
+2017-12-20 16:01:49,712:ncclient.transport.session: initialized: session-id=1523 | server_capabilities=<dictionary-keyiterator object at 0x10bb7cba8>
+2017-12-20 16:01:49,713:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 16:01:50,200:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 16:01:50,380:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 16:01:50,873:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 16:01:51,205:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 16:01:51,919:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 16:01:52,049:PyEZ Server: Starting the software upgrade process: ./images/jinstall-ex-4300-15.1R5.5-domestic-signed.tgz
+2017-12-20 16:01:52,049:PyEZ Server: computing checksum on local package: ./images/jinstall-ex-4300-15.1R5.5-domestic-signed.tgz
+2017-12-20 16:01:52,473:PyEZ Server: cleaning filesystem ...
+2017-12-20 16:01:52,474:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 16:02:04,466:PyEZ Server: before copy, computing checksum on remote package: /var/tmp/jinstall-ex-4300-15.1R5.5-domestic-signed.tgz
+2017-12-20 16:02:04,466:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 16:02:04,850:paramiko.transport: Connected (version 2.0, client OpenSSH_6.9)
+2017-12-20 16:02:05,330:paramiko.transport: Authentication (publickey) failed.
+2017-12-20 16:02:05,462:paramiko.transport: Authentication (publickey) failed.
+2017-12-20 16:02:05,574:paramiko.transport: Authentication (password) successful!
+2017-12-20 16:02:21,419:PyEZ Server: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 17711104 / 177065444 (10%)
+2017-12-20 16:02:35,946:PyEZ Server: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 35422208 / 177065444 (20%)
+2017-12-20 16:02:50,310:PyEZ Server: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 53133312 / 177065444 (30%)
+2017-12-20 16:03:05,044:PyEZ Server: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 70828032 / 177065444 (40%)
+2017-12-20 16:03:20,299:PyEZ Server: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 88539136 / 177065444 (50%)
+2017-12-20 16:03:34,463:PyEZ Server: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 106250240 / 177065444 (60%)
+2017-12-20 16:03:51,845:PyEZ Server: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 123961344 / 177065444 (70%)
+2017-12-20 16:04:06,986:PyEZ Server: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 141656064 / 177065444 (80%)
+2017-12-20 16:04:21,371:PyEZ Server: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 159367168 / 177065444 (90%)
+2017-12-20 16:04:37,340:PyEZ Server: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 177065444 / 177065444 (100%)
+2017-12-20 16:04:37,592:PyEZ Server: after copy, computing checksum on remote package: /var/tmp/jinstall-ex-4300-15.1R5.5-domestic-signed.tgz
+2017-12-20 16:04:37,592:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 16:04:40,799:PyEZ Server: checksum check passed.
+2017-12-20 16:04:40,799:PyEZ Server: validating software against current config, please be patient ...
+2017-12-20 16:04:40,800:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 16:04:54,687:PyEZ Server: software validate package-result: 0
+Output: 
+
+2017-12-20 16:04:54,687:PyEZ Server: installing software ... please be patient ...
+2017-12-20 16:04:54,688:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 16:05:33,430:PyEZ Server: software pkgadd package-result: 0
+Output: 
+Verify the signature of the new package
+Verified jinstall-ex-4300-15.1R5.5-domestic.tgz signed by PackageProductionRSA_2016 method RSA2048+SHA1
+WARNING: A reboot is required to install the software
+WARNING:     Use the 'request system reboot' command immediately
+
+2017-12-20 16:05:33,430:PyEZ Server: Software installation complete.
+2017-12-20 16:05:38,135:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 16:05:38,364:PyEZ Server: Upgrade pending reboot cycle, please be patient.
+2017-12-20 16:05:38,364:PyEZ Server: Shutdown at Wed Dec 20 16:06:38 2017.
+[pid 1900]
+2017-12-20 16:05:38,364:ncclient.operations.rpc: Requesting 'CloseSession'
+2017-12-20 16:05:55,328:ncclient.transport.ssh: Connected (version 2.0, client OpenSSH_6.9)
+2017-12-20 16:05:55,848:ncclient.transport.ssh: Authentication (publickey) failed.
+2017-12-20 16:05:55,982:ncclient.transport.ssh: Authentication (publickey) failed.
+2017-12-20 16:05:56,090:ncclient.transport.ssh: Authentication (password) successful!
+2017-12-20 16:05:56,918:ncclient.transport.session: initialized: session-id=1403 | server_capabilities=<dictionary-keyiterator object at 0x10bcb8368>
+2017-12-20 16:05:56,919:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 16:05:57,471:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 16:05:57,650:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 16:05:58,162:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 16:05:58,660:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 16:05:59,332:ncclient.operations.rpc: Requesting 'CloseSession'

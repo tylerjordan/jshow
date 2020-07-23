@@ -1,0 +1,59 @@
+**************************************************************************************************************
+                                              DEPLOY COMMANDS LOG
+**************************************************************************************************************
+User: lab
+Performed: 2018-03-07_1507
+Output Log: ./logs/set_output_20180307-1507.log
+**************************************************************************************************************
+                                              COMMANDS TO EXECUTE
+**************************************************************************************************************
+ -> delete interfaces ge-0/0/{{ intf_num }}
+ -> 
+ -> delete vlans {{ vlan_name }}
+**************************************************************************************************************
+
+**************************************************************************************************************
+                                                 START PROCESS
+**************************************************************************************************************
+172.25.91.207: Connected!
+172.25.91.210: Connected!
+172.25.91.208: Connected!
+172.25.91.206: Connected!
+hdn-ex4300-2: Locked Configuration.
+hdn-ex4300-2: Loaded Configuration.
+hdn-ex4200-1: Locked Configuration.
+hdn-ex4300-3: Locked Configuration.
+hdn-ex4200-1: Loaded Configuration.
+hdn-ex4300-3: Loaded Configuration.
+hdn-ex3300-1: ERROR - Unable to lock configuration: LockError(severity: error, bad_element: None, message: configuration database modified)
+Moving to next device...
+hdn-ex4300-2: Committed Configuration.
+hdn-ex4300-2: Unlocked Configuration.
+hdn-ex4300-2: Completed Push!
+172.25.91.211: Connected!
+hdn-ex4300-3: Committed Configuration.
+hdn-ex4300-3: Unlocked Configuration.
+hdn-ex4300-3: Completed Push!
+hdn-ex4200-1: Committed Configuration.
+hdn-ex4200-1: Unlocked Configuration.
+hdn-ex4200-1: Completed Push!
+hdn-ex4200-2: Locked Configuration.
+hdn-ex4200-2: Loaded Configuration.
+hdn-ex4200-2: Committed Configuration.
+hdn-ex4200-2: Unlocked Configuration.
+hdn-ex4200-2: Completed Push!
+**************************************************************************************************************
+                                                  END PROCESS
+**************************************************************************************************************
+**************************************************************************************************************
+                                                PROCESS SUMMARY
+**************************************************************************************************************
+Devices Accessed:       0
+Devices Successful:     0
+Devices Unreachable:    0
+Devices Unsuccessful:   0
+Total Devices:          5
+
+**************************************************************************************************************
+                                                       
+**************************************************************************************************************

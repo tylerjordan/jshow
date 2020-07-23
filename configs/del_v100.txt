@@ -1,0 +1,3 @@
+delete interfaces ge-0/0/10
+
+delete vlans v100 

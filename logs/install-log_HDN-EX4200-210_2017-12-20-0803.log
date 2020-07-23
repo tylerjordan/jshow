@@ -1,0 +1,13 @@
+2017-12-20 08:03:34,681:172.25.91.210: Information logged in ./logs/install-log_HDN-EX4200-210_2017-12-20-0803.log
+2017-12-20 08:03:34,855:ncclient.transport.ssh: Connected (version 2.0, client OpenSSH_6.6.1)
+2017-12-20 08:03:35,357:ncclient.transport.ssh: Authentication (publickey) failed.
+2017-12-20 08:03:35,498:ncclient.transport.ssh: Authentication (publickey) failed.
+2017-12-20 08:03:35,609:ncclient.transport.ssh: Authentication (password) successful!
+2017-12-20 08:03:36,667:ncclient.transport.session: initialized: session-id=30519 | server_capabilities=<dictionary-keyiterator object at 0x10f032050>
+2017-12-20 08:03:36,667:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 08:03:37,227:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 08:03:37,403:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 08:03:38,018:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 08:03:38,414:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 08:03:38,760:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 08:03:38,941:172.25.91.210: Starting the software upgrade process: ./images/jinstall-ex-4200-15.1R6.7-domestic-signed.tgz

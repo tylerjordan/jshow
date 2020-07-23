@@ -1,0 +1,203 @@
+**************************************************************************************************************
+OPERATIONAL COMMANDS OUTPUT
+**************************************************************************************************************
+User: pyez_script
+Performed: 2020-07-20_1347
+Output Log: ./logs/oper_output_20200720-1347.log
+Error Log: ./logs/oper_err_20200720-1347.log
+**************************************************************************************************************
+COMMANDS EXECUTED
+**************************************************************************************************************
+ -> request system storage cleanup dry-run no-confirm
+**************************************************************************************************************
+--------------------------------------------------------------------------------------------------------------
+
+SRX300-1: Executing -> request system storage cleanup dry-run no-confirm
+
+
+List of files to delete:
+
+	 Size Date	   Name
+    11B Jul 20 13:20 /cf/var/jail/tmp/alarmd.ts
+     0B Jun 19 17:20 /cf/var/log/chassisd.0.gz
+  53.0K May 28 12:58 /cf/var/log/dcd.0.gz
+  56.4K Apr 22 11:22 /cf/var/log/dcd.1.gz
+  10.8K May 14 09:48 /cf/var/log/ike-trace.0.gz
+  9650B May 13 16:52 /cf/var/log/ike-trace.1.gz
+   952B Mar 25 09:50 /cf/var/log/install.0.gz
+  1052B Nov  6  2018 /cf/var/log/install.1.gz
+  16.4K Jul 20 13:49 /cf/var/log/interactive-commands.0.gz
+  65.7K Jun  3 09:00 /cf/var/log/interactive-commands.1.gz
+  66.0K May 26 16:00 /cf/var/log/interactive-commands.2.gz
+  63.1K May 13 09:45 /cf/var/log/interactive-commands.3.gz
+  60.5K Apr 24 10:00 /cf/var/log/interactive-commands.4.gz
+  66.5K Apr 20 16:45 /cf/var/log/interactive-commands.5.gz
+  61.5K Apr  3 17:00 /cf/var/log/interactive-commands.6.gz
+  58.0K Mar 26 13:00 /cf/var/log/interactive-commands.7.gz
+  56.8K Mar 13 10:45 /cf/var/log/interactive-commands.8.gz
+  33.6K May 31  2019 /cf/var/log/interactive-commands.9.gz
+  23.3K Jul 20 13:49 /cf/var/log/kmd-logs.0.gz
+  25.9K May 28 15:00 /cf/var/log/kmd-logs.1.gz
+  25.6K May 20 16:30 /cf/var/log/kmd-logs.2.gz
+  18.9K May 12 17:45 /cf/var/log/kmd-logs.3.gz
+  68.4K Jul 20 13:49 /cf/var/log/messages.0.gz
+  99.7K Jul 17 14:30 /cf/var/log/messages.1.gz
+ 100.5K Jun 18 12:45 /cf/var/log/messages.2.gz
+ 118.0K Jun  3 09:00 /cf/var/log/messages.3.gz
+ 139.0K May 29 08:45 /cf/var/log/messages.4.gz
+ 119.2K May 28 14:30 /cf/var/log/messages.5.gz
+  96.9K May 28 11:30 /cf/var/log/messages.6.gz
+  56.6K May 27 08:30 /cf/var/log/messages.7.gz
+ 109.3K May 21 08:00 /cf/var/log/messages.8.gz
+ 125.1K May 19 08:30 /cf/var/log/messages.9.gz
+    77B Jul 20 13:46 /cf/var/log/wtmp.0.gz
+   643B Jul 20 13:18 /cf/var/log/wtmp.1.gz
+  1617B Jun 18 12:42 /cf/var/log/wtmp.2.gz
+  1457B May  8 09:36 /cf/var/log/wtmp.3.gz
+  2475B Apr  8 10:38 /cf/var/log/wtmp.4.gz
+ 246.5M Nov  6  2018 /cf/var/sw/pkg/junos-15.1X49-D145.2.tgz
+ 247.7M Mar 25 09:48 /cf/var/sw/pkg/junos-15.1X49-D210.1.tgz
+ 318.1M Jul 17 16:27 /cf/var/sw/pkg/junos-18.4R3-S4.2.tgz
+  30.1K Jul 20 13:23 /cf/var/tmp/appidd_trace_debug
+  2094B Apr  2 11:14 /cf/var/tmp/cacert.pem
+  4679B Jul 20 13:18 /cf/var/tmp/cleanup-pkgs.log
+     0B Jul 20 13:19 /cf/var/tmp/eedebug_bin_file
+    34B Mar 25 09:55 /cf/var/tmp/gksdchk.log
+ 124.0K Jul 17 16:31 /cf/var/tmp/gres-tp/env.dat
+     0B Oct 29  2018 /cf/var/tmp/gres-tp/lock
+     4B Jul 17 12:41 /cf/var/tmp/idp_license_info
+ 318.1M Jul 17 15:57 /cf/var/tmp/junos-srxsme-18.4R3-S4.2.tgz
+    70B Jul 17 16:42 /cf/var/tmp/kmdchk.log
+    57B Jul 20 13:19 /cf/var/tmp/krt_rpf_filter.txt
+     2B Jul 20 13:19 /cf/var/tmp/nsd_restart
+  1837B Nov  6  2018 /cf/var/tmp/out.xml
+    42B Jul 17 16:35 /cf/var/tmp/pfe_debug_commands
+    30B Jul 20 13:20 /cf/var/tmp/policy_status
+     0B Jul 20 13:18 /cf/var/tmp/rtsdb/if-rtsdb
+     0B Oct 29  2018 /cf/var/tmp/spu_kmd_init
+   664B May  7 13:50 /cf/var/tmp/srx300-1-req
+  5800B Apr  2 11:13 /cf/var/tmp/srx300-1.pem
+  4831B Nov  6  2018 /cf/var/tmp/srx300-3.default
+  1346B Nov  6  2018 /cf/var/tmp/ssl_cert.crt
+    32B May 29 16:19 /cf/var/tmp/vpn_tunnel-_orig.id
+    53B Jul 17 12:41 /cf/var/tmp/vpn_tunnel_orig.id
+
+SRX300-2: Executing -> request system storage cleanup dry-run no-confirm
+
+
+List of files to delete:
+
+	 Size Date	   Name
+    11B Jul 20 13:19 /cf/var/jail/tmp/alarmd.ts
+  44.5K Jun  5 10:51 /cf/var/log/dcd.0.gz
+  52.3K May  5 14:43 /cf/var/log/dcd.1.gz
+   989B Jun  4 12:01 /cf/var/log/install.0.gz
+   972B Mar 25 09:48 /cf/var/log/install.1.gz
+  1082B May  7  2018 /cf/var/log/install.2.gz
+  4448B Jul 20 13:49 /cf/var/log/interactive-commands.0.gz
+  8774B Jun 19 14:30 /cf/var/log/interactive-commands.1.gz
+  8927B Jun  3 11:45 /cf/var/log/interactive-commands.2.gz
+  4916B Jul 20 13:49 /cf/var/log/kmd-logs.0.gz
+  5773B Jun  4 11:30 /cf/var/log/kmd-logs.1.gz
+  5392B May 28 15:45 /cf/var/log/kmd-logs.2.gz
+   332B Jul 20 13:49 /cf/var/log/messages.0.gz
+  12.6K Jul 20 13:30 /cf/var/log/messages.1.gz
+  13.9K Jul 17 17:45 /cf/var/log/messages.2.gz
+  5572B Oct  4  2019 /cf/var/log/phone-home.0.gz
+  5527B Oct  4  2019 /cf/var/log/phone-home.1.gz
+  11.1K May 20 16:32 /cf/var/log/pki-trace.0.gz
+  13.1K May 18 15:06 /cf/var/log/pki-trace.1.gz
+    27B Jul 20 13:30 /cf/var/log/wtmp.0.gz
+   369B Jul 20 13:17 /cf/var/log/wtmp.1.gz
+  1644B Jun 18 12:42 /cf/var/log/wtmp.2.gz
+  1362B May 11 10:36 /cf/var/log/wtmp.3.gz
+  1660B Apr 10 07:09 /cf/var/log/wtmp.4.gz
+ 245.7M May  7  2018 /cf/var/sw/pkg/junos-15.1X49-D133.tgz
+ 247.7M Mar 25 09:46 /cf/var/sw/pkg/junos-15.1X49-D210.1.tgz
+ 317.8M Jun  4 11:40 /cf/var/sw/pkg/junos-18.4R3-S2.tgz
+  32.3K Jul 20 13:20 /cf/var/tmp/appidd_trace_debug
+  2094B Apr  2 13:54 /cf/var/tmp/cacert.pem
+  4679B Jul 20 13:17 /cf/var/tmp/cleanup-pkgs.log
+     0B Jul 20 13:18 /cf/var/tmp/eedebug_bin_file
+    34B Mar 25 09:52 /cf/var/tmp/gksdchk.log
+ 124.0K Jun  4 12:16 /cf/var/tmp/gres-tp/env.dat
+     0B May  7  2018 /cf/var/tmp/gres-tp/lock
+     4B Jun  4 10:30 /cf/var/tmp/idp_license_info
+ 247.7M Mar 25 08:29 /cf/var/tmp/junos-srxsme-15.1X49-D210.1-domestic.tgz
+ 317.8M Jun  4 11:27 /cf/var/tmp/junos-srxsme-18.4R3-S2.tgz
+ 318.1M Jul 17 17:06 /cf/var/tmp/junos-srxsme-18.4R3-S4.2.tgz
+    70B Jul 17 17:40 /cf/var/tmp/kmdchk.log
+    57B Jul 20 13:19 /cf/var/tmp/krt_rpf_filter.txt
+ 727.5K Apr 24 09:25 /cf/var/tmp/nsd.core-tarball.0.tgz
+     2B Jul 20 13:19 /cf/var/tmp/nsd_restart
+  2406B Jun  7  2018 /cf/var/tmp/out.xml
+    42B Jun  4 12:20 /cf/var/tmp/pfe_debug_commands
+   244B Jun  7  2018 /cf/var/tmp/pkid-new-ca-grp-profile.xml
+    73B Jun  7  2018 /cf/var/tmp/pkid_mgd_errors
+    30B Jul 20 13:20 /cf/var/tmp/policy_status
+     0B Jul 20 13:18 /cf/var/tmp/rtsdb/if-rtsdb
+     0B May  7  2018 /cf/var/tmp/spu_kmd_init
+  5800B Apr  2 13:46 /cf/var/tmp/srx300-2.pem
+   639B May  7 15:34 /cf/var/tmp/srx300-2.req
+  1332B May 15  2018 /cf/var/tmp/ssl_cert.crt
+    17B May 29 16:19 /cf/var/tmp/vpn_tunnel-_orig.id
+    38B Jun  4 10:30 /cf/var/tmp/vpn_tunnel_orig.id
+
+SRX300-3: Executing -> request system storage cleanup dry-run no-confirm
+
+
+List of files to delete:
+
+	 Size Date	   Name
+    11B Jul 20 13:20 /cf/var/jail/tmp/alarmd.ts
+ 254.9K Apr  3 17:15 /cf/var/log/chassisd.0.gz
+  45.7K May 29 08:44 /cf/var/log/dcd.0.gz
+  50.7K Apr 13 09:19 /cf/var/log/dcd.1.gz
+   853B Mar 25 09:17 /cf/var/log/install.0.gz
+   800B Feb 28 13:15 /cf/var/log/install.1.gz
+   598B Dec  5  2017 /cf/var/log/install.2.gz
+  4143B Jul 20 13:49 /cf/var/log/interactive-commands.0.gz
+  7267B Jun 19 14:30 /cf/var/log/interactive-commands.1.gz
+  8708B Jun  3 09:00 /cf/var/log/interactive-commands.2.gz
+   332B Jul 20 13:49 /cf/var/log/messages.0.gz
+  38.3K Jul 20 13:30 /cf/var/log/messages.1.gz
+  20.4K Jul 10 16:15 /cf/var/log/messages.2.gz
+   261B Jul 20 13:18 /cf/var/log/wtmp.0.gz
+   354B Jul 10 16:01 /cf/var/log/wtmp.1.gz
+  1536B Jun  3 09:27 /cf/var/log/wtmp.2.gz
+  1356B May  4 13:30 /cf/var/log/wtmp.3.gz
+   755B Mar 28 17:04 /cf/var/log/wtmp.4.gz
+ 251.0M Feb 28 13:04 /cf/var/sw/pkg/junos-15.1X49-D190.2.tgz
+ 247.7M Mar 25 09:01 /cf/var/sw/pkg/junos-15.1X49-D210.1.tgz
+ 318.1M Jul 17 16:43 /cf/var/sw/pkg/junos-18.4R3-S4.2.tgz
+  60.9K Jul 20 13:21 /cf/var/tmp/appidd_trace_debug
+  4679B Jul 20 13:18 /cf/var/tmp/cleanup-pkgs.log
+     0B Jul 20 13:19 /cf/var/tmp/eedebug_bin_file
+    34B Mar 25 09:25 /cf/var/tmp/gksdchk.log
+ 124.0K Jul 17 17:02 /cf/var/tmp/gres-tp/env.dat
+     0B Dec  5  2017 /cf/var/tmp/gres-tp/lock
+     4B Jul 17 12:41 /cf/var/tmp/idp_license_info
+ 247.7M Mar 25 08:55 /cf/var/tmp/junos-srxsme-15.1X49-D210.1-domestic.tgz
+ 318.1M Jul 17 16:36 /cf/var/tmp/junos-srxsme-18.4R3-S4.2.tgz
+    70B Jul 17 17:13 /cf/var/tmp/kmdchk.log
+    57B Jul 20 13:19 /cf/var/tmp/krt_rpf_filter.txt
+     2B Jul 20 13:20 /cf/var/tmp/nsd_restart
+    42B Jul 17 17:06 /cf/var/tmp/pfe_debug_commands
+    30B Jul 20 13:20 /cf/var/tmp/policy_status
+     0B Jul 20 13:18 /cf/var/tmp/rtsdb/if-rtsdb
+     0B Dec  5  2017 /cf/var/tmp/spu_kmd_init
+   664B May 12 10:38 /cf/var/tmp/srx300-3-req
+    32B May 29 16:18 /cf/var/tmp/vpn_tunnel-_orig.id
+    53B Jul 17 12:40 /cf/var/tmp/vpn_tunnel_orig.id
+--------------------------------------------------------------------------------------------------------------
+**************************************************************************************************************
+COMMANDS COMPLETED
+**************************************************************************************************************
+**************************************************************************************************************
+PROCESS SUMMARY
+**************************************************************************************************************
+Devices With Output:  3
+Devices No Output:    0
+Devices Unreachable:  0
+Total Devices:        3
+**************************************************************************************************************

@@ -1,0 +1,7 @@
+HOSTNAME,IP,MODEL,JUNOS,REACHABLE,LOAD_SUCCESS,ERROR
+hdn-ex3300-1,172.25.91.206,EX3300-48P,15.1R6.7,True,True,
+hdn-ex4300-2,172.25.91.207,EX4300-24T,15.1R6.7,True,True,
+hdn-ex4300-3,172.25.91.208,EX4300-48P,15.1R6.7,True,True,
+Unknown,172.25.91.209,Unknown,Unknown,False,False,Unable to Connect! : Probe timeout, possible IP reachability issues.
+hdn-ex4200-1,172.25.91.210,EX4200-24PX,15.1R5.5,True,True,
+hdn-ex4200-2,172.25.91.211,EX4200-24T,15.1R6.7,True,True,

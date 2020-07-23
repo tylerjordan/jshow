@@ -1,0 +1,2207 @@
+**************************************************************************************************************
+OPERATIONAL COMMANDS OUTPUT
+**************************************************************************************************************
+User: pyez_script
+Performed: 2020-06-18_1419
+Output Log: ./logs/oper_output_20200618-1419.log
+Error Log: ./logs/oper_err_20200618-1419.log
+**************************************************************************************************************
+COMMANDS EXECUTED
+**************************************************************************************************************
+ -> show interfaces
+**************************************************************************************************************
+--------------------------------------------------------------------------------------------------------------
+
+SRX300-1: Executing -> show interfaces
+
+Physical interface: ge-0/0/0, Enabled, Physical link is Down
+  Interface index: 135, SNMP ifIndex: 511
+  Link-level type: Ethernet, MTU: 1514, LAN-PHY mode, Link-mode: Full-duplex,
+  Speed: 1000mbps, BPDU Error: None, MAC-REWRITE Error: None,
+  Loopback: Disabled, Source filtering: Disabled, Flow control: Disabled,
+  Auto-negotiation: Enabled, Remote fault: Online
+  Device flags   : Present Running Down
+  Interface flags: Hardware-Down SNMP-Traps Internal: 0x0
+  Link flags     : None
+  CoS queues     : 8 supported, 8 maximum usable queues
+  Current address: d8:b1:22:3f:73:00, Hardware address: d8:b1:22:3f:73:00
+  Last flapped   : 2020-06-18 12:43:44 EDT (01:36:52 ago)
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+  Active alarms  : LINK
+  Active defects : LINK
+  Interface transmit statistics: Disabled
+
+  Logical interface ge-0/0/0.0 (Index 94) (SNMP ifIndex 513)
+    Description: N1 to NTP Server
+    Flags: Device-Down SNMP-Traps 0x0 Encapsulation: ENET2
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: trust-N1
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Dest-route-down Is-Default Is-Preferred Is-Primary
+        Destination: 172.16.100/24, Local: 172.16.100.1,
+        Broadcast: 172.16.100.255
+
+Physical interface: gr-0/0/0, Enabled, Physical link is Up
+  Interface index: 144, SNMP ifIndex: 523
+  Type: GRE, Link-level type: GRE, MTU: Unlimited, Speed: 800mbps
+  Link flags     : Scheduler Keepalives DTE
+  Device flags   : Present Running
+  Interface flags: Point-To-Point
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+
+Physical interface: ip-0/0/0, Enabled, Physical link is Up
+  Interface index: 145, SNMP ifIndex: 525
+  Type: IPIP, Link-level type: IP-over-IP, MTU: Unlimited, Speed: 800mbps
+  Link flags     : Scheduler Keepalives DTE
+  Device flags   : Present Running
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+
+Physical interface: lsq-0/0/0, Enabled, Physical link is Up
+  Interface index: 146, SNMP ifIndex: 526
+  Link-level type: LinkService, MTU: 1504
+  Device flags   : Present Running
+  Interface flags: Point-To-Point SNMP-Traps Internal: 0x0
+  Last flapped   : 2020-06-18 12:43:44 EDT (01:36:52 ago)
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+
+Physical interface: lt-0/0/0, Enabled, Physical link is Up
+  Interface index: 148, SNMP ifIndex: 528
+  Type: Logical-tunnel, Link-level type: Logical-tunnel, MTU: Unlimited,
+  Speed: 800mbps
+  Link flags     : Keepalives DTE
+  Device flags   : Present Running
+  Interface flags: Point-To-Point SNMP-Traps Internal: 0x0
+  Input rate     : 24576 bps (20 pps)
+  Output rate    : 26080 bps (20 pps)
+
+  Logical interface lt-0/0/0.1 (Index 97) (SNMP ifIndex 553)
+    Description: D4 to NY
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:00
+    Input packets : 698
+    Output packets: 697
+    Security: Zone: trust-D4
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 10.1.1/24, Local: 10.1.1.2, Broadcast: 10.1.1.255
+
+  Logical interface lt-0/0/0.2 (Index 98) (SNMP ifIndex 554)
+    Description: NY to D4
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:01
+    Input packets : 693
+    Output packets: 701
+    Security: Zone: trust-NY-cus4
+    Allowed host-inbound traffic : ospf ping traceroute
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 10.1.1/24, Local: 10.1.1.1, Broadcast: 10.1.1.255
+
+  Logical interface lt-0/0/0.3 (Index 99) (SNMP ifIndex 557)
+    Description: NY to D3
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:00
+    Input packets : 7735
+    Output packets: 11005
+    Security: Zone: untrust-NY
+    Allowed host-inbound traffic : ospf ike ping traceroute
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.31.0/30, Local: 172.16.31.1, Broadcast: 172.16.31.3
+
+  Logical interface lt-0/0/0.4 (Index 100) (SNMP ifIndex 558)
+    Description: D3 to NY
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:01
+    Input packets : 11003
+    Output packets: 7159
+    Security: Zone: trust-D3
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.31.0/30, Local: 172.16.31.2, Broadcast: 172.16.31.3
+
+  Logical interface lt-0/0/0.5 (Index 101) (SNMP ifIndex 559)
+    Description: D3 to D2
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:00
+    Input packets : 15512
+    Output packets: 17067
+    Security: Zone: trust-D3
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.31.8/30, Local: 172.16.31.9,
+        Broadcast: 172.16.31.11
+
+  Logical interface lt-0/0/0.6 (Index 102) (SNMP ifIndex 560)
+    Description: D2 to D3
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:01
+    Input packets : 18787
+    Output packets: 15515
+    Security: Zone: trust-D2
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.31.8/30, Local: 172.16.31.10,
+        Broadcast: 172.16.31.11
+
+  Logical interface lt-0/0/0.7 (Index 103) (SNMP ifIndex 561)
+    Description: D3 to VEN
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:00
+    Input packets : 22055
+    Output packets: 21470
+    Security: Zone: trust-D3
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.31.4/30, Local: 172.16.31.5, Broadcast: 172.16.31.7
+
+  Logical interface lt-0/0/0.8 (Index 104) (SNMP ifIndex 562)
+    Description: VEN to D3
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:01
+    Input packets : 22045
+    Output packets: 20336
+    Security: Zone: trust-VEN
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.31.4/30, Local: 172.16.31.6, Broadcast: 172.16.31.7
+
+  Logical interface lt-0/0/0.9 (Index 105) (SNMP ifIndex 573)
+    Description: VEN to D1
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:00
+    Input packets : 807
+    Output packets: 813
+    Security: Zone: untrust-VEN
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.10.0/30, Local: 172.16.10.2, Broadcast: 172.16.10.3
+
+  Logical interface lt-0/0/0.10 (Index 106) (SNMP ifIndex 567)
+    Description: D1 to VEN
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:01
+    Input packets : 810
+    Output packets: 810
+    Security: Zone: trust-D1
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.10.0/30, Local: 172.16.10.1, Broadcast: 172.16.10.3
+
+  Logical interface lt-0/0/0.11 (Index 107) (SNMP ifIndex 569)
+    Description: D2 to R1
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:00
+    Input packets : 15187
+    Output packets: 16738
+    Security: Zone: trust-D2
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.10.20/30, Local: 172.16.10.22,
+        Broadcast: 172.16.10.23
+
+  Logical interface lt-0/0/0.12 (Index 108) (SNMP ifIndex 555)
+    Description: R1 to D2
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:01
+    Input packets : 18459
+    Output packets: 15188
+    Security: Zone: trust-R1
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.10.20/30, Local: 172.16.10.21,
+        Broadcast: 172.16.10.23
+
+  Logical interface lt-0/0/0.13 (Index 109) (SNMP ifIndex 566)
+    Description: D1 to T1
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:00
+    Input packets : 430
+    Output packets: 429
+    Security: Zone: trust-D1
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 11.1.1.0/30, Local: 11.1.1.2, Broadcast: 11.1.1.3
+
+  Logical interface lt-0/0/0.14 (Index 110) (SNMP ifIndex 556)
+    Description: T1 to D1
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:01
+    Input packets : 427
+    Output packets: 431
+    Security: Zone: trust-T1
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 11.1.1.0/30, Local: 11.1.1.1, Broadcast: 11.1.1.3
+
+  Logical interface lt-0/0/0.15 (Index 111) (SNMP ifIndex 563)
+    Description: T1 to N1
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:00
+    Input packets : 438
+    Output packets: 437
+    Security: Zone: trust-T1
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 103.1.1.0/30, Local: 103.1.1.2, Broadcast: 103.1.1.3
+
+  Logical interface lt-0/0/0.16 (Index 112) (SNMP ifIndex 564)
+    Description: N1 to T1
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:01
+    Input packets : 435
+    Output packets: 439
+    Security: Zone: trust-N1
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 103.1.1.0/30, Local: 103.1.1.1, Broadcast: 103.1.1.3
+
+  Logical interface lt-0/0/0.17 (Index 113) (SNMP ifIndex 574)
+    Description: VEN to T1
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:00
+    Input packets : 428
+    Output packets: 426
+    Security: Zone: untrust-VEN
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 11.2.2.0/30, Local: 11.2.2.2, Broadcast: 11.2.2.3
+
+  Logical interface lt-0/0/0.18 (Index 114) (SNMP ifIndex 575)
+    Description: T1 to VEN
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:01
+    Input packets : 424
+    Output packets: 429
+    Security: Zone: trust-T1
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 11.2.2.0/30, Local: 11.2.2.1, Broadcast: 11.2.2.3
+
+  Logical interface lt-0/0/0.19 (Index 115) (SNMP ifIndex 579)
+    Description: VEN to HUB
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:00
+    Input packets : 21292
+    Output packets: 21381
+    Security: Zone: trust-VEN
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.31.12/30, Local: 172.16.31.13,
+        Broadcast: 172.16.31.15
+
+  Logical interface lt-0/0/0.20 (Index 116) (SNMP ifIndex 584)
+    Description: HUB to VEN
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:01
+    Input packets : 21956
+    Output packets: 21296
+    Security: Zone: trust-HUB
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.31.12/30, Local: 172.16.31.14,
+        Broadcast: 172.16.31.15
+
+  Logical interface lt-0/0/0.21 (Index 117) (SNMP ifIndex 586)
+    Description: NY to D5
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:00
+    Input packets : 692
+    Output packets: 698
+    Security: Zone: trust-NY-cus5
+    Allowed host-inbound traffic : ospf ping traceroute
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 10.1.2/24, Local: 10.1.2.1, Broadcast: 10.1.2.255
+
+  Logical interface lt-0/0/0.22 (Index 118) (SNMP ifIndex 587)
+    Description: D5 to NY
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: d8:b1:22:3f:73:01
+    Input packets : 694
+    Output packets: 697
+    Security: Zone: trust-D5
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 10.1.2/24, Local: 10.1.2.2, Broadcast: 10.1.2.255
+
+Physical interface: mt-0/0/0, Enabled, Physical link is Up
+  Interface index: 147, SNMP ifIndex: 527
+  Type: Multicast-GRE, Link-level type: GRE, MTU: Unlimited, Speed: 800mbps
+  Link flags     : Keepalives DTE
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+
+Physical interface: sp-0/0/0, Enabled, Physical link is Up
+  Interface index: 143, SNMP ifIndex: 522
+  Type: Adaptive-Services, Link-level type: Adaptive-Services, MTU: 9192,
+  Speed: 800mbps
+  Device flags   : Present Running
+  Interface flags: Point-To-Point SNMP-Traps Internal: 0x0
+  Link type      : Full-Duplex
+  Link flags     : None
+  Last flapped   : 2020-06-18 12:43:44 EDT (01:36:52 ago)
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+
+  Logical interface sp-0/0/0.0 (Index 122) (SNMP ifIndex 533)
+    Flags: Up Point-To-Point SNMP-Traps Encapsulation: Adaptive-Services
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: Null
+    Protocol inet, MTU: 9192
+      Flags: Receive-options, Receive-TTL-Exceeded
+    Protocol inet6, MTU: 9192
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Primary, Is-Primary, Receive-options, Receive-TTL-Exceeded
+
+  Logical interface sp-0/0/0.16383 (Index 123) (SNMP ifIndex 534)
+    Flags: Up Point-To-Point SNMP-Traps Encapsulation: Adaptive-Services
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: Null
+    Protocol inet, MTU: 9192
+      Flags: Is-Primary, Receive-options, Receive-TTL-Exceeded
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 10.0.0.16, Local: 10.0.0.1
+      Addresses
+        Local: 10.0.0.6
+      Addresses, Flags: Is-Preferred
+        Destination: 128.0.1.16, Local: 128.0.0.1
+      Addresses
+        Local: 128.0.0.6
+
+Physical interface: ge-0/0/1, Enabled, Physical link is Up
+  Interface index: 136, SNMP ifIndex: 512
+  Link-level type: Ethernet, MTU: 1514, LAN-PHY mode, Link-mode: Full-duplex,
+  Speed: 1000mbps, BPDU Error: None, MAC-REWRITE Error: None,
+  Loopback: Disabled, Source filtering: Disabled, Flow control: Disabled,
+  Auto-negotiation: Enabled, Remote fault: Online
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps Internal: 0x0
+  Link flags     : None
+  CoS queues     : 8 supported, 8 maximum usable queues
+  Current address: d8:b1:22:3f:73:01, Hardware address: d8:b1:22:3f:73:01
+  Last flapped   : 2020-06-18 12:43:48 EDT (01:36:48 ago)
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+  Active alarms  : None
+  Active defects : None
+  Interface transmit statistics: Disabled
+
+  Logical interface ge-0/0/1.0 (Index 95) (SNMP ifIndex 521)
+    Description: T1 to T3
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    Input packets : 428
+    Output packets: 429
+    Security: Zone: trust-T1
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Is-Default Is-Preferred Is-Primary
+        Destination: 101.1.1.0/30, Local: 101.1.1.1, Broadcast: 101.1.1.3
+
+Physical interface: ge-0/0/2, Enabled, Physical link is Up
+  Interface index: 137, SNMP ifIndex: 514
+  Link-level type: Ethernet, MTU: 1514, LAN-PHY mode, Link-mode: Full-duplex,
+  Speed: 1000mbps, BPDU Error: None, MAC-REWRITE Error: None,
+  Loopback: Disabled, Source filtering: Disabled, Flow control: Disabled,
+  Auto-negotiation: Enabled, Remote fault: Online
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps Internal: 0x0
+  Link flags     : None
+  CoS queues     : 8 supported, 8 maximum usable queues
+  Current address: d8:b1:22:3f:73:02, Hardware address: d8:b1:22:3f:73:02
+  Last flapped   : 2020-06-18 12:45:20 EDT (01:35:16 ago)
+  Input rate     : 280 bps (0 pps)
+  Output rate    : 416 bps (0 pps)
+  Active alarms  : None
+  Active defects : None
+  Interface transmit statistics: Disabled
+
+  Logical interface ge-0/0/2.0 (Index 96) (SNMP ifIndex 516)
+    Description: T1 to T2
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    Input packets : 424
+    Output packets: 441
+    Security: Zone: trust-T1
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 101.1.1.4/30, Local: 101.1.1.5, Broadcast: 101.1.1.7
+
+Physical interface: ge-0/0/3, Enabled, Physical link is Up
+  Interface index: 138, SNMP ifIndex: 515
+  Link-level type: Ethernet, MTU: 1514, LAN-PHY mode, Link-mode: Full-duplex,
+  Speed: 1000mbps, BPDU Error: None, MAC-REWRITE Error: None,
+  Loopback: Disabled, Source filtering: Disabled, Flow control: Disabled,
+  Auto-negotiation: Enabled, Remote fault: Online
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps Internal: 0x0
+  Link flags     : None
+  CoS queues     : 8 supported, 8 maximum usable queues
+  Current address: d8:b1:22:3f:73:03, Hardware address: d8:b1:22:3f:73:03
+  Last flapped   : 2020-06-18 12:43:48 EDT (01:36:48 ago)
+  Input rate     : 856 bps (0 pps)
+  Output rate    : 1720 bps (1 pps)
+  Active alarms  : None
+  Active defects : None
+  Interface transmit statistics: Disabled
+
+  Logical interface ge-0/0/3.0 (Index 119) (SNMP ifIndex 524)
+    Description: R1 to R3
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    Input packets : 8152
+    Output packets: 10267
+    Security: Zone: trust-R1
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Is-Default Is-Preferred Is-Primary
+        Destination: 172.16.10.40/30, Local: 172.16.10.41,
+        Broadcast: 172.16.10.43
+
+Physical interface: ge-0/0/4, Enabled, Physical link is Up
+  Interface index: 139, SNMP ifIndex: 517
+  Link-level type: Ethernet, MTU: 1514, LAN-PHY mode, Link-mode: Full-duplex,
+  Speed: 1000mbps, BPDU Error: None, MAC-REWRITE Error: None,
+  Loopback: Disabled, Source filtering: Disabled, Flow control: Disabled,
+  Auto-negotiation: Enabled, Remote fault: Online
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps Internal: 0x0
+  Link flags     : None
+  CoS queues     : 8 supported, 8 maximum usable queues
+  Current address: d8:b1:22:3f:73:04, Hardware address: d8:b1:22:3f:73:04
+  Last flapped   : 2020-06-18 12:45:20 EDT (01:35:16 ago)
+  Input rate     : 856 bps (0 pps)
+  Output rate    : 856 bps (0 pps)
+  Active alarms  : None
+  Active defects : None
+  Interface transmit statistics: Disabled
+
+  Logical interface ge-0/0/4.0 (Index 120) (SNMP ifIndex 529)
+    Description: R1 to R2
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    Input packets : 7454
+    Output packets: 6906
+    Security: Zone: trust-R1
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.10.44/30, Local: 172.16.10.45,
+        Broadcast: 172.16.10.47
+
+Physical interface: ge-0/0/5, Enabled, Physical link is Up
+  Interface index: 140, SNMP ifIndex: 518
+  Link-level type: Ethernet, MTU: 1514, LAN-PHY mode, Link-mode: Full-duplex,
+  Speed: 1000mbps, BPDU Error: None, MAC-REWRITE Error: None,
+  Loopback: Disabled, Source filtering: Disabled, Flow control: Disabled,
+  Auto-negotiation: Enabled, Remote fault: Online
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps Internal: 0x0
+  Link flags     : None
+  CoS queues     : 8 supported, 8 maximum usable queues
+  Current address: d8:b1:22:3f:73:05, Hardware address: d8:b1:22:3f:73:05
+  Last flapped   : 2020-06-18 12:43:48 EDT (01:36:48 ago)
+  Input rate     : 377152 bps (906 pps)
+  Output rate    : 1404808 bps (906 pps)
+  Active alarms  : None
+  Active defects : None
+  Interface transmit statistics: Disabled
+
+  Logical interface ge-0/0/5.0 (Index 121) (SNMP ifIndex 530)
+    Description: Management
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    Input packets : 5591
+    Output packets: 2326
+    Security: Zone: trust-local
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Is-Default Is-Preferred Is-Primary
+        Destination: 100.1.1.0/29, Local: 100.1.1.1, Broadcast: 100.1.1.7
+
+Physical interface: ge-0/0/6, Enabled, Physical link is Down
+  Interface index: 141, SNMP ifIndex: 519
+  Link-level type: Ethernet, MTU: 1514, LAN-PHY mode, Link-mode: Full-duplex,
+  Speed: 1000mbps, BPDU Error: None, MAC-REWRITE Error: None,
+  Loopback: Disabled, Source filtering: Disabled, Flow control: Disabled,
+  Auto-negotiation: Enabled, Remote fault: Online
+  Device flags   : Present Running Down
+  Interface flags: Hardware-Down SNMP-Traps Internal: 0x0
+  Link flags     : None
+  CoS queues     : 8 supported, 8 maximum usable queues
+  Current address: d8:b1:22:3f:73:06, Hardware address: d8:b1:22:3f:73:06
+  Last flapped   : 2020-06-18 12:43:44 EDT (01:36:52 ago)
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+  Active alarms  : LINK
+  Active defects : LINK
+  Interface transmit statistics: Disabled
+
+Physical interface: ge-0/0/7, Enabled, Physical link is Down
+  Interface index: 142, SNMP ifIndex: 520
+  Link-level type: Ethernet, MTU: 1514, LAN-PHY mode, Link-mode: Full-duplex,
+  Speed: 1000mbps, BPDU Error: None, MAC-REWRITE Error: None,
+  Loopback: Disabled, Source filtering: Disabled, Flow control: Disabled,
+  Auto-negotiation: Enabled, Remote fault: Online
+  Device flags   : Present Running Down
+  Interface flags: Hardware-Down SNMP-Traps Internal: 0x0
+  Link flags     : None
+  CoS queues     : 8 supported, 8 maximum usable queues
+  Current address: d8:b1:22:3f:73:07, Hardware address: d8:b1:22:3f:73:07
+  Last flapped   : 2020-06-18 12:43:44 EDT (01:36:52 ago)
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+  Active alarms  : LINK
+  Active defects : LINK
+  Interface transmit statistics: Disabled
+
+Physical interface: gre    , Enabled, Physical link is Up
+  Interface index: 10, SNMP ifIndex: 8
+  Type: GRE, Link-level type: GRE, MTU: Unlimited, Speed: Unlimited
+  Link flags     : Keepalives DTE
+  Device flags   : Present Running
+  Interface flags: Point-To-Point SNMP-Traps
+    Input packets : 0
+    Output packets: 0
+
+Physical interface: ipip   , Enabled, Physical link is Up
+  Interface index: 11, SNMP ifIndex: 9
+  Type: IPIP, Link-level type: IP-over-IP, MTU: Unlimited, Speed: Unlimited
+  Link flags     : Keepalives DTE
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps
+    Input packets : 0
+    Output packets: 0
+
+Physical interface: irb    , Enabled, Physical link is Up
+  Interface index: 130, SNMP ifIndex: 504
+  Type: Ethernet, Link-level type: Ethernet, MTU: 1514
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps
+  Link type      : Full-Duplex
+  Link flags     : None
+  Current address: d8:b1:22:3f:73:b0, Hardware address: d8:b1:22:3f:73:b0
+  Last flapped   : Never
+    Input packets : 0
+    Output packets: 0
+
+Physical interface: jsrv   , Enabled, Physical link is Up
+  Interface index: 128, SNMP ifIndex: 501
+  Type: Ethernet, Link-level type: Ethernet, MTU: 1514
+  Device flags   : Present Running
+  Link type      : Full-Duplex
+  Link flags     : None
+  Current address: 00:79:47:90:00:79, Hardware address: 00:79:47:90:00:79
+  Last flapped   : Never
+    Input packets : 0
+    Output packets: 0
+
+  Logical interface jsrv.1 (Index 68) (SNMP ifIndex 502)
+    Flags: Up 0x0 Encapsulation: unknown
+    Bandwidth: 1000mbps
+    Routing Instance: None Bridging Domain: None
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: Null
+    Protocol inet, MTU: 1514
+      Flags: Is-Primary
+      Addresses, Flags: Primary Is-Default Is-Preferred Is-Primary
+        Destination: 128/2, Local: 128.0.0.127, Broadcast: 191.255.255.255
+
+Physical interface: lo0    , Enabled, Physical link is Up
+  Interface index: 6, SNMP ifIndex: 6
+  Type: Loopback, MTU: Unlimited
+  Device flags   : Present Running Loopback
+  Interface flags: SNMP-Traps
+  Link flags     : None
+  Last flapped   : Never
+    Input packets : 55106
+    Output packets: 55106
+
+  Logical interface lo0.1 (Index 85) (SNMP ifIndex 570)
+    Description: D4 Loopback
+    Flags: Down SNMP-Traps Encapsulation: Unspecified
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: trust-D4
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: Unlimited
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Default Is-Primary
+        Local: 10.0.1.1
+
+  Logical interface lo0.2 (Index 92) (SNMP ifIndex 571)
+    Description: NY Loopback
+    Flags: Down SNMP-Traps Encapsulation: Unspecified
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: untrust-NY
+    Allowed host-inbound traffic : ospf ike ping traceroute
+    Protocol inet, MTU: Unlimited
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Default Is-Primary
+        Local: 10.0.1.2
+
+  Logical interface lo0.3 (Index 93) (SNMP ifIndex 572)
+    Description: VEN Loopback
+    Flags: Down SNMP-Traps Encapsulation: Unspecified
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: trust-VEN
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: Unlimited
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Default Is-Primary
+        Local: 10.0.1.3
+
+  Logical interface lo0.4 (Index 83) (SNMP ifIndex 568)
+    Description: D2 Loopback
+    Flags: Down SNMP-Traps Encapsulation: Unspecified
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: trust-D2
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: Unlimited
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Default Is-Primary
+        Local: 10.0.1.4
+
+  Logical interface lo0.5 (Index 75) (SNMP ifIndex 565)
+    Description: D1 Loopback
+    Flags: Down SNMP-Traps Encapsulation: Unspecified
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: trust-D1
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: Unlimited
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Default Is-Primary
+        Local: 10.0.1.5
+
+  Logical interface lo0.6 (Index 84) (SNMP ifIndex 576)
+    Description: D3 Loopback
+    Flags: Down SNMP-Traps Encapsulation: Unspecified
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: trust-D3
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: Unlimited
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Default Is-Primary
+        Local: 10.0.1.6
+
+  Logical interface lo0.7 (Index 89) (SNMP ifIndex 583)
+    Description: HUB Loopback
+    Flags: Down SNMP-Traps Encapsulation: Unspecified
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: trust-HUB
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: Unlimited
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Default Is-Primary
+        Local: 10.0.1.7
+
+  Logical interface lo0.8 (Index 87) (SNMP ifIndex 585)
+    Description: D5 Loopback
+    Flags: Down SNMP-Traps Encapsulation: Unspecified
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: trust-D5
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: Unlimited
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Default Is-Primary
+        Local: 10.0.1.8
+
+  Logical interface lo0.16384 (Index 65) (SNMP ifIndex 21)
+    Flags: Down SNMP-Traps Encapsulation: Unspecified
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: Null
+    Protocol inet, MTU: Unlimited
+      Flags: None
+      Addresses
+        Local: 127.0.0.1
+
+  Logical interface lo0.16385 (Index 66) (SNMP ifIndex 22)
+    Flags: Down SNMP-Traps Encapsulation: Unspecified
+    Input packets : 55106
+    Output packets: 55106
+    Security: Zone: Null
+    Protocol inet, MTU: Unlimited
+      Flags: None
+      Addresses, Flags: Is-Default Is-Primary
+        Local: 10.0.0.1
+      Addresses
+        Local: 10.0.0.16
+      Addresses
+        Local: 128.0.0.1
+      Addresses
+        Local: 128.0.0.4
+      Addresses
+        Local: 128.0.1.16
+
+  Logical interface lo0.32768 (Index 64) (SNMP ifIndex 251)
+    Flags: Encapsulation: Unspecified
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: Null
+
+Physical interface: lsi    , Enabled, Physical link is Up
+  Interface index: 4, SNMP ifIndex: 4
+  Type: Software-Pseudo, Link-level type: LSI, MTU: Unlimited, Speed: Unlimited
+  Device flags   : Present Running
+  Link flags     : None
+  Last flapped   : Never
+    Input packets : 0
+    Output packets: 0
+
+Physical interface: mtun   , Enabled, Physical link is Up
+  Interface index: 64, SNMP ifIndex: 12
+  Type: Multicast-GRE, Link-level type: GRE, MTU: Unlimited, Speed: Unlimited
+  Link flags     : Keepalives DTE
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps
+    Input packets : 0
+    Output packets: 0
+
+Physical interface: pimd   , Enabled, Physical link is Up
+  Interface index: 26, SNMP ifIndex: 11
+  Type: PIMD, Link-level type: PIM-Decapsulator, MTU: Unlimited,
+  Speed: Unlimited
+  Device flags   : Present Running
+    Input packets : 0
+    Output packets: 0
+
+Physical interface: pime   , Enabled, Physical link is Up
+  Interface index: 25, SNMP ifIndex: 10
+  Type: PIME, Link-level type: PIM-Encapsulator, MTU: Unlimited,
+  Speed: Unlimited
+  Device flags   : Present Running
+    Input packets : 0
+    Output packets: 0
+
+Physical interface: pp0    , Enabled, Physical link is Up
+  Interface index: 129, SNMP ifIndex: 503
+  Type: PPPoE, Link-level type: PPPoE, MTU: 1532
+  Device flags   : Present Running
+  Interface flags: Point-To-Point SNMP-Traps
+  Link type      : Full-Duplex
+  Link flags     : None
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+
+Physical interface: ppd0   , Enabled, Physical link is Up
+  Interface index: 133, SNMP ifIndex: 507
+  Type: PIMD, Link-level type: PIM-Decapsulator, MTU: Unlimited, Speed: 800mbps
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+
+Physical interface: ppe0   , Enabled, Physical link is Up
+  Interface index: 134, SNMP ifIndex: 508
+  Type: PIME, Link-level type: PIM-Encapsulator, MTU: Unlimited, Speed: 800mbps
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+
+Physical interface: st0    , Enabled, Physical link is Up
+  Interface index: 132, SNMP ifIndex: 506
+  Type: Secure-Tunnel, Link-level type: Secure-Tunnel, MTU: 9192
+  Device flags   : Present Running
+  Interface flags: Point-To-Point
+  Input rate     : 1648 bps (2 pps)
+  Output rate    : 3344 bps (4 pps)
+
+  Logical interface st0.1 (Index 91) (SNMP ifIndex 589)
+    Flags: Up No-Multicast SNMP-Traps Encapsulation: Secure-Tunnel
+    Input packets : 6555
+    Output packets: 6551
+    Security: Zone: spoke-1-vpn
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 9192
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.1/24, Local: 172.16.1.1
+
+  Logical interface st0.3 (Index 90) (SNMP ifIndex 588)
+    Flags: Up No-Multicast SNMP-Traps Encapsulation: Secure-Tunnel
+    Input packets : 15
+    Output packets: 3287
+    Security: Zone: spoke-3-vpn
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 9192
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.3/24, Local: 172.16.3.1
+
+  Logical interface st0.10 (Index 88) (SNMP ifIndex 582)
+    Flags: Up No-Multicast SNMP-Traps Encapsulation: Secure-Tunnel
+    Input packets : 19561
+    Output packets: 19570
+    Security: Zone: hub-vpn
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 9192
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.1/24, Local: 172.16.1.10
+
+Physical interface: tap    , Enabled, Physical link is Up
+  Interface index: 12, SNMP ifIndex: 7
+  Type: Software-Pseudo, Link-level type: Interface-Specific, MTU: Unlimited,
+  Speed: Unlimited
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps
+  Link flags     : None
+  Last flapped   : Never
+    Input packets : 0
+    Output packets: 0
+
+Physical interface: vtep   , Enabled, Physical link is Up
+  Interface index: 131, SNMP ifIndex: 505
+  Type: Software-Pseudo, Link-level type: VxLAN-Tunnel-Endpoint, MTU: 1600,
+  Speed: Unlimited
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps
+  Link type      : Full-Duplex
+  Link flags     : None
+  Last flapped   : Never
+    Input packets : 0
+    Output packets: 0
+
+SRX300-2: Executing -> show interfaces
+
+Physical interface: ge-0/0/0, Enabled, Physical link is Down
+  Interface index: 138, SNMP ifIndex: 508
+  Link-level type: Ethernet, MTU: 1514, LAN-PHY mode, Link-mode: Full-duplex,
+  Speed: 1000mbps, BPDU Error: None, Loop Detect PDU Error: None,
+  Ethernet-Switching Error: None, MAC-REWRITE Error: None, Loopback: Disabled,
+  Source filtering: Disabled, Flow control: Disabled, Auto-negotiation: Enabled,
+  Remote fault: Online
+  Device flags   : Present Running Down
+  Interface flags: Hardware-Down SNMP-Traps Internal: 0x0
+  Link flags     : None
+  CoS queues     : 8 supported, 8 maximum usable queues
+  Current address: 2c:21:31:53:66:80, Hardware address: 2c:21:31:53:66:80
+  Last flapped   : 2020-06-18 12:44:56 EDT (01:35:34 ago)
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+  Active alarms  : LINK
+  Active defects : LINK
+  PCS statistics                      Seconds
+    Bit errors                             0
+    Errored blocks                         0
+  Ethernet FEC statistics              Errors
+    FEC Corrected Errors                    0
+    FEC Uncorrected Errors                  0
+    FEC Corrected Errors Rate               0
+    FEC Uncorrected Errors Rate             0
+  Interface transmit statistics: Disabled
+
+Physical interface: gr-0/0/0, Enabled, Physical link is Up
+  Interface index: 147, SNMP ifIndex: 521
+  Type: GRE, Link-level type: GRE, MTU: Unlimited, Speed: 800mbps
+  Link flags     : Scheduler Keepalives DTE
+  Device flags   : Present Running
+  Interface flags: Point-To-Point
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+
+Physical interface: ip-0/0/0, Enabled, Physical link is Up
+  Interface index: 148, SNMP ifIndex: 522
+  Type: IPIP, Link-level type: IP-over-IP, MTU: Unlimited, Speed: 800mbps
+  Link flags     : Scheduler Keepalives DTE
+  Device flags   : Present Running
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+
+Physical interface: lsq-0/0/0, Enabled, Physical link is Up
+  Interface index: 149, SNMP ifIndex: 523
+  Link-level type: LinkService, MTU: 1504
+  Device flags   : Present Running
+  Interface flags: Point-To-Point SNMP-Traps Internal: 0x0
+  Last flapped   : 2020-06-18 12:44:56 EDT (01:35:34 ago)
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+
+Physical interface: lt-0/0/0, Enabled, Physical link is Up
+  Interface index: 151, SNMP ifIndex: 526
+  Type: Logical-tunnel, Link-level type: Logical-tunnel, MTU: Unlimited,
+  Speed: 800mbps
+  Device flags   : Present Running
+  Interface flags: Point-To-Point SNMP-Traps Internal: 0x0
+  Link flags     : None
+  Physical info  : 13
+  Current address: 2c:21:31:53:66:80, Hardware address: 2c:21:31:53:66:80
+  Last flapped   : Never
+  Input rate     : 9328 bps (3 pps)
+  Output rate    : 11704 bps (5 pps)
+
+  Logical interface lt-0/0/0.1 (Index 91) (SNMP ifIndex 528)
+    Description: C4 to PHA
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: 2c:21:31:53:66:80
+    Input packets : 686
+    Output packets: 688
+    Security: Zone: trust-C4
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 10.2.1/24, Local: 10.2.1.2, Broadcast: 10.2.1.255
+
+  Logical interface lt-0/0/0.2 (Index 92) (SNMP ifIndex 529)
+    Description: PHA to C4
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: 2c:21:31:53:66:81
+    Input packets : 681
+    Output packets: 690
+    Security: Zone: trust-PHA-cus4
+    Allowed host-inbound traffic : ospf ping traceroute
+    Protocol inet, MTU: 1500
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 10.2.1/24, Local: 10.2.1.1, Broadcast: 10.2.1.255
+
+  Logical interface lt-0/0/0.3 (Index 93) (SNMP ifIndex 534)
+    Description: PHA to C3
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: 2c:21:31:53:66:80
+    Input packets : 7638
+    Output packets: 12017
+    Security: Zone: untrust-PHA
+    Allowed host-inbound traffic : ospf ike ping traceroute
+    Protocol inet, MTU: 1500
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.32.0/30, Local: 172.16.32.1, Broadcast: 172.16.32.3
+
+  Logical interface lt-0/0/0.4 (Index 94) (SNMP ifIndex 535)
+    Description: C3 to PHA
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: 2c:21:31:53:66:81
+    Input packets : 10865
+    Output packets: 7639
+    Security: Zone: trust-C3
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.32.0/30, Local: 172.16.32.2, Broadcast: 172.16.32.3
+
+  Logical interface lt-0/0/0.5 (Index 95) (SNMP ifIndex 558)
+    Description: C3 to C2
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: 2c:21:31:53:66:80
+    Input packets : 8372
+    Output packets: 11601
+    Security: Zone: trust-C3
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.32.8/30, Local: 172.16.32.10,
+        Broadcast: 172.16.32.11
+
+  Logical interface lt-0/0/0.6 (Index 96) (SNMP ifIndex 560)
+    Description: C2 to C3
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: 2c:21:31:53:66:81
+    Input packets : 11596
+    Output packets: 8376
+    Security: Zone: trust-C2
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.32.8/30, Local: 172.16.32.9,
+        Broadcast: 172.16.32.11
+
+  Logical interface lt-0/0/0.7 (Index 97) (SNMP ifIndex 561)
+    Description: C3 to WID
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: 2c:21:31:53:66:80
+    Input packets : 744
+    Output packets: 749
+    Security: Zone: trust-C3
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.32.4/30, Local: 172.16.32.6, Broadcast: 172.16.32.7
+
+  Logical interface lt-0/0/0.8 (Index 98) (SNMP ifIndex 562)
+    Description: WID to C3
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: 2c:21:31:53:66:81
+    Input packets : 744
+    Output packets: 749
+    Security: Zone: trust-WID
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.32.4/30, Local: 172.16.32.5, Broadcast: 172.16.32.7
+
+  Logical interface lt-0/0/0.9 (Index 99) (SNMP ifIndex 567)
+    Description: WID to C1
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: 2c:21:31:53:66:80
+    Input packets : 785
+    Output packets: 789
+    Security: Zone: untrust-WID
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.10.4/30, Local: 172.16.10.5, Broadcast: 172.16.10.7
+
+  Logical interface lt-0/0/0.10 (Index 100) (SNMP ifIndex 569)
+    Description: C1 to WID
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: 2c:21:31:53:66:81
+    Input packets : 785
+    Output packets: 790
+    Security: Zone: trust-C1
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.10.4/30, Local: 172.16.10.6, Broadcast: 172.16.10.7
+
+  Logical interface lt-0/0/0.11 (Index 101) (SNMP ifIndex 570)
+    Description: C2 to R2
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: 2c:21:31:53:66:80
+    Input packets : 8059
+    Output packets: 11715
+    Security: Zone: trust-C2
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.10.24/30, Local: 172.16.10.26,
+        Broadcast: 172.16.10.27
+
+  Logical interface lt-0/0/0.12 (Index 102) (SNMP ifIndex 571)
+    Description: R2 to C2
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: 2c:21:31:53:66:81
+    Input packets : 11287
+    Output packets: 8485
+    Security: Zone: trust-R2
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.10.24/30, Local: 172.16.10.25,
+        Broadcast: 172.16.10.27
+
+  Logical interface lt-0/0/0.13 (Index 103) (SNMP ifIndex 568)
+    Description: C1 to T2
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: 2c:21:31:53:66:80
+    Input packets : 427
+    Output packets: 844
+    Security: Zone: trust-C1
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 22.1.1.0/30, Local: 22.1.1.2, Broadcast: 22.1.1.3
+
+  Logical interface lt-0/0/0.14 (Index 104) (SNMP ifIndex 572)
+    Description: T2 to C1
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: 2c:21:31:53:66:81
+    Input packets : 424
+    Output packets: 849
+    Security: Zone: trust-T2
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 22.1.1.0/30, Local: 22.1.1.1, Broadcast: 22.1.1.3
+
+  Logical interface lt-0/0/0.15 (Index 105) (SNMP ifIndex 573)
+    Description: WID to R2
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: 2c:21:31:53:66:80
+    Input packets : 424
+    Output packets: 841
+    Security: Zone: untrust-WID
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 22.2.2.0/30, Local: 22.2.2.2, Broadcast: 22.2.2.3
+
+  Logical interface lt-0/0/0.16 (Index 106) (SNMP ifIndex 574)
+    Description: R2 to WID
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: 2c:21:31:53:66:81
+    Input packets : 422
+    Output packets: 844
+    Security: Zone: trust-T2
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 22.2.2.0/30, Local: 22.2.2.1, Broadcast: 22.2.2.3
+
+  Logical interface lt-0/0/0.17 (Index 107) (SNMP ifIndex 579)
+    Description: PHA to C5
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: 2c:21:31:53:66:80
+    Input packets : 682
+    Output packets: 689
+    Security: Zone: trust-PHA-cus5
+    Allowed host-inbound traffic : ospf ping traceroute
+    Protocol inet, MTU: 1500
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 10.2.2/24, Local: 10.2.2.1, Broadcast: 10.2.2.255
+
+  Logical interface lt-0/0/0.18 (Index 108) (SNMP ifIndex 580)
+    Description: C5 to PHA
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    MAC: 2c:21:31:53:66:81
+    Input packets : 685
+    Output packets: 688
+    Security: Zone: trust-C5
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 10.2.2/24, Local: 10.2.2.2, Broadcast: 10.2.2.255
+
+  Logical interface lt-0/0/0.32767 (Index 109) (SNMP ifIndex 586)
+    Flags: Up SNMP-Traps 0x0 VLAN-Tag [ 0x0000.0 ]  Encapsulation: ENET2
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: Null
+
+Physical interface: mt-0/0/0, Enabled, Physical link is Up
+  Interface index: 150, SNMP ifIndex: 525
+  Type: Multicast-GRE, Link-level type: GRE, MTU: Unlimited, Speed: 800mbps
+  Link flags     : Keepalives DTE
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+
+Physical interface: sp-0/0/0, Enabled, Physical link is Up
+  Interface index: 146, SNMP ifIndex: 519
+  Type: Adaptive-Services, Link-level type: Adaptive-Services, MTU: 9192,
+  Speed: 800mbps
+  Device flags   : Present Running
+  Interface flags: Point-To-Point SNMP-Traps Internal: 0x0
+  Link type      : Full-Duplex
+  Link flags     : None
+  Last flapped   : 2020-06-18 12:44:56 EDT (01:35:34 ago)
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+
+  Logical interface sp-0/0/0.0 (Index 114) (SNMP ifIndex 530)
+    Flags: Up Point-To-Point SNMP-Traps Encapsulation: Adaptive-Services
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: Null
+    Protocol inet, MTU: 9192
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Receive-options, Receive-TTL-Exceeded
+    Protocol inet6, MTU: 9192
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Primary, Is-Primary, Receive-options, Receive-TTL-Exceeded
+
+  Logical interface sp-0/0/0.16383 (Index 115) (SNMP ifIndex 531)
+    Flags: Up Point-To-Point SNMP-Traps Encapsulation: Adaptive-Services
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: Null
+    Protocol inet, MTU: 9192
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Is-Primary, Receive-options, Receive-TTL-Exceeded
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 10.0.0.16, Local: 10.0.0.1
+      Addresses
+        Local: 10.0.0.6
+      Addresses, Flags: Is-Preferred
+        Destination: 128.0.1.16, Local: 128.0.0.1
+      Addresses
+        Local: 128.0.0.6
+
+Physical interface: ge-0/0/1, Enabled, Physical link is Up
+  Interface index: 139, SNMP ifIndex: 509
+  Link-level type: Ethernet, MTU: 1514, LAN-PHY mode, Link-mode: Full-duplex,
+  Speed: 1000mbps, BPDU Error: None, Loop Detect PDU Error: None,
+  Ethernet-Switching Error: None, MAC-REWRITE Error: None, Loopback: Disabled,
+  Source filtering: Disabled, Flow control: Disabled, Auto-negotiation: Enabled,
+  Remote fault: Online
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps Internal: 0x0
+  Link flags     : None
+  CoS queues     : 8 supported, 8 maximum usable queues
+  Current address: 2c:21:31:53:66:81, Hardware address: 2c:21:31:53:66:81
+  Last flapped   : 2020-06-18 12:45:02 EDT (01:35:28 ago)
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+  Active alarms  : None
+  Active defects : None
+  PCS statistics                      Seconds
+    Bit errors                             0
+    Errored blocks                         0
+  Ethernet FEC statistics              Errors
+    FEC Corrected Errors                    0
+    FEC Uncorrected Errors                  0
+    FEC Corrected Errors Rate               0
+    FEC Uncorrected Errors Rate             0
+  Interface transmit statistics: Disabled
+
+  Logical interface ge-0/0/1.0 (Index 111) (SNMP ifIndex 518)
+    Description: T2 to T1
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    Input packets : 427
+    Output packets: 424
+    Security: Zone: trust-T2
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+    Max nh cache: 100000, New hold nh limit: 100000, Curr nh cnt: 1,
+    Curr new hold cnt: 0, NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Is-Default Is-Preferred Is-Primary
+        Destination: 101.1.1.4/30, Local: 101.1.1.6, Broadcast: 101.1.1.7
+
+Physical interface: ge-0/0/2, Enabled, Physical link is Up
+  Interface index: 140, SNMP ifIndex: 510
+  Link-level type: Ethernet, MTU: 1514, LAN-PHY mode, Link-mode: Full-duplex,
+  Speed: 1000mbps, BPDU Error: None, Loop Detect PDU Error: None,
+  Ethernet-Switching Error: None, MAC-REWRITE Error: None, Loopback: Disabled,
+  Source filtering: Disabled, Flow control: Disabled, Auto-negotiation: Enabled,
+  Remote fault: Online
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps Internal: 0x0
+  Link flags     : None
+  CoS queues     : 8 supported, 8 maximum usable queues
+  Current address: 2c:21:31:53:66:82, Hardware address: 2c:21:31:53:66:82
+  Last flapped   : 2020-06-18 12:45:01 EDT (01:35:29 ago)
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+  Active alarms  : None
+  Active defects : None
+  PCS statistics                      Seconds
+    Bit errors                             0
+    Errored blocks                         0
+  Ethernet FEC statistics              Errors
+    FEC Corrected Errors                    0
+    FEC Uncorrected Errors                  0
+    FEC Corrected Errors Rate               0
+    FEC Uncorrected Errors Rate             0
+  Interface transmit statistics: Disabled
+
+  Logical interface ge-0/0/2.0 (Index 113) (SNMP ifIndex 520)
+    Description: T2 to T3
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    Input packets : 426
+    Output packets: 428
+    Security: Zone: trust-T2
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+    Max nh cache: 100000, New hold nh limit: 100000, Curr nh cnt: 1,
+    Curr new hold cnt: 0, NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 101.1.1.8/30, Local: 101.1.1.9, Broadcast: 101.1.1.11
+
+Physical interface: ge-0/0/3, Enabled, Physical link is Up
+  Interface index: 141, SNMP ifIndex: 512
+  Link-level type: Ethernet, MTU: 1514, LAN-PHY mode, Link-mode: Full-duplex,
+  Speed: 1000mbps, BPDU Error: None, Loop Detect PDU Error: None,
+  Ethernet-Switching Error: None, MAC-REWRITE Error: None, Loopback: Disabled,
+  Source filtering: Disabled, Flow control: Disabled, Auto-negotiation: Enabled,
+  Remote fault: Online
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps Internal: 0x0
+  Link flags     : None
+  CoS queues     : 8 supported, 8 maximum usable queues
+  Current address: 2c:21:31:53:66:83, Hardware address: 2c:21:31:53:66:83
+  Last flapped   : 2020-06-18 12:45:02 EDT (01:35:28 ago)
+  Input rate     : 856 bps (0 pps)
+  Output rate    : 1288 bps (1 pps)
+  Active alarms  : None
+  Active defects : None
+  PCS statistics                      Seconds
+    Bit errors                             0
+    Errored blocks                         0
+  Ethernet FEC statistics              Errors
+    FEC Corrected Errors                    0
+    FEC Uncorrected Errors                  0
+    FEC Corrected Errors Rate               0
+    FEC Uncorrected Errors Rate             0
+  Interface transmit statistics: Disabled
+
+  Logical interface ge-0/0/3.0 (Index 90) (SNMP ifIndex 524)
+    Description: R2 to R1
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    Input packets : 7478
+    Output packets: 7472
+    Security: Zone: trust-R2
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+    Max nh cache: 100000, New hold nh limit: 100000, Curr nh cnt: 1,
+    Curr new hold cnt: 0, NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Is-Default Is-Preferred Is-Primary
+        Destination: 172.16.10.44/30, Local: 172.16.10.46,
+        Broadcast: 172.16.10.47
+
+Physical interface: ge-0/0/4, Enabled, Physical link is Up
+  Interface index: 142, SNMP ifIndex: 514
+  Link-level type: Ethernet, MTU: 1514, LAN-PHY mode, Link-mode: Full-duplex,
+  Speed: 1000mbps, BPDU Error: None, Loop Detect PDU Error: None,
+  Ethernet-Switching Error: None, MAC-REWRITE Error: None, Loopback: Disabled,
+  Source filtering: Disabled, Flow control: Disabled, Auto-negotiation: Enabled,
+  Remote fault: Online
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps Internal: 0x0
+  Link flags     : None
+  CoS queues     : 8 supported, 8 maximum usable queues
+  Current address: 2c:21:31:53:66:84, Hardware address: 2c:21:31:53:66:84
+  Last flapped   : 2020-06-18 12:45:01 EDT (01:35:30 ago)
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 424 bps (0 pps)
+  Active alarms  : None
+  Active defects : None
+  PCS statistics                      Seconds
+    Bit errors                             0
+    Errored blocks                         0
+  Ethernet FEC statistics              Errors
+    FEC Corrected Errors                    0
+    FEC Uncorrected Errors                  0
+    FEC Corrected Errors Rate               0
+    FEC Uncorrected Errors Rate             0
+  Interface transmit statistics: Disabled
+
+  Logical interface ge-0/0/4.0 (Index 110) (SNMP ifIndex 575)
+    Description: R2 to R3
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    Input packets : 1006
+    Output packets: 4236
+    Security: Zone: trust-R2
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+    Max nh cache: 100000, New hold nh limit: 100000, Curr nh cnt: 1,
+    Curr new hold cnt: 0, NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.10.48/30, Local: 172.16.10.49,
+        Broadcast: 172.16.10.51
+
+Physical interface: ge-0/0/5, Enabled, Physical link is Up
+  Interface index: 143, SNMP ifIndex: 515
+  Link-level type: Ethernet, MTU: 1514, LAN-PHY mode, Link-mode: Full-duplex,
+  Speed: 1000mbps, BPDU Error: None, Loop Detect PDU Error: None,
+  Ethernet-Switching Error: None, MAC-REWRITE Error: None, Loopback: Disabled,
+  Source filtering: Disabled, Flow control: Disabled, Auto-negotiation: Enabled,
+  Remote fault: Online
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps Internal: 0x0
+  Link flags     : None
+  CoS queues     : 8 supported, 8 maximum usable queues
+  Current address: 2c:21:31:53:66:85, Hardware address: 2c:21:31:53:66:85
+  Last flapped   : 2020-06-18 12:45:00 EDT (01:35:31 ago)
+  Input rate     : 72016 bps (167 pps)
+  Output rate    : 253576 bps (166 pps)
+  Active alarms  : None
+  Active defects : None
+  PCS statistics                      Seconds
+    Bit errors                             0
+    Errored blocks                         0
+  Ethernet FEC statistics              Errors
+    FEC Corrected Errors                    0
+    FEC Uncorrected Errors                  0
+    FEC Corrected Errors Rate               0
+    FEC Uncorrected Errors Rate             0
+  Interface transmit statistics: Disabled
+
+  Logical interface ge-0/0/5.0 (Index 112) (SNMP ifIndex 527)
+    Description: Management
+    Flags: Up SNMP-Traps 0x0 Encapsulation: ENET2
+    Input packets : 5345
+    Output packets: 2151
+    Security: Zone: trust-local
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 1500
+    Max nh cache: 100000, New hold nh limit: 100000, Curr nh cnt: 1,
+    Curr new hold cnt: 0, NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re, Is-Primary
+      Addresses, Flags: Is-Default Is-Preferred Is-Primary
+        Destination: 100.1.1.0/29, Local: 100.1.1.2, Broadcast: 100.1.1.7
+
+Physical interface: ge-0/0/6, Enabled, Physical link is Down
+  Interface index: 144, SNMP ifIndex: 516
+  Link-level type: Ethernet, MTU: 1514, LAN-PHY mode, Link-mode: Full-duplex,
+  Speed: 1000mbps, BPDU Error: None, Loop Detect PDU Error: None,
+  Ethernet-Switching Error: None, MAC-REWRITE Error: None, Loopback: Disabled,
+  Source filtering: Disabled, Flow control: Disabled, Auto-negotiation: Enabled,
+  Remote fault: Online
+  Device flags   : Present Running Down
+  Interface flags: Hardware-Down SNMP-Traps Internal: 0x0
+  Link flags     : None
+  CoS queues     : 8 supported, 8 maximum usable queues
+  Current address: 2c:21:31:53:66:86, Hardware address: 2c:21:31:53:66:86
+  Last flapped   : 2020-06-18 12:44:56 EDT (01:35:35 ago)
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+  Active alarms  : LINK
+  Active defects : LINK
+  PCS statistics                      Seconds
+    Bit errors                             0
+    Errored blocks                         0
+  Ethernet FEC statistics              Errors
+    FEC Corrected Errors                    0
+    FEC Uncorrected Errors                  0
+    FEC Corrected Errors Rate               0
+    FEC Uncorrected Errors Rate             0
+  Interface transmit statistics: Disabled
+
+Physical interface: ge-0/0/7, Enabled, Physical link is Down
+  Interface index: 145, SNMP ifIndex: 517
+  Link-level type: Ethernet, MTU: 1514, LAN-PHY mode, Link-mode: Full-duplex,
+  Speed: 1000mbps, BPDU Error: None, Loop Detect PDU Error: None,
+  Ethernet-Switching Error: None, MAC-REWRITE Error: None, Loopback: Disabled,
+  Source filtering: Disabled, Flow control: Disabled, Auto-negotiation: Enabled,
+  Remote fault: Online
+  Device flags   : Present Running Down
+  Interface flags: Hardware-Down SNMP-Traps Internal: 0x0
+  Link flags     : None
+  CoS queues     : 8 supported, 8 maximum usable queues
+  Current address: 2c:21:31:53:66:87, Hardware address: 2c:21:31:53:66:87
+  Last flapped   : 2020-06-18 12:44:56 EDT (01:35:35 ago)
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+  Active alarms  : LINK
+  Active defects : LINK
+  PCS statistics                      Seconds
+    Bit errors                             0
+    Errored blocks                         0
+  Ethernet FEC statistics              Errors
+    FEC Corrected Errors                    0
+    FEC Uncorrected Errors                  0
+    FEC Corrected Errors Rate               0
+    FEC Uncorrected Errors Rate             0
+  Interface transmit statistics: Disabled
+
+Physical interface: esi, Enabled, Physical link is Up
+  Interface index: 132, SNMP ifIndex: 583
+  Type: Software-Pseudo, Link-level type: VxLAN-Tunnel-Endpoint, MTU: Unlimited,
+  Speed: Unlimited
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps
+  Link type      : Full-Duplex
+  Link flags     : None
+  Last flapped   : Never
+    Input packets : 0
+    Output packets: 0
+
+Physical interface: fti0, Enabled, Physical link is Up
+  Interface index: 137, SNMP ifIndex: 585
+  Type: FTI, Link-level type: Flexible-tunnel-Interface, MTU: Unlimited,
+  Speed: Unlimited
+  Device flags   : Present Running
+  Link type      : Full-Duplex
+  Link flags     : None
+  Last flapped   : Never
+    Input packets : 0
+    Output packets: 0
+
+Physical interface: gre, Enabled, Physical link is Up
+  Interface index: 10, SNMP ifIndex: 8
+  Type: GRE, Link-level type: GRE, MTU: Unlimited, Speed: Unlimited
+  Link flags     : Keepalives DTE
+  Device flags   : Present Running
+  Interface flags: Point-To-Point SNMP-Traps
+    Input packets : 0
+    Output packets: 0
+
+Physical interface: ipip, Enabled, Physical link is Up
+  Interface index: 11, SNMP ifIndex: 9
+  Type: IPIP, Link-level type: IP-over-IP, MTU: Unlimited, Speed: Unlimited
+  Link flags     : Keepalives DTE
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps
+    Input packets : 0
+    Output packets: 0
+
+Physical interface: irb, Enabled, Physical link is Up
+  Interface index: 130, SNMP ifIndex: 502
+  Type: Ethernet, Link-level type: Ethernet, MTU: 1514
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps
+  Link type      : Full-Duplex
+  Link flags     : None
+  Current address: 2c:21:31:53:67:30, Hardware address: 2c:21:31:53:67:30
+  Last flapped   : Never
+    Input packets : 0
+    Output packets: 0
+
+Physical interface: jsrv, Enabled, Physical link is Up
+  Interface index: 128, SNMP ifIndex: 532
+  Type: Ethernet, Link-level type: Ethernet, MTU: 1514
+  Device flags   : Present Running
+  Link type      : Full-Duplex
+  Link flags     : None
+  Current address: 2c:21:31:53:67:00, Hardware address: 2c:21:31:53:67:00
+  Last flapped   : Never
+    Input packets : 0
+    Output packets: 0
+
+  Logical interface jsrv.1 (Index 66) (SNMP ifIndex 533)
+    Flags: Up 0x0 Encapsulation: unknown
+    Bandwidth: 1Gbps
+    Routing Instance: None Bridging Domain: None
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: Null
+    Protocol inet, MTU: 1514
+    Max nh cache: 100000, New hold nh limit: 100000, Curr nh cnt: 0,
+    Curr new hold cnt: 0, NH drop cnt: 0
+      Flags: Is-Primary
+      Addresses, Flags: Primary Is-Default Is-Preferred Is-Primary
+        Destination: 128/2, Local: 128.0.0.127, Broadcast: 191.255.255.255
+
+Physical interface: lo0, Enabled, Physical link is Up
+  Interface index: 6, SNMP ifIndex: 6
+  Type: Loopback, MTU: Unlimited
+  Device flags   : Present Running Loopback
+  Interface flags: SNMP-Traps
+  Link flags     : None
+  Last flapped   : Never
+    Input packets : 65251
+    Output packets: 65251
+
+  Logical interface lo0.1 (Index 78) (SNMP ifIndex 566)
+    Description: C4 Loopback
+    Flags: SNMP-Traps Encapsulation: Unspecified
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: trust-C4
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: Unlimited
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Default Is-Primary
+        Local: 10.0.2.1
+
+  Logical interface lo0.2 (Index 82) (SNMP ifIndex 559)
+    Description: PHA Loopback
+    Flags: SNMP-Traps Encapsulation: Unspecified
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: untrust-PHA
+    Allowed host-inbound traffic : ospf ike ping traceroute
+    Protocol inet, MTU: Unlimited
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Default Is-Primary
+        Local: 10.0.2.2
+
+  Logical interface lo0.3 (Index 86) (SNMP ifIndex 511)
+    Description: WID Loopback
+    Flags: SNMP-Traps Encapsulation: Unspecified
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: trust-WID
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: Unlimited
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Default Is-Primary
+        Local: 10.0.2.3
+
+  Logical interface lo0.4 (Index 74) (SNMP ifIndex 563)
+    Description: C2 Loopback
+    Flags: SNMP-Traps Encapsulation: Unspecified
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: trust-C2
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: Unlimited
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Default Is-Primary
+        Local: 10.0.2.4
+
+  Logical interface lo0.5 (Index 72) (SNMP ifIndex 565)
+    Description: C1 Loopback
+    Flags: SNMP-Traps Encapsulation: Unspecified
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: trust-C1
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: Unlimited
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Default Is-Primary
+        Local: 10.0.2.5
+
+  Logical interface lo0.6 (Index 76) (SNMP ifIndex 564)
+    Description: C3 Loopback
+    Flags: SNMP-Traps Encapsulation: Unspecified
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: trust-C3
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: Unlimited
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Default Is-Primary
+        Local: 10.0.2.6
+
+  Logical interface lo0.7 (Index 80) (SNMP ifIndex 576)
+    Description: C5 Loopback
+    Flags: SNMP-Traps Encapsulation: Unspecified
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: trust-C5
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: Unlimited
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Default Is-Primary
+        Local: 10.0.2.7
+
+  Logical interface lo0.16384 (Index 68) (SNMP ifIndex 21)
+    Flags: SNMP-Traps Encapsulation: Unspecified
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: Null
+    Protocol inet, MTU: Unlimited
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: None
+      Addresses
+        Local: 127.0.0.1
+
+  Logical interface lo0.16385 (Index 67) (SNMP ifIndex 22)
+    Flags: SNMP-Traps Encapsulation: Unspecified
+    Input packets : 65251
+    Output packets: 65251
+    Security: Zone: Null
+    Protocol inet, MTU: Unlimited
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: None
+      Addresses, Flags: Is-Default Is-Primary
+        Local: 10.0.0.1
+      Addresses
+        Local: 10.0.0.16
+      Addresses
+        Local: 128.0.0.1
+      Addresses
+        Local: 128.0.0.4
+      Addresses
+        Local: 128.0.1.16
+
+  Logical interface lo0.32768 (Index 64) (SNMP ifIndex 251)
+    Flags: Up Encapsulation: Unspecified
+    Input packets : 0
+    Output packets: 0
+    Security: Zone: Null
+
+Physical interface: lsi, Enabled, Physical link is Up
+  Interface index: 4, SNMP ifIndex: 4
+  Type: Software-Pseudo, Link-level type: LSI, MTU: Unlimited, Speed: Unlimited
+  Device flags   : Present Running
+  Link flags     : None
+  Last flapped   : Never
+    Input packets : 0
+    Output packets: 0
+
+Physical interface: mtun, Enabled, Physical link is Up
+  Interface index: 64, SNMP ifIndex: 12
+  Type: Multicast-GRE, Link-level type: GRE, MTU: Unlimited, Speed: Unlimited
+  Link flags     : Keepalives DTE
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps
+    Input packets : 0
+    Output packets: 0
+
+Physical interface: pimd, Enabled, Physical link is Up
+  Interface index: 26, SNMP ifIndex: 11
+  Type: PIMD, Link-level type: PIM-Decapsulator, MTU: Unlimited,
+  Speed: Unlimited
+  Device flags   : Present Running
+    Input packets : 0
+    Output packets: 0
+
+Physical interface: pime, Enabled, Physical link is Up
+  Interface index: 25, SNMP ifIndex: 10
+  Type: PIME, Link-level type: PIM-Encapsulator, MTU: Unlimited,
+  Speed: Unlimited
+  Device flags   : Present Running
+    Input packets : 0
+    Output packets: 0
+
+Physical interface: pp0, Enabled, Physical link is Up
+  Interface index: 129, SNMP ifIndex: 501
+  Type: PPPoE, Link-level type: PPPoE, MTU: 1532
+  Device flags   : Present Running
+  Interface flags: Point-To-Point SNMP-Traps
+  Link type      : Full-Duplex
+  Link flags     : None
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+
+Physical interface: ppd0, Enabled, Physical link is Up
+  Interface index: 135, SNMP ifIndex: 505
+  Type: PIMD, Link-level type: PIM-Decapsulator, MTU: Unlimited, Speed: 800mbps
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+
+Physical interface: ppe0, Enabled, Physical link is Up
+  Interface index: 136, SNMP ifIndex: 506
+  Type: PIME, Link-level type: PIM-Encapsulator, MTU: Unlimited, Speed: 800mbps
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps
+  Input rate     : 0 bps (0 pps)
+  Output rate    : 0 bps (0 pps)
+
+Physical interface: rbeb, Enabled, Physical link is Up
+  Interface index: 133, SNMP ifIndex: 584
+  Type: Software-Pseudo, Link-level type: Remote-BEB, MTU: Unlimited,
+  Speed: Unlimited
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps
+  Link type      : Full-Duplex
+  Link flags     : None
+  Last flapped   : Never
+    Input packets : 0
+    Output packets: 0
+
+Physical interface: st0, Enabled, Physical link is Up
+  Interface index: 134, SNMP ifIndex: 504
+  Type: Secure-Tunnel, Link-level type: Secure-Tunnel, MTU: 9192
+  Device flags   : Present Running
+  Interface flags: Point-To-Point
+  Input rate     : 408 bps (0 pps)
+  Output rate    : 1480 bps (1 pps)
+
+  Logical interface st0.1 (Index 88) (SNMP ifIndex 581)
+    Flags: Up No-Multicast SNMP-Traps Encapsulation: Secure-Tunnel
+    Input packets : 6481
+    Output packets: 6475
+    Security: Zone: spoke-1-vpn
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 9192
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.1/24, Local: 172.16.1.2
+
+  Logical interface st0.3 (Index 89) (SNMP ifIndex 582)
+    Flags: Up No-Multicast SNMP-Traps Encapsulation: Secure-Tunnel
+    Input packets : 7
+    Output packets: 3240
+    Security: Zone: spoke-3-vpn
+    Allowed host-inbound traffic : bootp bfd bgp dns dvmrp igmp ldp msdp nhrp
+    ospf pgm pim rip router-discovery rsvp sap vrrp dhcp finger ftp tftp
+    ident-reset http https ike netconf ping reverse-telnet reverse-ssh rlogin
+    rpm rsh snmp snmp-trap ssh telnet traceroute xnm-clear-text xnm-ssl lsping
+    ntp sip r2cp webapi-clear-text webapi-ssl tcp-encap sdwan-appqoe
+    Protocol inet, MTU: 9192
+    Max nh cache: 0, New hold nh limit: 0, Curr nh cnt: 0, Curr new hold cnt: 0,
+    NH drop cnt: 0
+      Flags: Sendbcast-pkt-to-re
+      Addresses, Flags: Is-Preferred Is-Primary
+        Destination: 172.16.3/24, Local: 172.16.3.2
+
+Physical interface: tap, Enabled, Physical link is Up
+  Interface index: 12, SNMP ifIndex: 7
+  Type: Software-Pseudo, Link-level type: Interface-Specific, MTU: Unlimited,
+  Speed: Unlimited
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps
+  Link flags     : None
+  Last flapped   : Never
+    Input packets : 0
+    Output packets: 0
+
+Physical interface: vtep, Enabled, Physical link is Up
+  Interface index: 131, SNMP ifIndex: 503
+  Type: Software-Pseudo, Link-level type: VxLAN-Tunnel-Endpoint, MTU: Unlimited,
+  Speed: Unlimited
+  Device flags   : Present Running
+  Interface flags: SNMP-Traps
+  Link type      : Full-Duplex
+  Link flags     : None
+  Last flapped   : Never
+    Input packets : 0
+    Output packets: 0
+--------------------------------------------------------------------------------------------------------------
+**************************************************************************************************************
+COMMANDS COMPLETED
+**************************************************************************************************************
+**************************************************************************************************************
+PROCESS SUMMARY
+**************************************************************************************************************
+Devices With Output:  2
+Devices No Output:    0
+Devices Unreachable:  0
+Total Devices:        2
+**************************************************************************************************************

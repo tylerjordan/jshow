@@ -1,0 +1,110 @@
+2017-12-20 14:45:18,009:172.25.91.207: Information logged in ./logs/install-log_HDN-EX4300-207_2017-12-20-1445.log
+2017-12-20 14:45:18,154:ncclient.transport.ssh: Connected (version 2.0, client OpenSSH_6.9)
+2017-12-20 14:45:18,635:ncclient.transport.ssh: Authentication (publickey) failed.
+2017-12-20 14:45:18,761:ncclient.transport.ssh: Authentication (publickey) failed.
+2017-12-20 14:45:18,940:ncclient.transport.ssh: Authentication (password) successful!
+2017-12-20 14:45:19,747:ncclient.transport.session: initialized: session-id=3154 | server_capabilities=<dictionary-keyiterator object at 0x107b45368>
+2017-12-20 14:45:19,747:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:45:20,191:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:45:20,371:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:45:20,711:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:45:21,047:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:45:21,435:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:45:21,617:172.25.91.207: Starting the software upgrade process: ./images/jinstall-ex-4300-15.1R5.5-domestic-signed.tgz
+2017-12-20 14:45:21,617:172.25.91.207: computing checksum on local package: ./images/jinstall-ex-4300-15.1R5.5-domestic-signed.tgz
+2017-12-20 14:45:22,013:172.25.91.207: cleaning filesystem ...
+2017-12-20 14:45:22,013:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:45:33,833:172.25.91.207: before copy, computing checksum on remote package: /var/tmp/jinstall-ex-4300-15.1R5.5-domestic-signed.tgz
+2017-12-20 14:45:33,833:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:45:34,175:paramiko.transport: Connected (version 2.0, client OpenSSH_6.9)
+2017-12-20 14:45:34,652:paramiko.transport: Authentication (publickey) failed.
+2017-12-20 14:45:34,771:paramiko.transport: Authentication (publickey) failed.
+2017-12-20 14:45:34,891:paramiko.transport: Authentication (password) successful!
+2017-12-20 14:46:07,620:172.25.91.207: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 17711104 / 177065444 (10%)
+2017-12-20 14:46:47,082:172.25.91.207: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 35422208 / 177065444 (20%)
+2017-12-20 14:47:27,391:172.25.91.207: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 53133312 / 177065444 (30%)
+2017-12-20 14:47:49,524:172.25.91.207: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 70828032 / 177065444 (40%)
+2017-12-20 14:48:50,825:172.25.91.207: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 88539136 / 177065444 (50%)
+2017-12-20 14:49:32,140:172.25.91.207: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 106250240 / 177065444 (60%)
+2017-12-20 14:49:59,135:172.25.91.207: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 123961344 / 177065444 (70%)
+2017-12-20 14:50:21,983:172.25.91.207: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 141656064 / 177065444 (80%)
+2017-12-20 14:50:46,004:172.25.91.207: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 159367168 / 177065444 (90%)
+2017-12-20 14:51:18,533:172.25.91.207: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 177065444 / 177065444 (100%)
+2017-12-20 14:51:18,727:172.25.91.207: after copy, computing checksum on remote package: /var/tmp/jinstall-ex-4300-15.1R5.5-domestic-signed.tgz
+2017-12-20 14:51:18,728:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:51:22,086:172.25.91.207: checksum check passed.
+2017-12-20 14:51:22,087:172.25.91.207: validating software against current config, please be patient ...
+2017-12-20 14:51:22,087:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:51:35,989:172.25.91.207: software validate package-result: 0
+Output: 
+
+2017-12-20 14:51:35,989:172.25.91.207: installing software ... please be patient ...
+2017-12-20 14:51:35,989:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:52:14,696:172.25.91.207: software pkgadd package-result: 0
+Output: 
+Verify the signature of the new package
+Verified jinstall-ex-4300-15.1R5.5-domestic.tgz signed by PackageProductionRSA_2016 method RSA2048+SHA1
+WARNING: A reboot is required to install the software
+WARNING:     Use the 'request system reboot' command immediately
+
+2017-12-20 14:52:14,697:172.25.91.207: Software installation complete.
+2017-12-20 14:52:26,327:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:52:26,614:172.25.91.207: Upgrade pending reboot cycle, please be patient.
+2017-12-20 14:52:26,614:172.25.91.207: Shutdown at Wed Dec 20 14:53:26 2017.
+[pid 3531]
+2017-12-20 14:52:26,621:ncclient.operations.rpc: Requesting 'CloseSession'
+2017-12-20 14:52:26,753:172.25.91.208: Information logged in ./logs/install-log_HDN-EX4300-208_2017-12-20-1452.log
+2017-12-20 14:52:26,909:ncclient.transport.ssh: Connected (version 2.0, client OpenSSH_6.9)
+2017-12-20 14:52:27,415:ncclient.transport.ssh: Authentication (publickey) failed.
+2017-12-20 14:52:27,550:ncclient.transport.ssh: Authentication (publickey) failed.
+2017-12-20 14:52:27,661:ncclient.transport.ssh: Authentication (password) successful!
+2017-12-20 14:52:28,532:ncclient.transport.session: initialized: session-id=3031 | server_capabilities=<dictionary-keyiterator object at 0x107d57158>
+2017-12-20 14:52:28,533:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:52:29,133:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:52:29,310:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:52:29,761:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:52:30,198:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:52:30,487:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:52:30,665:172.25.91.208: Starting the software upgrade process: ./images/jinstall-ex-4300-15.1R5.5-domestic-signed.tgz
+2017-12-20 14:52:30,665:172.25.91.208: computing checksum on local package: ./images/jinstall-ex-4300-15.1R5.5-domestic-signed.tgz
+2017-12-20 14:52:31,077:172.25.91.208: cleaning filesystem ...
+2017-12-20 14:52:31,077:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:52:43,066:172.25.91.208: before copy, computing checksum on remote package: /var/tmp/jinstall-ex-4300-15.1R5.5-domestic-signed.tgz
+2017-12-20 14:52:43,066:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:52:43,364:paramiko.transport: Connected (version 2.0, client OpenSSH_6.9)
+2017-12-20 14:52:43,892:paramiko.transport: Authentication (publickey) failed.
+2017-12-20 14:52:44,007:paramiko.transport: Authentication (publickey) failed.
+2017-12-20 14:52:44,118:paramiko.transport: Authentication (password) successful!
+2017-12-20 14:53:33,206:172.25.91.208: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 17711104 / 177065444 (10%)
+2017-12-20 14:54:07,685:172.25.91.208: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 35422208 / 177065444 (20%)
+2017-12-20 14:54:45,745:172.25.91.208: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 53133312 / 177065444 (30%)
+2017-12-20 14:55:27,769:172.25.91.208: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 70828032 / 177065444 (40%)
+2017-12-20 14:56:15,952:172.25.91.208: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 88539136 / 177065444 (50%)
+2017-12-20 14:57:04,495:172.25.91.208: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 106250240 / 177065444 (60%)
+2017-12-20 14:57:44,856:172.25.91.208: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 123961344 / 177065444 (70%)
+2017-12-20 14:58:22,868:172.25.91.208: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 141656064 / 177065444 (80%)
+2017-12-20 14:59:01,076:172.25.91.208: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 159367168 / 177065444 (90%)
+2017-12-20 14:59:36,116:172.25.91.208: jinstall-ex-4300-15.1R5.5-domestic-signed.tgz: 177065444 / 177065444 (100%)
+2017-12-20 14:59:36,570:172.25.91.208: after copy, computing checksum on remote package: /var/tmp/jinstall-ex-4300-15.1R5.5-domestic-signed.tgz
+2017-12-20 14:59:36,571:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:59:40,268:172.25.91.208: checksum check passed.
+2017-12-20 14:59:40,268:172.25.91.208: validating software against current config, please be patient ...
+2017-12-20 14:59:40,268:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 14:59:55,184:172.25.91.208: software validate package-result: 0
+Output: 
+
+2017-12-20 14:59:55,184:172.25.91.208: installing software ... please be patient ...
+2017-12-20 14:59:55,185:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 15:00:37,039:172.25.91.208: software pkgadd package-result: 0
+Output: 
+Verify the signature of the new package
+Verified jinstall-ex-4300-15.1R5.5-domestic.tgz signed by PackageProductionRSA_2016 method RSA2048+SHA1
+WARNING: A reboot is required to install the software
+WARNING:     Use the 'request system reboot' command immediately
+
+2017-12-20 15:00:37,040:172.25.91.208: Software installation complete.
+2017-12-20 15:06:12,005:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 15:06:12,182:172.25.91.208: Upgrade pending reboot cycle, please be patient.
+2017-12-20 15:06:12,183:172.25.91.208: Shutdown at Wed Dec 20 15:07:12 2017.
+[pid 3418]
+2017-12-20 15:06:12,191:ncclient.operations.rpc: Requesting 'CloseSession'

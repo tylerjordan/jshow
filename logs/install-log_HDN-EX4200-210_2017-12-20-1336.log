@@ -1,0 +1,57 @@
+2017-12-20 13:36:53,297:172.25.91.210: Information logged in ./logs/install-log_HDN-EX4200-210_2017-12-20-1336.log
+2017-12-20 13:36:53,472:ncclient.transport.ssh: Connected (version 2.0, client OpenSSH_6.9)
+2017-12-20 13:36:53,961:ncclient.transport.ssh: Authentication (publickey) failed.
+2017-12-20 13:36:54,065:ncclient.transport.ssh: Authentication (publickey) failed.
+2017-12-20 13:36:54,168:ncclient.transport.ssh: Authentication (password) successful!
+2017-12-20 13:36:55,149:ncclient.transport.session: initialized: session-id=1804 | server_capabilities=<dictionary-keyiterator object at 0x10ecd7fc8>
+2017-12-20 13:36:55,150:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 13:36:55,761:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 13:36:55,940:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 13:36:56,395:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 13:36:56,734:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 13:36:57,173:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 13:36:57,354:172.25.91.210: Starting the software upgrade process: ./images/jinstall-ex-4200-14.1X53-D35.3-domestic-signed.tgz
+2017-12-20 13:36:57,354:172.25.91.210: computing checksum on local package: ./images/jinstall-ex-4200-14.1X53-D35.3-domestic-signed.tgz
+2017-12-20 13:36:57,699:172.25.91.210: cleaning filesystem ...
+2017-12-20 13:36:57,700:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 13:37:09,290:172.25.91.210: before copy, computing checksum on remote package: /var/tmp/jinstall-ex-4200-14.1X53-D35.3-domestic-signed.tgz
+2017-12-20 13:37:09,291:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 13:37:09,696:paramiko.transport: Connected (version 2.0, client OpenSSH_6.9)
+2017-12-20 13:37:10,188:paramiko.transport: Authentication (publickey) failed.
+2017-12-20 13:37:10,306:paramiko.transport: Authentication (publickey) failed.
+2017-12-20 13:37:10,413:paramiko.transport: Authentication (password) successful!
+2017-12-20 13:37:25,969:172.25.91.210: jinstall-ex-4200-14.1X53-D35.3-domestic-signed.tgz: 12926976 / 129155939 (10%)
+2017-12-20 13:37:36,995:172.25.91.210: jinstall-ex-4200-14.1X53-D35.3-domestic-signed.tgz: 25837568 / 129155939 (20%)
+2017-12-20 13:37:49,399:172.25.91.210: jinstall-ex-4200-14.1X53-D35.3-domestic-signed.tgz: 38748160 / 129155939 (30%)
+2017-12-20 13:38:00,770:172.25.91.210: jinstall-ex-4200-14.1X53-D35.3-domestic-signed.tgz: 51675136 / 129155939 (40%)
+2017-12-20 13:38:12,410:172.25.91.210: jinstall-ex-4200-14.1X53-D35.3-domestic-signed.tgz: 64585728 / 129155939 (50%)
+2017-12-20 13:38:25,849:172.25.91.210: jinstall-ex-4200-14.1X53-D35.3-domestic-signed.tgz: 77496320 / 129155939 (60%)
+2017-12-20 13:38:41,260:172.25.91.210: jinstall-ex-4200-14.1X53-D35.3-domestic-signed.tgz: 90423296 / 129155939 (70%)
+2017-12-20 13:38:56,313:172.25.91.210: jinstall-ex-4200-14.1X53-D35.3-domestic-signed.tgz: 103333888 / 129155939 (80%)
+2017-12-20 13:39:08,573:172.25.91.210: jinstall-ex-4200-14.1X53-D35.3-domestic-signed.tgz: 116244480 / 129155939 (90%)
+2017-12-20 13:39:19,730:172.25.91.210: jinstall-ex-4200-14.1X53-D35.3-domestic-signed.tgz: 129155939 / 129155939 (100%)
+2017-12-20 13:39:19,921:172.25.91.210: after copy, computing checksum on remote package: /var/tmp/jinstall-ex-4200-14.1X53-D35.3-domestic-signed.tgz
+2017-12-20 13:39:19,922:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 13:39:23,121:172.25.91.210: checksum check passed.
+2017-12-20 13:39:23,122:172.25.91.210: installing software ... please be patient ...
+2017-12-20 13:39:23,122:ncclient.operations.rpc: Requesting 'ExecuteRpc'
+2017-12-20 13:42:00,820:172.25.91.210: software pkgadd package-result: 0
+Output: 
+
+[Dec 20 13:39:38]: Retrieving software images. This process can take several minutes. Please be patient..
+
+
+Retrieving version and model information from /var/tmp/jinstall-ex-4200-14.1X53-D35.3-domestic-signed.tgz
+
+
+
+Checking pending install on fpc0
+
+
+fpc0:
+Verify the signature of the new package
+Verified jinstall-ex-4200-14.1X53-D35.3-domestic.tgz signed by PackageProductionRSA_2016 method RSA2048+SHA1
+WARNING: A reboot is required to install the software
+WARNING:     Use the 'request system reboot' command immediately
+2017-12-20 13:42:00,820:172.25.91.210: Software installation complete. Rebooting.
+2017-12-20 14:03:54,933:ncclient.operations.rpc: Requesting 'ExecuteRpc'
